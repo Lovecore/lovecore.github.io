@@ -33,7 +33,7 @@ It looks like the only way in is on port 80. Let's see what's being hosted. Sinc
 
 We see the request come throught to `horizontall.htb`, so we'll add that to our host file.
 
-{{< figure src="__GHOST_URL__/content/images/2021/10/image.png" >}}
+![](/content/images/2021/10/image.png")
 
 Once we add this to the host file, we get a basic web page. Nothing is usable on the page, so we start our enumeration with `ffuf`.
 
