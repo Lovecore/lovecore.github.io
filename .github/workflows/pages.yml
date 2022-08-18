@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: 0.101.0
-    steps: #we don't want extended due to theming issues
+    steps: # We don't want extended due to theming issues
       - name: Install Hugo CLI
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.deb \
@@ -43,7 +43,6 @@ jobs:
       - name: Install NPM Packages
         run: |
           npm install /home/runner/work/lovecore.github.io/lovecore.github.io/themes/blist
-          #npm install --location=global postcss postcss-cli postcss-import @tailwindcss/typography autoprefixer tailwindcss
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v1
