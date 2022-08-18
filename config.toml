@@ -2,10 +2,11 @@ baseURL = 'http://lovecore.github.io'
 languageCode = 'en-us'
 title = 'Rootflag.io'
 theme = "blist"
-
-
+enableEmoji = true
 DefaultContentLanguage = "en"
 DefaultContentLanguageInSubdir = true
+noTimes = true
+
 [languages]
   [languages.en]
     contentDir = "content/en" #English
@@ -116,12 +117,12 @@ DefaultContentLanguageInSubdir = true
 
   # To hide "Other languages" option if the post is available in multiple languages
   # Can be used at site level or page level
-  hideOtherLanguages = false
+  hideOtherLanguages = true
 
 [params.homepage.social]
   # Global params common for both languages
   title = "Follow me"
-  description = "I work on everything coding and tweet developer memes"
+  description = "I hack things and tweet about things..."
   twitter = "https://twitter.com/lovecore_FGC"
   linkedin = "https://www.linkedin.com/in/nicholas-c-962265153/"
   github = "https://github.com/Lovecore/"
