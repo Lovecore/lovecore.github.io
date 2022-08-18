@@ -49,7 +49,7 @@ Once we open the file, we see just about everything is in Spanish. However, befo
 
 This is base64 encoding, so it's unlikley that this string is the password however it does decode to 'user: security'. So we have a username but what about a password? As we keep skimming through the data, we find another:
 
-{{< figure src="__GHOST_URL__/content/images/2019/08/image-4.png" caption=""This key cannot be lost, I keep it here"" >}}
+{{< figure src="__GHOST_URL__/content/images/2019/08/image-4.png" caption="'This key cannot be lost, I keep it here'" >}}
 
 This decodes to pass: spanish.is.key. Well it seems we have a username / password combination, lets see if SSH is going to work for us. Sure does!
 
