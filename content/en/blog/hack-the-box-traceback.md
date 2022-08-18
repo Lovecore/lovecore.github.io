@@ -46,7 +46,7 @@ We see a basic page that shows us the site has been hacked. We'll start a `gobus
 
 We see `payload.php` but nothing else really shows up. I played around with the page but couldn't really find anything, probably a rabbit hole. Some googling around for backdoors got me to thinking about WHO the backdoor was put there by. If we search some more for `xH4H` we find a github repo with some Web Shells!
 
-{{<="https://github.com/Xh4H/Web-Shells" title="Xh4H/Web-Shells" description="Some of the best web shells that you might need. Contribute to Xh4H/Web-Shells development by creating an account on GitHub." icon="https://github.githubassets.com/favicons/favicon.svg" author="Xh4H" publisher="GitHub" thumbnail="https://avatars0.githubusercontent.com/u/20613820?s=400&v=4" caption="" >}}
+"https://github.com/Xh4H/Web-Shells" description="Some of the best web shells that you might need. Contribute to Xh4H/Web-Shells development by creating an account on GitHub." 
 
 So we'll clone the git repo: `git clone https://github.com/Xh4H/Web-Shells`. Now we will list the content of the gitbut with the `-1` flag, which lists the files line by line. We take that output and put it into a file for fuzzing.
 
