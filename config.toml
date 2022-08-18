@@ -4,7 +4,7 @@ title = 'Rootflag.io'
 theme = "blist"
 enableEmoji = true
 DefaultContentLanguage = "en"
-DefaultContentLanguageInSubdir = true
+DefaultContentLanguageInSubdir = false
 noTimes = true
 
 [languages]
