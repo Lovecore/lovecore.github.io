@@ -45,7 +45,7 @@ We see our standard .kibana index as well as quotes and bank. Lets get the conte
 
 Once we open the file, we see just about everything is in Spanish. However, before we translate it, we'll simply page through it for anything that might stick out.
 
-{{< figure src="__GHOST_URL__/content/images/2019/08/image-3.png" caption="Hmmm... "I have to save the password for the machine"" >}}
+{{< figure src="__GHOST_URL__/content/images/2019/08/image-3.png" caption="Hmmm... 'I have to save the password for the machine'" >}}
 
 This is base64 encoding, so it's unlikley that this string is the password however it does decode to 'user: security'. So we have a username but what about a password? As we keep skimming through the data, we find another:
 
