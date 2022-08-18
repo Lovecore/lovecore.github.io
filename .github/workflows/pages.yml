@@ -34,7 +34,7 @@ jobs:
     steps: #we don't want extended due to theming issues
       - name: Install NPM Packages
         run: |
-          npm install -g postcss postcss-cli
+          npm install --location=global postcss postcss-cli postcss-import
       - name: Install Hugo CLI
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.deb \
