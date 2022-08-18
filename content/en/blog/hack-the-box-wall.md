@@ -81,7 +81,7 @@ Now that we will get back some data on what might be going on, we run it again a
 
 To do this we will change the amount of arguments our script takes. We will remove the line 30 & 31 for  ```ip``` and ```port```. We will then create an argument called ```payload```. We also need to modify the expected length on line 22. We should have something like this:
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-26.png" caption="\" >}}
+{{< figure src="__GHOST_URL__/content/images/2019/11/image-26.png" caption="" >}}
 
 We then need to modify our ```payload_info```. Line 69 is where the payload the default exploit would use. However, we can simply replace this payload with the variable ```payload```. This way we can modify our payload on the go to evade whatever might be blocking the standard payload.
 
