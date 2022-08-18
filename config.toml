@@ -14,7 +14,7 @@ noTimes = true
     languageName = "English"
     [languages.en.params]
       introTitle = "Hey! I'm Nick"
-      introSubtitle = "I'm a Father, hacker and gamer. Welcomd to my blog."
+      introSubtitle = "I'm a Father, hacker and gamer. Welcome to my blog."
       introPhoto = "/picture.jpg"
       logo = "/blist-logo.png"
     [[languages.en.menu.main]]
