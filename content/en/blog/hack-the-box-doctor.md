@@ -90,8 +90,7 @@ We can test against this use case by doing just what's listed:
 
 Sure enough, we do get the expected results!
 
-
-{{<  src="__GHOST_URL__/content/images/2020/11/1.png" width="272" height="166" >}}{{<  src="__GHOST_URL__/content/images/2020/11/12.png" width="293" height="96" >}}
+![](src="__GHOST_URL__/content/images/2020/11/1.png" width="272" height="166")![](src="__GHOST_URL__/content/images/2020/11/12.png" width="293" height="96")
 
 So now, how do we leverage this? We simply leverage the supplied [Remote Code statement](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection#exploit-the-ssti-by-calling-popen-without-guessing-the-offset)!
 
