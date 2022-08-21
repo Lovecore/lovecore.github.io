@@ -9,7 +9,7 @@ thumbnail = "/images/2021/10/horizontall.png"
 slug = "hack-the-box-horizontall"
 tags = ["hack the box", "easy", "Linux", "Laravel", "strapi", "reverse shell"]
 title = "Hack the Box - Horizontall"
-url = "/:slug:"
+url = "/:slug"
 +++
 
 
