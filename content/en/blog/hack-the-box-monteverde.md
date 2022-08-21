@@ -98,7 +98,7 @@ We use the `-L` to specify a username list.
 The `-P` is for a password list.
 Then the IP followed by the service we want to use.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/monte_user.gif" >}}
+![](/images/2020/01/monte_user.gif)
 
 We get a match! `SABatchJobs`:`SABatchJobs`. 
 
@@ -109,7 +109,7 @@ Since we have a set of credentials and we know that `WinRM` is running we can tr
 Command:
 `smbmap -u SABatchJobs -p SABatchjobs -H 10.10.10.172`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/monte_smb.gif" >}}
+![](/images/2020/01/monte_smb.gif)
 
 We get a few shares back - C$, E$, azure_uploads, NETLOGON, SYSVOL and users$.
 
@@ -118,22 +118,22 @@ The users$ share is read only, so we'll first start by connecting to this and se
 Command:
 `smbclient -U SABatchJobs //10.10.10.172/users$`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-46.png" >}}
+![](/images/2020/01/image-46.png)
 
 We start looking into each users directory. We only find one file, azure.xml, in mhope's home directory. We download the file with `get`. When we open it up, we see some credentials!
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-47.png" >}}
+![](/images/2020/01/image-47.png)
 
 Armed with this potential password, we'll try to authenticate as mhope.
 
 Command:
 `evil-winrm -i 10.10.10.171 -u mhope -p 4n0therD4y@n0th3r$`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-48.png" >}}
+![](/images/2020/01/image-48.png)
 
 We head over to mhope's Desktop and get our User.txt flag. We start to enumerate internally now. We see that `net user mhope` shows him as part of the Azure admins.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-49.png" >}}
+![](/images/2020/01/image-49.png)
 
 I then like to run [WindowsEnum.ps1](https://github.com/absolomb/WindowsEnum) on a machine to get a basic idea of my rights and what I can see from the current user. Right away we see Microsoft AADSync. Since I've spent time as a System Engineer, I knew this was the immediate path I would take.
 
@@ -155,11 +155,11 @@ Command:
 `import-module ./Azure-ADConnect.ps1`
 `Azure-ADConnect -server 127.0.0.1 -db ADSync`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/monte_admin_cred.gif" >}}
+![](/images/2020/01/monte_admin_cred.gif)
 
 Now we have the Administrator credentials, we can try and log back in via Evil-WinRM to see if they work.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-50.png" >}}
+![](/images/2020/01/image-50.png)
 
 They do work! We log in, head over to the Administrator's Desktop and snag the root.txt flag!
 

@@ -42,7 +42,7 @@ These results are pretty basic. `Tomcat` on 8080 a container manager and an `Apa
 
 We see that the site is refereted to as `megahosting.htb` and there is a link toe a `.php` location with an argument.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-83.png" >}}
+![](/images/2020/06/image-83.png)
 
 We'll add this to our hosts file and enumerate a bit. For starters we kick of a `gobuster` to see what else might be around.
 
@@ -56,23 +56,23 @@ Command:
 
 While those run we'll check for some other basic things, like an `LFI`. We check the `news.php` location and sure enough, there is an `LFI`. We'll load up `Burpsuite` to help with this one.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-84.png" >}}
+![](/images/2020/06/image-84.png)
 
 We send our `LFI` to the Repeater function and get the `passwd` file. We get this file so that we can get a good idea of the users on the machine.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-85.png" >}}
+![](/images/2020/06/image-85.png)
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-86.png" >}}
+![](/images/2020/06/image-86.png)
 
 We see our user we are potentially after is `Ash`. Now in addition to this, if we visit port `8080` we can see a 'default' `Tomcat` install.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-87.png" >}}
+![](/images/2020/06/image-87.png)
 
 What we really want to take away from this is that it gives us quite a few paths. The one of particular interest is `/etc/tomcat9/tomcat-users.xml`. Now this isn't that standard path you might think. It's actually the path WITHIN the `tomcat9` instance.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-92.png" >}}
+![](/images/2020/06/image-92.png)
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-93.png" >}}
+![](/images/2020/06/image-93.png)
 
 Now that we have the user credentials we log in. Now that we can authenticate, we can look for some `Authenticated RCE's`. None of the 'standard' `Metasploit` modules seemed to work. Some googling around lead us [here](https://pentestlab.blog/2012/08/26/using-metasploit-to-create-a-war-backdoor/) and [here](https://gist.github.com/pete911/6111816). The first is on creating a backdoor using a `war` file. The second is how to leverage `curl` to upload the file.
 
@@ -85,7 +85,7 @@ Command:
 
 This creates our payload.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-94.png" >}}
+![](/images/2020/06/image-94.png)
 
 Now we just need to upload it following the gist above.
 
@@ -95,30 +95,30 @@ Command:
 
 We use the `/manager/text/deploy` path as stated [here](http://tomcat.apache.org/tomcat-9.0-doc/manager-howto.html).
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-91.png" >}}
+![](/images/2020/06/image-91.png)
 
 Now with our payload uploaded, we just need to start up a `netcat` listener and execute. To do that we browse to our payload on 8080. Once we do, we get a shell back on our listener! Note: I tried the above at first with `MSFPC` and wasn't able to catch a shell back.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-95.png" >}}
+![](/images/2020/06/image-95.png)
 
 We'll upgrade our shell and look for a way to pivot into `ash`. We'll download `linpeas` and start enumerating. We see a file listed as `16162020_backup.zip`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-96.png" >}}
+![](/images/2020/06/image-96.png)
 
 We'll try to download this and see what's inside.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-97.png" >}}
+![](/images/2020/06/image-97.png)
 
 When we try to unzip it, we are prompted with a password.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-98.png" >}}
+![](/images/2020/06/image-98.png)
 
 We can try to brute the password with `fcrackzip`.
 
 Command:
 `fcrackzip -D -p /usr/share/wordlists/rockyou.txt -u 16162020_backup.zip`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-99.png" >}}
+![](/images/2020/06/image-99.png)
 
 As we look through the files, its just a basic backup. Nothing to be found inside. So the next logical step is, well, maybe this user has reused passwords. We try to `su` to `ash`.
 
@@ -127,13 +127,13 @@ Command:
 
 And it works!
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-100.png" >}}
+![](/images/2020/06/image-100.png)
 
 We head over to the users home directory and grab our `Users.txt` flag. We will generate an new keypair for this machine using `ssh-kegen`. We can then copy this key over to the `authorized_keys` file under Ash and SSH in. Now we can start our internal enumeration again, this time as Ash.
 
 The enumeration doesn't come back with much. the `lxd` group is is a slightly different group to see a user as a part of. Some googleing around for 'Priv esc lxd` lead me to [this resource](https://www.hackingarticles.in/lxd-privilege-escalation/). We want this part in particular:
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-101.png" >}}
+![](/images/2020/06/image-101.png)
 
 Let's follow these steps as shown to hopefully escalate! From the PoC:
 
@@ -156,11 +156,11 @@ And download the file. Now we import the image file.
 Command: 
 `lxc image import ./apline-v3.10-x86_64-20191008_1227.tar.gz --alias rfimage`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-102.png" >}}
+![](/images/2020/06/image-102.png)
 
 We can use the `lxc image list` command to see if our image has been imported correctly.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-103.png" >}}
+![](/images/2020/06/image-103.png)
 
 Now we issue config commands to our image.
 
@@ -169,26 +169,26 @@ Commands:
 lxc init rfimage fire -c security.privileged=true
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-104.png" >}}
+![](/images/2020/06/image-104.png)
 
 `lxc config device add fire rfimage disk source=/ path=/mnt/root recursive=true`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-105.png" >}}
+![](/images/2020/06/image-105.png)
 
 ```
 lxc start fire
 lxc exec fire /bin/sh
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-106.png" >}}
+![](/images/2020/06/image-106.png)
 
 Now that we're in the contiainer we navigate to `/mnt/root` like the PoC says. This allows us to see all the resources from the host machine.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-108.png" >}}
+![](/images/2020/06/image-108.png)
 
 Awesome! We head over to the `root` directory to group our `root.txt` flag!
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-107.png" >}}
+![](/images/2020/06/image-107.png)
 
 This box was pretty fun. If you enjoyed this write-up and / or learned something along the way, shoot some me some respect on [Hack The Box](https://www.hackthebox.eu/home/users/profile/95635).
 

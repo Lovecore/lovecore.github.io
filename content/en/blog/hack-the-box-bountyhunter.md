@@ -34,13 +34,13 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 There are only two ports open. Let's see what's being hosted on port 80. When we land on the page, we see a standard landing page. Digging around, we find a `log_submit.php` page. When we fill out the data required, we get the following response.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-28.png" >}}
+![](/images/2021/08/image-28.png)
 
 Since this entry point will be a web entry point. We'll do everything going forward inside `Burpsuite`. We check the request and we see that it's coming accross as base64 encoded XML data.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-27.png" >}}
+![](/images/2021/08/image-27.png)
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-29.png" >}}
+![](/images/2021/08/image-29.png)
 
 Before we dig much futher into the web requests, we're going to start some basic enumeration and see what we can find. We know there is a endpoint called `tracker_diRbPr00f314.php`, this would lead us to believe we won't be able to enumerate it.
 
@@ -55,7 +55,7 @@ The above is a malformed `base64` encoding. The `%3D` is URL encoding for `=`. T
 
 Giving us the following data being sent:
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-30.png" >}}
+![](/images/2021/08/image-30.png)
 
 Now we need to craft a PoC. You can read more on [XXE here](https://portswigger.net/web-security/xxe). We'll use the basic example they had listed for our PoC. Here is our payload:
 
@@ -92,7 +92,7 @@ data=PD94bWwgIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9IklTTy04ODU5LTEiPz4KCSAgPCFET0NUWVB
 
 You can see we are only trying to view the `/etc/passwd` file as our PoC. We put it into `Burp` and see what we get.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/XXE.gif" >}}
+![](/images/2021/08/XXE.gif)
 
 It works! Perfect! Now we need to leverage this to obtain a foothold. Based on the above data, we know the user we are after - `development`. After attempting to read `id_rsa` and `db.php` files with the traditional method of `file:///`, we need to leverage something different. We need to use a `php filter` to obtain access to the files we want.
 
@@ -116,21 +116,21 @@ This will be the payload portion of our `XXE`. Here's our new `XXE` payload.
 
 After we convert this to base64 and URL encode it, we get a valid response:
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-32.png" >}}
+![](/images/2021/08/image-32.png)
 
 A base64 encoded string. When we decode it, we get the following:
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-33.png" >}}
+![](/images/2021/08/image-33.png)
 
 A set of credentials! Finally! Now, we see a `testuser` account but I'm willing to bet, that these credentials will also work for the user `development` as well. Let's try to leverage them to `SSH`.
 
 Sure enough, they do!
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-34.png" >}}
+![](/images/2021/08/image-34.png)
 
 We are able to log in and get the `user.txt` flag! Once we're in, we check `sudo -l` to see if there are any easy hints for priv esc.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-36.png" >}}
+![](/images/2021/08/image-36.png)
 
 Sure enough, we have access to `ticketValidator.py`. When we view the file, we see that there are some basic requirements to the file we want to read.
 
@@ -166,7 +166,7 @@ Then we run our script.
 Command:
 `sudo python3.8 /opt/skytrain_inc/ticketValidator.py`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/bountyroot.gif" >}}
+![](/images/2021/08/bountyroot.gif)
 
 There we have it, the `root.txt` flag!
 

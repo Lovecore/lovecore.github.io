@@ -41,7 +41,7 @@ Command:
 
 We pretty much see our standard items:
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-20.png" >}}
+![](/images/2020/11/image-20.png)
 
 When we browse to the `includes` location, we see two files. `auth.php` and `auth.php.swp`. When we try and load the `.swp` file we get some info. A user of Jennifer and a hostname of openkeys.htb. We'll add the hostname to our hosts file and try some enumeration for subdomains.
 
@@ -65,21 +65,21 @@ We need to determine a way forward, which seemingly is the web interface. So whe
 
 We create a new cookie called username and give it a value of jennifer. Try to login with some junk credentials, no dice.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-22.png" >}}
+![](/images/2020/11/image-22.png)
 
 Doing some research on OpenBSD and web authentications leads me to this article: [schallenge](https://www.secpod.com/blog/openbsd-authentication-bypass-and-local-privilege-escalation-vulnerabilities/). Now given this information, we could potentially use a username of `-schallenge` and a junk password in conjunction with our cookie to log in.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/openkey.gif" >}}
+![](/images/2020/11/openkey.gif)
 
 Sure enough, it works! We now have an `SSH` key for Jennifer! We save the file, give it the correct permissions and try to log in.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-23.png" >}}
+![](/images/2020/11/image-23.png)
 
 Now we can snag our `user.txt` flag! Once we have that we start out internal enumeration. We download `linpeas` to the machine and let it run and see what it comes back with. Nothing great. However, we know from our previous research that CVE-2019-19520 has local auth bypass. Some googling arounds leads us to a [PoC](https://github.com/bcoles/local-exploits/blob/master/CVE-2019-19520/openbsd-authroot).
 
 All we have to do is potentially run the script!
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/root.gif" >}}
+![](/images/2020/11/root.gif)
 
 There we have it, our root flag!
 

@@ -85,7 +85,7 @@ Command:
 
 We get a large output from this as well. At the bottom of the output we see we do indeed have a user. Hugo Smith. Now this doesn't quite match up with the users we saw on the about.html page, clever.
 
-{{< figure src="__GHOST_URL__/content/images/2020/02/image.png" >}}
+![](/images/2020/02/image.png)
 
 We continue to enumerate the website but don't find anything. Our `gobuster` comes back with the same results we saw while we were manually browsing the site and source.
 
@@ -118,18 +118,18 @@ hbear
 
 Once we do that we see four Session errors, but we have 5 users! We have a hash!
 
-{{< figure src="__GHOST_URL__/content/images/2020/02/sauna-user.gif" >}}
+![](/images/2020/02/sauna-user.gif)
 
 Now that we have a hash, let's crack it!
 
 Command:
 `john --wordlist=/usr/share/wordlists/rockyou.txt impacket_output.txt`
 
-{{< figure src="__GHOST_URL__/content/images/2020/02/image-1.png" >}}
+![](/images/2020/02/image-1.png)
 
 We have a password of `Thestroke23`. Awesome, now we can potentially leverage this in `Evil-WinRM`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/02/image-2.png" >}}
+![](/images/2020/02/image-2.png)
 
 Turns out we can! We log in as fsmith and move right to the Desktop and snag our user.txt. Now it's time to start enumerating internally. We'll upload `WinPEAS` to the machine and run it to see what we can find.
 
@@ -142,21 +142,21 @@ After you run the script, you should see some credentials. Alternatly, if you ca
 Command:
 `reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"`
 
-{{< figure src="__GHOST_URL__/content/images/2020/02/image-3.png" caption="" >}}
+![](/images/2020/02/image-3.png" caption=")
 
 We see a set of stored credentials! Let's pivot to this user just like we did with fsmith. However, this username doesn't match up with the users we saw. The enumerated username as shown by `WinPEAS` or manual enumeration is svc_loanmgr.
 
 Command:
 `./evil-winrm.rb -i 10.10.10.175 -u svc_loanmgr -p 'Moneymakestheworldgoround!'`
 
-{{< figure src="__GHOST_URL__/content/images/2020/02/image-4.png" >}}
+![](/images/2020/02/image-4.png)
 
 Once we've connected as this service account we can do a few things. Normally I use `Bloodhound` to enumerate a second account but before I try that I try some basic things like Impackets [`secretdump.py`](https://github.com/SecureAuthCorp/impacket/blob/master/examples/secretsdump.py), WINpeas and some other internal commands. In this case, secrets dump works out!
 
 Command:
 `impacket-secretsdump -just-dc-ntlm egotisticalbank/svc_loanmgr@10.10.10.175`
 
-{{< figure src="__GHOST_URL__/content/images/2020/02/sauna_secret_dump.gif" >}}
+![](/images/2020/02/sauna_secret_dump.gif)
 
 You could also replicate this same technique by upload `mimikatz` and executing `lsadump`. Now we see we have an NTLM hash for our Administrator account. We have a few options.  We can crack the hash offline, we can use attempt to use some tools with these hashed credentials like `psexec.py` or we can login with the hash via `Evil-WinRM`. 
 
@@ -165,7 +165,7 @@ In this case I'll just login with `Evil-WinRM`.
 Command:
 `Evil-WinRM -i 10.10.10.175 -u Administrator -H d9485863c1e9e05851aa40cbb4ab9dff`
 
-{{< figure src="__GHOST_URL__/content/images/2020/02/admin_winrm.gif" >}}
+![](/images/2020/02/admin_winrm.gif)
 
 And we are in! We head over to the Desktop and grab the flag! Root acquired! I hope you enjoyed this box. All in all I would say this is a great box for understanding Windows' entry techniques.
 

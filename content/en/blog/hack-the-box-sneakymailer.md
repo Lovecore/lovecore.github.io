@@ -76,7 +76,7 @@ Command:
 `telnet sneakymailer.htb 25`
 `EHLO`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-14.png" >}}
+![](/images/2020/10/image-14.png)
 
 It looks like we can send un-authorized messages on the system. If you've had to thinker with SMTP before you might be familiar with [Swaks](http://www.jetmore.org/john/code/swaks/). We'll download this to our machine.
 
@@ -102,7 +102,7 @@ Command:
 
 There is also an example on how to loop using `swaks` in the `--help` command for the application. Eventually, we get back a response:
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-15.png" >}}
+![](/images/2020/10/image-15.png)
 
 We can take this and toss it into `burpsuite` for decoding, or any other URL decoder you like. When we do, we get back our password.
 
@@ -117,58 +117,58 @@ Command:
 
 Once installed we'll create pauls account on the client. The wizard will guide us through most, we just want to ensure our settings are as such:
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-16.png" >}}
+![](/images/2020/10/image-16.png)
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-17.png" caption="Note the port change to 25" >}}
+![](/images/2020/10/image-17.png" caption="Note the port change to 25)
 
 Once we've setup the account, it will attempt to login. We get a certificate erropr which is fine, we'll accept it.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-18.png" >}}
+![](/images/2020/10/image-18.png)
 
 Now we can enter our password.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-21.png" >}}
+![](/images/2020/10/image-21.png)
 
 We get into the account. Not much here, just two sent emails. One is great for us. It tells us an account and password!
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-22.png" >}}
+![](/images/2020/10/image-22.png)
 
 The other mail is a basic task. Now we didn't see a respone from the admin about the password being changed, so it still might work. Let's try.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-23.png" >}}
+![](/images/2020/10/image-23.png)
 
 They do indeed work for FTP! We see one folder, `dev`. Inside is some code for a site. We download some files and sift through them, nothing to great. However, what is interesting about this directory permissions is that we seem to have the  ability to upload files to it. We'll modify one of our `PHP Shells` and upload it to the `dev` directory.
 
 Command:
 `ftp> put sh3ll.php`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-24.png" >}}
+![](/images/2020/10/image-24.png)
 
 Now when you try to browse to this, you notice you cannot find the page. That's because `dev` is a subdomain of sneakymailer. We could have found this by using something like `wfuzz`/`ffuf` or even `nmap`. So the URL we want to catch is actually `http://dev.sneakycorp.htb/sh3ll.php`. Although we are unable to browse to the URL, we can `curl` the path to our shell.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/sneakymailershell.gif" >}}
+![](/images/2020/10/sneakymailershell.gif)
 
 Next we can upgrade our shell to be more interactive. Let's look around. First I'm going to grab a copy of `linpeas` and run it to see what that finds. Some interesting data comes back, like the `.htpasswd` for `pypi.sneakycorp.htb`. We'll try to `su` to the developer account. It works.
 
 Command:
 `su -u developer`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-25.png" >}}
+![](/images/2020/10/image-25.png)
 
 Now with a shell as developer, we'll re-run our enum script. We see pretty much the same things. What's interesting about the network scan is that both accounts listening on `localhost:5000`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-26.png" >}}
+![](/images/2020/10/image-26.png)
 
 When we `curl` it, we get back `pypi` response page.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-27.png" >}}
+![](/images/2020/10/image-27.png)
 
 Doing some research about pypiserver lets  us know that it runs on `8080` by default. Sure enough, we browse to it and get the same response we did from curl. Now what? Well, we have that hash from our `linpeas`. We might as well try and crack it to see if it's the same password as `low`.
 
 Command:
 `john hash -w=/usr/share/wordlists/rockyou.txt`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-28.png" >}}
+![](/images/2020/10/image-28.png)
 
 It is not the same password. Bummer. More research leads us to creating our own package that has a reverse shell in it. If we can get `pypi` to load it, we might be able to execute code. [Here](https://packaging.python.org/tutorials/packaging-projects/) is the documentation on how to create a package. It's not that hard, but the short is we need a `setup.py`, `.pypirc` and a `README.md`.
 
@@ -218,14 +218,14 @@ Now we just register and  upload our package.
 Command:
 `python3 setup.py sdist register -r local upload -r local`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-29.png" >}}
+![](/images/2020/10/image-29.png)
 
 We get a warning saying this method is depreciated, but we also get a response of 200. So if all went well, we should be able to SSH in as low.
 
 Command:
 `ssh -i key low@sneakymailer.htb`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-30.png" >}}
+![](/images/2020/10/image-30.png)
 
 We're in! Now to snag our flag and start enumerating internally. As always we check our `sudo -l` first to see if we have some low hanging fruit. This time it seems we might. When we issue the command we see root ability on `pip3`. Some [research](https://gtfobins.github.io/gtfobins/pip/) [suggests](https://root4loot.com/post/pip-install-privilege-escalation/) we can indeed use this to escalate.
 
@@ -234,7 +234,7 @@ Commands:
 `echo "import os; os.execl('/bin/sh', 'sh', '-c', 'sh <$(tty) >$(tty) 2>$(tty)')" > $TF/setup.py`
 `pip install $TF`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/sneakymailer.gif" >}}
+![](/images/2020/10/sneakymailer.gif)
 
 There we have it, the root flag! This was a fun path in. Hopefully something was learned along the way. Feel free to send some respect my way if this helped you out!
 

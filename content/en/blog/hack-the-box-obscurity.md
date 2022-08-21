@@ -114,7 +114,7 @@ Command:
 
 I ran a few larger wordlists against the target but all of them failing after ~2,200 requests. So we pick an even smaller listing.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/obscurity_fuzz.gif" >}}
+![](/images/2019/12/obscurity_fuzz.gif)
 
 We find our target is stored under ```develop```. Lets get the file.
 
@@ -123,7 +123,7 @@ Command:
 
 Once we have it downloaded, we look at what's inside.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-40.png" >}}
+![](/images/2019/12/image-40.png)
 
 We found our foothold. If we are able to pass our command and escape the first part, we should be able to execute some python code we inject. We need to make sure we format our request correctly. We want to close the first part of the ommand with ```';``` then execute our code and close the command. I used a simple bash reverse shell:
 
@@ -133,46 +133,46 @@ We found our foothold. If we are able to pass our command and escape the first p
 
 We apply this to our URL and wait for our connector...
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/obscurity_www_shell.gif" >}}
+![](/images/2019/12/obscurity_www_shell.gif)
 
 We now have a shell as ```www-data```. Now that we have a shell we can start enumerating internally. We see a few files in ```Robert```'s home directory. ```SuperSecureCrypt.py``` and ```passwordreminder.txt```. We download the python script and look at it locally. It looks to contain an [```Vigenere cipher```](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher) method. If you are familiar with this cipher you know that we can obtain the password for the file if you know the original input.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/obscurity_key.gif" >}}
+![](/images/2019/12/obscurity_key.gif)
 
 It looks like our password was ```alexandrovich```. We can now take this password and decrypt our ```passwordreminder.txt```. Repeating the process but supplying a ```-k``` of ```alexanderovich``` gives us a password of ```SecThruObsFTW```. Which assumably is Robert's password. We try to SSH as him and it works.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/obscurity_robert_ssh-1.gif" >}}
+![](/images/2019/12/obscurity_robert_ssh-1.gif)
 
 Now that we've gotten our ```user.txt```. Lets start enumerating as Robert. We see that Robert is able to launch ```BetterSSH.py``` as sudo.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-41.png" >}}
+![](/images/2019/12/image-41.png)
 
 When we look through ```BetterSSH.py``` we see there are a few avenue's of attack. The first being this ```command injection```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-42.png" >}}
+![](/images/2019/12/image-42.png)
 
 The application calls the command you input with the ```-u``` flag. So if we simply apply another ```-u``` to our input, we can do things as ```root```!
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/obscurity_root_1.gif" >}}
+![](/images/2019/12/obscurity_root_1.gif)
 
 The other method is that we see that copies the system shadow file out to a temporary directory every .1 seconds. If we can monitor this file location, we can snag the file before it's deleted. So we'll make a file on ```/tmp``` called snag. Then we'll run the ```watch``` command every .1 seconds. We then run the ```BetterSSH.py``` script and snag the file before it's created.
 
 Command:
 ```watch -n .1 cp /tmp/SSH/* /tmp/snag```
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/obscurit_root_2.gif" >}}
+![](/images/2019/12/obscurit_root_2.gif)
 
 We can then get the contents of the file we copied. Inside it we have the root hash.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-43.png" >}}
+![](/images/2019/12/image-43.png)
 
 We can just run it through ```John``` and see if we get a password.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/obscurity_root_hash-1.gif" >}}
+![](/images/2019/12/obscurity_root_hash-1.gif)
 
 Sure enough, we get one: ```mercedes```. We can now just ```su``` to root.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/obscurity_root_su.gif" >}}
+![](/images/2019/12/obscurity_root_su.gif)
 
 There we have it. Another box down!
 

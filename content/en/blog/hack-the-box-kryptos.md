@@ -44,11 +44,11 @@ So we'll repeat the scan but against all ports: ```nmap -sC -sV -T4 -p- -oA 10.1
 
 Lets head over to port 80 and see what is being served.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-32.png" caption="A login page." >}}
+![](/images/2019/09/image-32.png" caption="A login page.)
 
 We will setup a `dirb` on the URL and see what comes back. While it runs, we take a look at the source of the page and see its fairly simple as well. We do see a token value that seems to change on every submission (tied to the cookie?). The standard passwords didn't work either. If we look at the request in Burpsuite we see the request being sent to a database called Cryptor.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-33.png" >}}
+![](/images/2019/09/image-33.png)
 
 We can actually modify this request in a ```curl``` command and append a command injection to see if it's vulnerable to this method. We need to create a database running on our machine first. 
 
@@ -66,27 +66,27 @@ curl -X POST http://10.10.10.129 -b "PHPSESSID=p5g6j9caioo3qf8ian1ku9krmb" -d "u
 
 We then see our Metasploit listener light up and obtain our hash.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-34.png" >}}
+![](/images/2019/09/image-34.png)
 
 We can now feed this into Hashcat for cracking!
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-35.png" caption="Cracking done on a Windows machine." >}}
+![](/images/2019/09/image-35.png" caption="Cracking done on a Windows machine.)
 
 Now we wait...
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-36.png" >}}
+![](/images/2019/09/image-36.png)
 
 We have a password! We now have the username of dbuser and a password of krypton1te. So now we will create a local database on our local machine with the same name as our target, cryptor. In this case, I chose to make the privileges available to only that DB user from the IP with this password.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-37.png" >}}
+![](/images/2019/09/image-37.png)
 
 Now we need understand the database structure of the target machine. So for this we need to do some Wireshark action. We will use the same method as above and craft an injected curl command and see what the wire shows.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-38.png" caption="We get a password back, encrypted it seems." >}}
+![](/images/2019/09/image-38.png" caption="We get a password back, encrypted it seems.)
 
 We see that the call is to a table called 'users'. So now we have a table. We need to figure out what kind of hashing is done on the passwords. A quick copy paste into TunnelsUp gives us an MD5 hash. So now that we have table and column structure, we need to recreate that locally as well. Once that is done, we will call our command injection again via Burpsuite and we should see a valid submission! We have to edit our token and cookie quite a few times until it finally worked for me, but it worked!
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-39.png" >}}
+![](/images/2019/09/image-39.png)
 
 We are greeted with the above page. Seemingly encrypts a file type. We have the option of AES-CBC and RC4. RC4 is a Xor algorithm. That means if you can have the following scenarios:
 
@@ -96,47 +96,47 @@ We are greeted with the above page. Seemingly encrypts a file type. We have the 
 
 Now I'm just going to assume that it's using a static key to do the RC4. To test this we make a file called original.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-40.png" >}}
+![](/images/2019/09/image-40.png)
 
 Now host the file for the encyption page via ```SimpleHTTPServer```. We get a value.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-41.png" >}}
+![](/images/2019/09/image-41.png)
 
 Now we can take that value and encrypt it AGAIN and save that.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-42.png" >}}
+![](/images/2019/09/image-42.png)
 
 Now give that file to the encryption page as well.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-43.png" >}}
+![](/images/2019/09/image-43.png)
 
 So following how XOR encryption works, we should be able to decrypt this string and get our starting value.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-44.png" >}}
+![](/images/2019/09/image-44.png)
 
 Sure enough we can! So it is using a static key. You can also use this technique as a form of LFI. So using this method, we can start to get the contents of the directories from the `dirbuster` enumeration. The dev directory in particular. The first guess was index.html which yielded nothing. The next is index.php.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-45.png" >}}
+![](/images/2019/09/image-45.png)
 
 After following the above method (which I should have scripted...), we are able to see the contents of index.php inside /dev/!
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-46.png" >}}
+![](/images/2019/09/image-46.png)
 
 We see there are 2 additional links. We repeat the process for those pages as well. We see that there is a need to remove the sqlite_test_page.php. Well, lets get that page using the same method.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-47.png" >}}
+![](/images/2019/09/image-47.png)
 
 Nothing here. Seems that the content might be hidden or just blank. If it is hidden we can use a [PHP filter or wrapper](https://highon.coffee/blog/lfi-cheat-sheet/#php-wrapper-phpfilter) to encode the content to base64. So our URL will look like this:
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-48.png" >}}
+![](/images/2019/09/image-48.png)
 
 We see at the bottom of the file another base64 encoded block.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-49.png" >}}
+![](/images/2019/09/image-49.png)
 
 We decode it and we have the following:
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-50.png" >}}
+![](/images/2019/09/image-50.png)
 
 It looks like this code is used to lookup books by ID. What's great for us is that it seems that `bookid` is injectable. Searching around lead me to [this resource](https://github.com/s0wr0b1ndef/PayloadsAllTheThings/blob/master/SQL%20injection/SQLite%20Injection.md). It seems that we can attach to a file as a database as a form of RCE. So first we need to craft our command, Burpsuite is useful for this.
 
@@ -152,39 +152,39 @@ http://127.0.0.1/dev/sqlite_test_page.php?no_results=FALSE&bookid=%31%20%6f%72%2
 
 We use burp to inject it and we can use the Xor method to get that page content.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-52.png" >}}
+![](/images/2019/09/image-52.png)
 
 Well that concept worked, so now we can do one of two things. Create a payload with MSFPC or use built in PHP functions, `scandir` and `get_file_contents`, to enumerate. I don't really want to PHP filter anymore to get code on the box, so we'll use the enumeration option.
 
 We can use ```<?php print_r(scandir('/home/')); ?>``` in our command to get the contents of the directory.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-53.png" >}}
+![](/images/2019/09/image-53.png)
 
 We get back one user, rijndael. Lets do this again to get that users folder content as well.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-54.png" >}}
+![](/images/2019/09/image-54.png)
 
 We see that we have quite a few things here for us to get. Trying to get the content of user.txt fails... of course. We try to get creds.txt and they seem to be a Vim encrypted file.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-55.png" >}}
+![](/images/2019/09/image-55.png)
 
 We will try to take a peek at creds.old as well.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-56.png" >}}
+![](/images/2019/09/image-56.png)
 
 Well then that's no good for us. When we look at the cred.txt file we see it says VimCrypt~02!. Given the documentation we either have pkzip, blowfish or blowfish2 encryption. [This article](https://dgl.cx/2014/10/vim-blowfish) suggests that its blowfish. Guess what, that's another Xor cipher! Luckily someone has done this for us, [vimdecrypt.py](https://github.com/nlitsme/vimdecrypt). Using the script we get back the combo of `rijndael` and `bkVBL8Q9HuBSpj`. We might be able to leverage that SSH port now.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-57.png" caption="It works, we are in!" >}}
+![](/images/2019/09/image-57.png" caption="It works, we are in!)
 
 Finally. User. Damn. Onto root!
 
 Now that we are on the system, lets look around. We saw before that there was a directory called kryptos. Inside it we find a python script, kryptos.py.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-58.png" >}}
+![](/images/2019/09/image-58.png)
 
 Immediately at looking at the script we see the eval function being called. We know that this is something we can leverage, however it does list builtins as ```None``` which slows us down. The script does three things, ```GET /```, ```GET /debug``` and ```POST /eval``` running on its self-created server on ```port 81```. We can check to see if this is running by using ```netstat```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-59.png" >}}
+![](/images/2019/09/image-59.png)
 
 It is running and as root. So in order to exploit this we need to exploit the ```eval``` function. We also need to exploit the the signature function, ```secure_rng```, because they need to match in order for code to function. If you copy the code locally and make some changes to the ```secure_rng``` function, we can see that the seed pool is has some repeating characters, meaning its a fairly small pool. We can try and repeat until our keys match up, in a brute force attempt. 
 
@@ -213,7 +213,7 @@ We can then combine the copy of the kryptos.py we took from the target machine a
 
 We forward our port locally to remote port 81: ```ssh -L 81:localhost:81 rijndael@10.10.10.129```. Once that is done, we run our modified kryptos.py script and wait fro the file ```1``` to show up in the ```/tmp/``` directory.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-61.png" >}}
+![](/images/2019/09/image-61.png)
 
 We did it. We have the root flag! I hope you enjoyed this box as much as I did.
 

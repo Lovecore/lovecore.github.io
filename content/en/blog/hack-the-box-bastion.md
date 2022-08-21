@@ -65,19 +65,19 @@ Nmap done: 1 IP address (1 host up) scanned in 18.45 seconds
 
 We see that SMB is open, so lets try to connect with a null and map some shares.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-37.png" >}}
+![](/images/2019/07/image-37.png)
 
 As we see there are a few shares available. Lets try to connect to the Backup share since it's not hidden.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-38.png" >}}
+![](/images/2019/07/image-38.png)
 
 Lets switch to the WindowsImageBackup directory and see what we have
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-39.png" >}}
+![](/images/2019/07/image-39.png)
 
 We see a directory called L4mpje-PC and when we path to it, we see a backup directory. In here there are a few things of note.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-40.png" >}}
+![](/images/2019/07/image-40.png)
 
 We obviously are interesting in the .vhd, or virtual hard drive's. One is 5+GB and the other is only 37 MB. Lets get that one. We can open it up and take a peek, we see its the System Reserve portion of the windows drive. In this case, I want to snag the stored hashes on it, if there are any. So to do this we need to mount the .VHD, we'll use a tool called guest mount. Now there are other ways of doing this, however, if I can mount the file directly from the network resource, thats good. First we'll mount the remote path our local host.
 
@@ -91,11 +91,11 @@ mkdir vhd; guestmount --add /mnt/remote/WindowsImageBackup/L4mpje-PC/Backup\ 201
 
 Now we can change to the vhd directory and see what we have.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-41.png" >}}
+![](/images/2019/07/image-41.png)
 
 Since we're after a NTLM dump, we'll path to Windows/System32/config and run [samdump2](https://linux.die.net/man/1/samdump2).
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-42.png" caption="Sweet, some hashes" >}}
+![](/images/2019/07/image-42.png" caption="Sweet, some hashes)
 
 We pipe those into a text file for cracking.
 
@@ -105,47 +105,47 @@ samdump2 SYSTEM SAM > ~/Documents/bastion/hash.txt
 
 Now we see that the Administrator account and the Guest account are disabled. Leaving us with just L4mpje. we'll take the second half of the string and put it into a new document and run hashcat against it. In this case I didn't have enough resources to run it on my VM. So in this case we used [hashkiller](https://hashkiller.co.uk/Cracker/NTLM) or [crackstation](https://crackstation.net/) to do some of the dirty work for us.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-43.png" caption="We have a match!" >}}
+![](/images/2019/07/image-43.png" caption="We have a match!)
 
 Now maybe we can use that to SSH in.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-44.png" >}}
+![](/images/2019/07/image-44.png)
 
 Sure enough, it works!
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-45.png" >}}
+![](/images/2019/07/image-45.png)
 
 We path to the Desktop and get the user.txt flag.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-47.png" >}}
+![](/images/2019/07/image-47.png)
 
 Now onto the root flag. We need to further enumerate the box, we can do that by heading to the Program Files and Program Files (x86) directories.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-48.png" caption="mRemoteNG is suspect..." >}}
+![](/images/2019/07/image-48.png" caption="mRemoteNG is suspect...)
 
 Between mRemoteNG and OpenSSH there isn't much here. Some googling around shows the mRemoteNG had an issue where passwords were being saved in the clear, but encrypted. So lets see what config files we can find, normally they're stored in AppData.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-49.png" >}}
+![](/images/2019/07/image-49.png)
 
 We see that we have some files here. Lets take a peek at them, starting from the top... Lucky for us, in the first file we see the Administrator password stored in an encrypted format, resembling base64.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-50.png" >}}
+![](/images/2019/07/image-50.png)
 
 Now, it's not base 64 but again, some digging around led me to this: [https://github.com/kmahyyg/mremoteng-decrypt](https://github.com/kmahyyg/mremoteng-decrypt). Someone has done the dirty work already! We'll just wget the python script and pass the hash through.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-51.png" caption="Damn, lets try the jar file." >}}
+![](/images/2019/07/image-51.png" caption="Damn, lets try the jar file.)
 
 Luckily the jar file worked.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-52.png" >}}
+![](/images/2019/07/image-52.png)
 
 Now we have a password for the Administrator. I wonder if this password matches the local administrator password?
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-53.png" caption="It sure did!" >}}
+![](/images/2019/07/image-53.png" caption="It sure did!)
 
 Now we have admin access lets snag our flag!
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-54.png" >}}
+![](/images/2019/07/image-54.png)
 
 This was another fairly quick box. The hardest part was the stability of the VPN to the box. It took me a few nmap scans to actually get back results.
 

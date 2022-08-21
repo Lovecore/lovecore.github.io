@@ -37,7 +37,7 @@ Nmap done: 1 IP address (1 host up) scanned in 72.04 seconds
 
 Well, it looks like web services are the way in. Let's see whats being hosted on port 80.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-34.png" >}}
+![](/images/2019/12/image-34.png)
 
 We have a Artificial Intelligence site. The links lead to ```php``` files. We'll start our enumeration with ```gobuster```.
 
@@ -59,7 +59,7 @@ Here are our results:
 
 Now we'll start visiting these pages to see if there are any paths forward. We see that the premise of the site is using voice recognition from audio files as a search engine. On the ```ai.php``` page we see there is an upload form requesting a ```.wav``` file. So we'll upload a sample file and see what happens. We get a response:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-35.png" >}}
+![](/images/2019/12/image-35.png)
 
 Good to know info, we'll move onto the next page which was ```intelligence.php```. Here is a list of supported API calls. So my logic here is to create a ```.wav``` with some type of text to speach engine using the provided api to craft my payload. 
 
@@ -83,7 +83,7 @@ So now that we've input this text-to-speech in, we save the file. Next we need t
 
 Now that we have the payload compiled so to speak, let's upload it.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/ai_database.gif" >}}
+![](/images/2019/12/ai_database.gif)
 
 Look's like it worked! We have a database name of ```alexa```. We will continue to craft payloads until we get what we need. It should be noted that sometimes the playback speed at certain parts of the payload needed to be slowed down. In the case of finding the table:
 ```
@@ -94,33 +94,33 @@ This needed to be modified a bit more heavily, speed, emphisis and voice.
 
 After much trial and error, we finally get the user password:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/ai_password.gif" >}}
+![](/images/2019/12/ai_password.gif)
 
 Great, now we have a username and password. Maybe it'll work for ```SSH```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/ai_ssh.gif" >}}
+![](/images/2019/12/ai_ssh.gif)
 
 We are in. We snag our ```user.txt``` flag and start enumerating for root. We sping up a ```SimpleHTTPServer``` and download ```Linpeas.sh``` onto the box. We see that there are few more open ports available to us:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-36.png" >}}
+![](/images/2019/12/image-36.png)
 
 We also see ```Tomcat``` running a cron job:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-37.png" >}}
+![](/images/2019/12/image-37.png)
 
 As well as ```Java``` task running that references ```Tomcat``` running on port 8000:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-38.png" >}}
+![](/images/2019/12/image-38.png)
 
 After doing some research it looks like this is [Java Debug Wire Protocol](https://docs.oracle.com/javase/7/docs/technotes/guides/jpda/jdwp-spec.html). THe give away was the jdwp in the process running: ```jdwp=transport```. The first google seach for this came back with quite a few RCE on the protocol. [This one ](https://ioactive.com/hacking-java-debug-wire-protocol-or-how/) does a great job of breaking it down. It also has a proof of concept, [here](https://github.com/IOActive/jdwp-shellifier).
 
 We copy the file to the server and run it.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-39.png" >}}
+![](/images/2019/12/image-39.png)
 
 It seems to execute but we never catch a shell via ```netcat```. Let's craft a payload with ```msfpc``` or ```msfvenom```. We issue ```msfpc elf tun0``` to generate a Linux payload. We can then copy this payload to the server under ```/tmp```. Then we will launch our MSF listener and retry our payload. Still doesn't work. After some furthre digging it was suggested to try a different Java method to hook from. We'll use a pretty basic one of ```java.lang.String.indexOf```. This time we run it and get a shell!
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/ai_root.gif" >}}
+![](/images/2019/12/ai_root.gif)
 
 ```root.txt``` is right as we land in. Box complete! This was quite a unique box for sure, I really enjoyed it.
 

@@ -69,17 +69,17 @@ Nmap done: 1 IP address (1 host up) scanned in 33.02 seconds
 
 Lets try the FTP port since we can log in anonymously. We log into the box and take a peek around.
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/ftp_anon1-1.png" >}}
+![](/images/2019/04/ftp_anon1-1.png)
 
 We log in and head over the the Users directory and see what we have at first glance. Administrator and Public, ok cool. Lets look at Public desktop, maybe we have a User hash.
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/ftp_anon2.png" caption="Sure enough our user hash is hanging out in the Public space!" >}}
+![](/images/2019/04/ftp_anon2.png" caption="Sure enough our user hash is hanging out in the Public space!)
 
 Well, that was... unexpectedly easy. Lets get our Admin hash now! Try the normal things, like accessing the Admin account directory, denied. Check other core access privileges, also denied. Lets drop the FTP session and see what we can see on port 80.
 
 We point our browser to the ip and we get the PRTG Network Monitor login page.
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/netmon-1.png" caption="" >}}
+![](/images/2019/04/netmon-1.png" caption=")
 
 Looks like we're running version 18.1.37. Lets try to log in with the default admin credentials of prtgadmin / prtgadmin. Nope, denied. Well, lets google around for some known exploits for PRTG.
 
@@ -87,7 +87,7 @@ We seem to find a few, one in particular that seems great, CVE-[2018-9276](https
 
 We jump back onto the FTP and try to path to ProgramData/Paessler/Configuration Auto-Backups/. You guessed it, this is where PRTG stores its automatic backups. If we're lucky we might have an old backup to parse through with some plaintext goodies in it.
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/ftp_ls_programData.png" >}}
+![](/images/2019/04/ftp_ls_programData.png)
 
 We see there are 3 backup files listed. the first two are the same size, so we'll grab a copy of one. The .old.bak file is a bit smaller so we'll grab that as well. Once we've downloaded them we will just grep through them for the word 'password'.
 
@@ -102,30 +102,30 @@ This time we found some credentials! Looks like the prtgadmin account password f
 
 So time to head over to the web interface and try the credentials. Failed. Damn it. Well, these are old credentials, maybe the user was required to change the password. Lets try Prtg@dmin2019. BINGO!
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/netmon-2.png" >}}
+![](/images/2019/04/netmon-2.png)
 
 This was actually the hardest part. I was thinking that I needed to brute force the box but in actuality, I just needed to think as a user. What would a user do? Change the year...
 
 Now that we have admin access we can go back to CVE-2018-976. The exploit requires our cookies from cache. So we load up developer options and snag the data.
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/cookie1.png" >}}
+![](/images/2019/04/cookie1.png)
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/cookie2-1.png" >}}
+![](/images/2019/04/cookie2-1.png)
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/cookie3.png" >}}
+![](/images/2019/04/cookie3.png)
 
 Now we just need to run the exploit with the appropiate switches.
 ```bash
 bash prtg-exploit.sh -u http://10.10.10.10 -c "_ga=GA1.4.1727477117.1555948138; _gid=GA1.4.1609818662.1555948138; OCTOPUS1813713946=ezM4QUUyMDVCLUNBNkEtNEEwQS1BNjc4LUEzMzVEMTM1Qjk1MX0%3D; _gat=1"
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/cve_run-1.png" caption="We now have an admin account on the server!" >}}
+![](/images/2019/04/cve_run-1.png" caption="We now have an admin account on the server!)
 
 Now that we have an admin account, we can use SMBCLIENT to connect to the C drive and get the admin hash.
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/smb3_C_pentest.png" >}}
+![](/images/2019/04/smb3_C_pentest.png)
 
-{{< figure src="__GHOST_URL__/content/images/2019/04/smb4_C_pentest.png" caption="There the root flag!" >}}
+![](/images/2019/04/smb4_C_pentest.png" caption="There the root flag!)
 
 On the Administrator desktop is the root.txt, we win!
 

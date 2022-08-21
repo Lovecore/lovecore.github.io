@@ -134,13 +134,13 @@ Nmap done: 1 IP address (1 host up) scanned in 37.09 seconds
 
 Well we are going to connect to the FTP services that lets us log in as anonymous and see what these files are. ```mget *``` downloads all our files for us. We open the files and see that we have a Solidity program for an Etherium based smart contract.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-30.png" >}}
+![](/images/2019/09/image-30.png)
 
 So it's very likley we are going to have to leverage this smart contract, cleverly named, WeaponizedPing to gain entry. Assumably, the ```setDomain``` function of the contract will let us change our target. After doing some research, I found the [Web3](https://web3py.readthedocs.io/en/stable/index.html) framework for interacting with the Etherium Blockchain. Now we'll have to craft a program to connect to the blockchain and utilized the smart contract.
 
 We will have the contract use our machine as the target and we can verify that it is pinging back to us by using ```tcpdump```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-31.png" >}}
+![](/images/2019/09/image-31.png)
 
 Now we can tell our payload to make a Netcat connection back to our machine. My code looks like this:
 
@@ -182,60 +182,60 @@ print("**********************************************************")
 
 We run our python script and...
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-62.png" >}}
+![](/images/2019/09/image-62.png)
 
 We have made a reverse connection. A quick ```whoami``` shows I'm the administrator. We see that there is another user account on the system, Bobby. We'll now create an SSH keypair so that we can reliably get back into the box and not have to deal with running our script every time we want to connect.
 
 Simply generate a keypair with ```ssh-keygen``` and append it to the authorized_keys on the target box.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-63.png" >}}
+![](/images/2019/09/image-63.png)
 
 Then we simply SSH in.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-64.png" >}}
+![](/images/2019/09/image-64.png)
 
 Now that we have a more consistent connection to the target. We can enumerate a little bit. We see there is a file called chainsaw-emp.csv in the administrators home directory. When we look at the contents of the file, we see its a list of people and roles. Bobby seems to be our Smart Contract Auditor.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-65.png" >}}
+![](/images/2019/09/image-65.png)
 
 We will start enumerating the box. We'll use ```LinEnum``` to start and see what it shows. If that doesn't yeild anything, we'll then kick up ```PsPy64``` and see if anything pops up there. While we are doing those, some manual enumeration shows that there is a ```.ipfs``` directory for the user. If you are unfamiliar with ```ipfs``` and what it is, this is a [good resource](https://docs.ipfs.io/introduction/how-ipfs-works/). It's essentially a peer-to-peer storage system. The hope here is that we are able to obtain some sensitive information to escalate with.
 
 We'll start by greping the blocks of storage in for the term root. 
 ```grep -iRl root```. The ```-R``` for recursive. The ```i``` for ignore case and the ```l``` for any files that match the context given.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-68.png" caption="" >}}
+![](/images/2019/09/image-68.png" caption=")
 
 Nothing. Next we'll check for anything Bobby.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-69.png" >}}
+![](/images/2019/09/image-69.png)
 
 We see that Bobby does seem to have some matches. We can  look at the contents of these files and see what might be in them. The data listed in block OY seems to have a base64 encrypted email.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-70.png" >}}
+![](/images/2019/09/image-70.png)
 
 Which decodes to:
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-71.png" >}}
+![](/images/2019/09/image-71.png)
 
 Awesome. We also have the key seemingly encoded as well. We'll snag the attached key and decode that base64 into our private key.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-72.png" >}}
+![](/images/2019/09/image-72.png)
 
 We now have a private key for Bobby. Now we'll ship it into ```ssh2john``` to convert it over. Then we'll use john to crack it.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-73.png" >}}
+![](/images/2019/09/image-73.png)
 
 Now we just tell ```john``` to go to town. ```john john_bobby --wordlist=/usr/share/wordlists/rockyou.txt```
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-74.png" caption="jackychain it is!" >}}
+![](/images/2019/09/image-74.png" caption="jackychain it is!)
 
 We now have a password to go with our keypair. Lets try to SSH in as Bobby now.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-75.png" >}}
+![](/images/2019/09/image-75.png)
 
 Now we are in and have our user flag! Lets keep enumerating. Like we did above, we'll use ```LinEnum```, ```PsPy64``` and more manual enumeration. An intersting folder that we find is projects. Inside that folder is a directory called ChainsawClub. When we look at the directory, we see its another smartcontract based system. This time for access to a service of some type. We see that the contract is making username and passwords.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-76.png" >}}
+![](/images/2019/09/image-76.png)
 
 We'll use the same principals as we did before to create a method for connecting and leveraging this smart contract. The code looks like this:
 
@@ -285,15 +285,15 @@ I was constantly running into an error where the ABI value was not being read. I
 
 Now that we've made our contract interaction, lets check to see if we can get in.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-77.png" >}}
+![](/images/2019/09/image-77.png)
 
 We are root! When we go to get our root flag we see the following message.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-78.png" >}}
+![](/images/2019/09/image-78.png)
 
 Hmm, ok. Nothing in the file... Well, let's enumerate more! This time as Root. We snag ```LinEnum``` and let it run. It doesn't really show anything. So we do some manual enumeration of applications on the system. One of the things that I do when manual enumeration is concerned is sort by date time. So in this case, we do ```ls -rtl```. This will list everthing in reverse order of time.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-79.png" >}}
+![](/images/2019/09/image-79.png)
 
 As we see, most of the items that are recently used are filesystem functions. However there is one item that isn't a normal binary to have, ```bmap```. You can take a look at [this github repo](https://github.com/CameronLonsdale/bmap) where bmap is used in a forensics sense.
 
@@ -301,7 +301,7 @@ Since ```root.txt``` is 52 bytes in size. that means there are still 4044 bytes 
 
 ```bmap --slack root.txt```
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-81.png" >}}
+![](/images/2019/09/image-81.png)
 
 There is our root flag! This was a fun machine. I am a blockchain enthusiast, so seeing it in HTB was a awesome!
 

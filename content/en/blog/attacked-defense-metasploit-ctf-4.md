@@ -16,7 +16,7 @@ In this entry we will tackle the third Metasploit CTF on Pentester Academy. In t
 
 ## Network Topology
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/PA_MCTF_1.png" >}}
+![](/images/2020/01/PA_MCTF_1.png)
 
 ## Enumeration
 Like the previous CTF's we've done. We now know that we'll start every CTF off with an `nmap` scan.
@@ -77,7 +77,7 @@ Command:
 
 We get back a few results, one of which seems to be a `Metasploit` module:
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/searchsploit_fingerd.png" >}}
+![](/images/2020/01/searchsploit_fingerd.png)
 
 We will try this module first, if it fails we'll move onto the next service, `SMB`.
 
@@ -91,7 +91,7 @@ Once we are loaded in we `search` for the module we want to use.
 Command:
 `msf5> search fingerd`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/metasploit_fingered.png" >}}
+![](/images/2020/01/metasploit_fingered.png)
 
 This is a VERY old exploit and not for our target system, but worth a shot anyway since it takes very little time to try it. We select the module for use.
 
@@ -111,7 +111,7 @@ The exploit runs but nothing happens. No surprise there! Before we `searchsploit
 
 Using the `search` in `Metasploit` for `SMB` will come back with a lot of results. We are after mostly the auxilary modules. These are mostly scanning and enumeration modules.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/metasploit_smb.png" >}}
+![](/images/2020/01/metasploit_smb.png)
 
 We are interested in the `auxilary/scanner/smb/smb_enumshares`. This will show us if there are any open shares we are free to connect to with or without authentication.
 
@@ -120,7 +120,7 @@ Command:
 
 Once the module is loaded we `show` our `options`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/show_smb_options.png" >}}
+![](/images/2020/01/show_smb_options.png)
 
 We have a few options. THe only one we want to set is `rhosts` currently.
 
@@ -139,7 +139,7 @@ Command:
 
 26 modules are returned. We are going to look at the ones that are for Linux since we know from our `nmap` scan that we have Ubuntu running on the target.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/search_samba.png" >}}
+![](/images/2020/01/search_samba.png)
 
 
 

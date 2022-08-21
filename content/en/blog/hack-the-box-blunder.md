@@ -38,7 +38,7 @@ Command:
 
 Right away we see `/admin/`, `todo.txt` and `robots.txt`. First we'll take a look at the `todo.txt`. Nothing but some notes and a person to inform. Then we'll head over to `/admin` and see what might be there.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image.png" >}}
+![](/images/2020/10/image.png)
 
 We get a login page. Some googling shows this is probably a [flat file CMS](https://www.bludit.com/). With this knowledge we can do some research for exploits and vulnerablilies. We find some basic Directory Traversals but they need to be authenticated. More research leads us to a [blog post](https://medium.com/@musyokaian/bludit-cms-version-3-9-2-brute-force-protection-bypass-283f39a84bbb) about brute force detection bypass. Luckily for us, there is a link to the [github](https://github.com/musyoka101/Bludit-CMS-Version-3.9.2-Brute-Force-Protection-Bypass-script/tree/master) for the script as well.
 
@@ -64,14 +64,14 @@ Command:
 
 Now with our custom password list, we'll refeed it through our python app and see what we get.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/blunder_wordlist.gif" >}}
+![](/images/2020/10/blunder_wordlist.gif)
 
 We've got one! A password of `RolandDeschain`. Let's use these creds to log in. Now that we're in, we can look around and get an idea of what's possible. We know we can leverage some previously found Directory Traversals since we have credentials.
 
 Command:
 `Searchsploit bludit`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-1.png" >}}
+![](/images/2020/10/image-1.png)
 
 We'll start with the `Metasploit` module. First we'll start up `Metasploit` and find our exploit.
 
@@ -83,7 +83,7 @@ Once inside the `Metasploit` framework, we'll `search` for our exploit.
 Command:
 `search bludit`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-2.png" >}}
+![](/images/2020/10/image-2.png)
 
 Now we'll `use` that exploit.
 
@@ -101,11 +101,11 @@ Command:
 
 Then we'll `run` our exploit.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-3.png" >}}
+![](/images/2020/10/image-3.png)
 
 We now have a `Meterpreter` session! Doing some internal enumation shows two version of bludit installed.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-4.png" >}}
+![](/images/2020/10/image-4.png)
 
 Poking around more shows a `databases` folder which has a `users.php` file. We'll download that file.
 
@@ -114,11 +114,11 @@ Command:
 
 When we look at the file contents, we see a password file hash for Admin and Fergus.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-5.png" >}}
+![](/images/2020/10/image-5.png)
 
 We'll also download the password from the `bludit-3.10.0a` directory as well. A quick peek on [TunnelsUp](https://www.tunnelsup.com/hash-analyzer/) shows us these are unsalted SHA1 hashes. [Crackstation](https://crackstation.net/) has one of these passwords on file.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-6.png" >}}
+![](/images/2020/10/image-6.png)
 
 This is the password for the user Hugo. Who is also a user on this machine. So at this point, we'll need to create a shell back to our system, upgrade it and switch user to `Hugo`.
 
@@ -134,7 +134,7 @@ Command:
 
 And we catch a shell.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-7.png" >}}
+![](/images/2020/10/image-7.png)
 
 Now we can upgrade out shell.
 
@@ -143,19 +143,19 @@ Command:
 
 Now we can `su` to hugo and get our `users.txt` flag!
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-8.png" >}}
+![](/images/2020/10/image-8.png)
 
 Now that we have a foothold as a user, we can enumerate. This box has been quite different than boxes in the past. Normally, we'd do basic enumeration by hand by poking around, running some basic commands and then use `linenum` or another enum script. This time, every tidbit we need has been in our initial commands.
 
 We run `sudo -l` and see the `!root` flag.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-9.png" >}}
+![](/images/2020/10/image-9.png)
 
 Between this and the version of `sudo` running, we can escalate to root. Here's a [quick snip](https://www.exploit-db.com/exploits/47502) on how the exploit works. All we have to do is execute the following command:
 
 `sudo -u#-1 /bin/bash`
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/blunder_root.gif" >}}
+![](/images/2020/10/blunder_root.gif)
 
 There we have it, box complete. A pretty standard entry level CTF box. I would highly recommend this box to new users.
 

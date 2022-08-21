@@ -92,7 +92,7 @@ Nmap done: 1 IP address (1 host up) scanned in 110.71 seconds
 
 There is some interesting items here. We see that port 80 and 8065 are open. We'll browse these ports to see what they have.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-7.png" caption="Landing page for port 80" >}}
+![](/images/2021/05/image-7.png" caption="Landing page for port 80)
 
 We see a generic page for some kind of IT support service. The first thing we notice is that the link points to helpdesk.delivery.htb. Viewing the source also shows us http://delivery.htb:8065 as well. We'll add these to our hosts list. After we add them, we click the link that takes us to helpdesk.delivery.htb.
 
@@ -100,36 +100,36 @@ We are now greeted with a support center ticketing system. This system is run on
 
 Now we'll head over to the items being hosted on 8065 to see if they require eachother.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-8.png" >}}
+![](/images/2021/05/image-8.png)
 
 Here it looks like we are able to create an account for delivery.htb, or atleast some service associated with it. We create an account and it tells us to check our inbox for the link.
 
 How do we get this registration link? After toying around, it looks like we can actually create a Mattermost account associated to the ticket email. Then, when the ticket is created, the email is sent to the ticket account and appended to the currently open ticket.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-9.png" >}}
+![](/images/2021/05/image-9.png)
 
 We can then copy the verification link out of the ticket, and verify our account.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-10.png" >}}
+![](/images/2021/05/image-10.png)
 
 Now we can login with the credentials we made.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-11.png" >}}
+![](/images/2021/05/image-11.png)
 
 We can then click internal and view some internal systems. When we get logged in we see some credentials posted in the clear `maildeliverer:Youve_G0t_Mail!`. We try to leverage these via `ssh` and we are in!
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-12.png" >}}
+![](/images/2021/05/image-12.png)
 
 Snag the `user.txt` flag and start enumerating! We download `linpeas.sh` to our target and start enumerating. Nothing really sticks out, so we'll have to manually dig around. One item that is of interest is `/opt/mattermost`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-13.png" >}}
+![](/images/2021/05/image-13.png)
 
 Atleast we have a starting point. Sifting through the config files, we find some credentials: `elastic:changeme` and `mmuser:Crack_The_MM_Admin_PW`. Now we can try to connect to this SQL instance with these credentials.
 
 Command:
 `mysql -u mmuser -p'Crack_The_MM_Admin_PW'`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-14.png" >}}
+![](/images/2021/05/image-14.png)
 
 Awesome, a database connection. Now we can enumerate within it.
 
@@ -142,7 +142,7 @@ describe Users;
 select * from Users\G;
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/sql_delivery.gif" >}}
+![](/images/2021/05/sql_delivery.gif)
 
 Now we have a `root` username and a password hash. Now we know from gaining entry to the internal site that this password is not on the `RockYou` password list. However, it does say that if we are clever enough, we can use `hashcat` rules to easily crack variations. Here are two good resources for `hashcat` rules: [one](https://notsosecure.com/one-rule-to-rule-them-all/) and [two](https://www.4armed.com/blog/hashcat-rule-based-attack/).
 
@@ -157,14 +157,14 @@ Now with our new wordlist, we simply supply it to `John` and let it do it's work
 Command:
 `john -w=root_combo.lst hash.out`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-15.png" >}}
+![](/images/2021/05/image-15.png)
 
 Now we have a password for the `root` `sql` user. What are the chances there is some password reuse?
 
 Command:
 `su root`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-16.png" >}}
+![](/images/2021/05/image-16.png)
 
 There we have it, the `root` flag! I hope everyone found this box fun, be sure to send Ippsec some love for all his contributions to the community!
 

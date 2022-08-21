@@ -55,11 +55,11 @@ Nmap done: 1 IP address (1 host up) scanned in 42.08 seconds
 
 Seems pretty low, lets try another swing at the nmap, but all ports.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-21.png" >}}
+![](/images/2019/07/image-21.png)
 
 We see that port 6022 is open. I telnet into the port and get back what looks like some SSH responses.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-22.png" >}}
+![](/images/2019/07/image-22.png)
 
 Looks like its using SSH-go as the server on this port. When we try to ssh into that port, we are prompted for a SSH key. We'll come back to this it seems.
 
@@ -67,13 +67,13 @@ We see the site being hosted on the box is talking about an API as well as a lin
 
 The first stop will be to take a look at the git repository. In this case we're going to look through the commit history to see what we can find. We'll want to enumerate all of our domains. A run of Dirbuster against gogs.craft.htb and we see our users. If we dig though the personal history, we see that Dinesh has left us a nice script, with authorization inside it!
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-93.png" >}}
+![](/images/2019/07/image-93.png)
 
 If we take this script and recreate it, we get a valid authentication using those credentials. We can also test it against the API page to validate and download the token. Looks like we can use these credentials to authenticate to gogs.craft.htb as well.
 
 When we are sifting though the notes we see 1 issue. This shows a possible problem with the ABV value.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-94.png" >}}
+![](/images/2019/07/image-94.png)
 
 When we look at the changes made, we see it's using the function eval(). This is might be the way in. We can leverage this function to call remote code! More on why eval() is bad, here and here.
 
@@ -120,7 +120,7 @@ print(response.text)
 
 After we run our codewe get a netcat connection!
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-95.png" >}}
+![](/images/2019/07/image-95.png)
 
 Well, this sends us to /opt/app as root, but when we look around, there's nothing here. It seems we're in a docker container. So in this case, we're going to head bad to where we landed and see whats here. When we run dbtest.py, we get back what the script is calling, so maybe we should try and modify it so we can dump some info.
 
@@ -155,19 +155,19 @@ finally:
 
 After we run our script, we get the following back:
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-96.png" >}}
+![](/images/2019/07/image-96.png)
 
 We now have three login credentials, lets see if any of these work on SSH. No dice. Lets try to log into Gogs with these. Turns our Gilfoyle's works. Now we can browse around what Gilfoyle has been doing. He has another repository as well. On inspection it seems to be the docker container that we are hosting the service in. When we check out the changes, we see a private key. We'll save this file and use it to authenticate via SSH.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-97.png" >}}
+![](/images/2019/07/image-97.png)
 
 Great we are in. Now we can snag our user.txt and look for a way to pivot to root. Once we've explored the system, we notice that there is a program called [Vault](https://www.vaultproject.io/docs/install/index.html). I've never worked with this application before but gaining root was actually very easy once I knew what I was looking for and how Vault functions. After reading documentation for a few hours and trying many MANY commands (and failing) to gather what info I could on the structure that was setup, I had to take a step back and rethink the entry points. Then I realized that Vault has documents on SSH and keysigning. Lucky for us [Vault has a document](https://www.vaultproject.io/docs/secrets/ssh/one-time-ssh-passwords.html) on how to do just that! We follow that document through and....
 
-{{< figure src="__GHOST_URL__/content/images/2019/08/image.png" >}}
+![](/images/2019/08/image.png)
 
 We get in using OTP. To the flag!
 
-{{< figure src="__GHOST_URL__/content/images/2019/08/image-1.png" >}}
+![](/images/2019/08/image-1.png)
 
 We did it, both flags captured. This was a fun and new box for me. I learned a lot on some software I've never used before.
 

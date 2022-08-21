@@ -16,7 +16,7 @@ In this entry we will tackle the third Metasploit CTF on Pentester Academy. In t
 
 ## Network Topology
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-77.png" >}}
+![](/images/2019/12/image-77.png)
 
 ## Enumeration
 If you've been following along, you know that we being our enumeration process with `nmap`. We'll now start to combine the set of command options we've learned. Let's obtain our IP and scan our subnet:
@@ -53,7 +53,7 @@ Command:
 
 We get back some good results:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-87.png" >}}
+![](/images/2019/12/image-87.png)
 
 We'll load up `Metasploit` and check out the modules.
 
@@ -62,7 +62,7 @@ Command:
 
 Once inside we will `search` for `postgres`.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-89.png" caption="" >}}
+![](/images/2019/12/image-89.png" caption=")
 
 Similar to what we did in the third CTF. We are going to look to enumerate user credentials. We'll start with using the `postrgres_login` module.
 
@@ -74,7 +74,7 @@ Next we'll `show` our options.
 Command:
 `msf5> show options`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-91.png" >}}
+![](/images/2019/12/image-91.png)
 
 For this module we will need to set our `rhosts`. Optionally we can set a password list but in this case we'll just use our defaults.
 
@@ -86,7 +86,7 @@ Then we `run` the module.
 Command:
 `msf5> run`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-90.png" >}}
+![](/images/2019/12/image-90.png)
 
 We get a valid credential set: `postrgres`:`postgres`. Next we need to leverage these commands. We have a few authenticated modules in our listing. The first we are going to try with this set of credentials is `auxiliary/admin/postgres/postgres_readfile`. This is the same method we used in CTF 2. We will first try to read `/etc/passwd` to verify we have permissions.
 
@@ -100,7 +100,7 @@ Command:
 
 Then we `run` it.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/CTF_4_postgres.gif" >}}
+![](/images/2019/12/CTF_4_postgres.gif)
 
 We do have the ability to read the file.
 

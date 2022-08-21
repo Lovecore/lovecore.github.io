@@ -143,7 +143,7 @@ Command:
 
 Sure enough we get a listing back!
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-15.png" >}}
+![](/images/2021/08/image-15.png)
 
 So we know that our 'landing' is on `/sdcard`. Now, we can go through these files and see what we can download and view. Eventually we find a file called `plat_file_contexts`. This file has a much better directory structure for us to view and find a better way in. But we still aren't able to get a full view of the machine / sdcard. So before we write some code for this to function better, some quick seaching [finds another PoC](https://github.com/fs0c131y/ESFileExplorerOpenPortVuln) for this exploit. Let's try this one.
 
@@ -160,11 +160,11 @@ Now we we can follow the documenation and point it at the target.
 Command:
 `python3 poc.py --cmd listFiles --ip 10.10.10.247`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-16.png" >}}
+![](/images/2021/08/image-16.png)
 
 We still get the same output. Based on the research we did, we know this vulnerability is simply making http requests to the server. So when we want to modify those requests, we use `Burpsuite`! First we need to ensure that `import os` is added to our `PoC.py` script, otherwise what we're going to do won't work.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-17.png" >}}
+![](/images/2021/08/image-17.png)
 
 Next, we're going to set some basic `environmental variables` for our proxy.
 
@@ -174,25 +174,25 @@ Command:
 
 The reason we import the `os` library is because we want this python script to route through using whatever OS specific settings we have setup, in this case, a proxy. With those in place, we can now launch `Burpsuite` and send the exploit code again.explore
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/explore.gif" >}}
+![](/images/2021/08/explore.gif)
 
 This time, we see the request come through our interceptor! We'll send the request to `repeater` and look to modify it. We know we want to enumerate the `/sdcard` location. So the easiest way to attempt to do that is append that location to our `POST` request.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/userpost.gif" >}}
+![](/images/2021/08/userpost.gif)
 
 Awesome, we now have a method for reliably enumerating the system. We'll modify the `POST` request again, this time to download our file.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-18.png" >}}
+![](/images/2021/08/image-18.png)
 
 We changed our `POST` location to be `/sdcard/user.txt` and the method to `getFile`. We send it off and get the `user.txt` flag! Now, we need a method to gain persistance on the machine. We'll use the method we created above to enumerate the system for some kind of `SSH` key / password.
 
 We start by looking in the folders on `/sdcard`. In the `DCIM` location, we have a file called `creds.jpg`. We could download it via `Burp` but in this case, it's a bit easier to just browse to the location - http://10.10.10.247:59777/sdcard/DCIM/creds.jpg
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-19.png" >}}
+![](/images/2021/08/image-19.png)
 
 Now we have some creds, let's see if they work for `SSH` as `Kristi`. Sure enough, they do!
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-20.png" >}}
+![](/images/2021/08/image-20.png)
 
 Now we need to explore this OS to understand where our root flag is as well as how we plan to get there. We know based on information above that port `5555` hasn't been used yet and is filtered out. If you've done much hacking around on Android devices, you know that this port is generally used for `ADB` - [Android Debug Bridge](https://developer.android.com/studio/command-line/adb). First, let's install `ADB`.
 
@@ -204,14 +204,14 @@ Once we have these installed, we can try to connect to the target machine.
 Command:
 `adb shell 10.10.10.247`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-21.png" >}}
+![](/images/2021/08/image-21.png)
 
 No dice. So we'll need a way to connect to that port. The easiest way to make a remote port, think it's a local port is to leverage `port forwarding`.
 
 Command:
 `sudo ssh -p 2222 -L 5555:localhost:5555 kristi@10.10.10.247`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-22.png" >}}
+![](/images/2021/08/image-22.png)
 
 Once we authenticate, we get a shell, as usual. Now we will try to connect to the `ADB` port on our local machine.
 
@@ -219,15 +219,15 @@ Command:
 `adb connect localhost:5555`
 `adb shell`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-23.png" >}}
+![](/images/2021/08/image-23.png)
 
 Awesome, we now have a shell. If you know anything else about Android, you know that this shell can simply be bumped to root by using `su`.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-24.png" >}}
+![](/images/2021/08/image-24.png)
 
 Now we are root, let's go find that flag! Shortly, after some digging, we find it in `/data/`!
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-25.png" >}}
+![](/images/2021/08/image-25.png)
 
 This was a fun new box! If you found this write-up handy, let me know!
 

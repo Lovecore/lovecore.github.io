@@ -49,19 +49,19 @@ Service Info: OS: Unix
 
 Let's take a look at the running web services. Browse to the site and we are greeted with a QR code.. interesting. Let's peek the source. In the source we see the URL for the QR Token and that's about it.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-23.png" caption="I've never dealt with QR codes and token's before. Better get to googling..." >}}
+![](/images/2019/07/image-23.png" caption="I've never dealt with QR codes and token's before. Better get to googling...)
 
 When we look at what is running on 443, we are greeted with an image that says Certificate Error. So we need some type of pair to continue maybe? Lets keep looking at what we have. A quick searchsploit for vsftpd shows that we do have 1 exploit to potentially try.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-24.png" caption="The -w will print out the URL for the exploit as well." >}}
+![](/images/2019/07/image-24.png" caption="The -w will print out the URL for the exploit as well.)
 
 [S](http://10.10.10.131/qrcode?qrurl=/root/)o we give it a shot. When this is exploit is run, it opens a debugging port on 6200. So we telnet to it and see what we have.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-77.png" caption="Some type of PHP shell." >}}
+![](/images/2019/07/image-77.png" caption="Some type of PHP shell.)
 
 We take a peek around but we only see one item. A variable called Tokyo. When we view it we get some code that references a certificate.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-78.png" >}}
+![](/images/2019/07/image-78.png)
 
 We can try and see what the ca.key has in store by using edit. ```bash edit -e /home/nairobica.key```
 
@@ -69,33 +69,33 @@ Now that we have a private key, what good is it to us? We know that from enumera
 
 What we'll need to do is create a public cert from the private key we just obtained. We will issue the following: ```bash openssl req -key /privatekey.txt -new -x509 -days 365 -out casa.crt```. ONce we've done that, we get our .crt, however, we need to convert this to a PKCS format from PEM. So we do the following ```bash openssl pkcs12 -inkey casa.crt -export -out new_casa.pfx```. Now that we have a valid certificate that FireFox will take, we import it and head back to the site.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-79.png" >}}
+![](/images/2019/07/image-79.png)
 
 We are now greeted with a new landing. Season 1 and Season 2. When we look at the links, we see that Season-2 is using ?PATH=. This would lead me to believe we can use directory traversal with ../../../ lets see what we get. Sure enough we get the output of the /etc directory! Using this we can path around and see what we have and we do see a .ssh file in /berlin/ but how can we view it? If you took a look around the site you will notice that each episode of Season 2 has what looks like base64 encoding:
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-82.png" >}}
+![](/images/2019/07/image-82.png)
 
 So it's possible we can just create an echo command then convert it to base63 and plug it into our web browser!
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-81.png" caption="We want the contents of the id_rsa file!" >}}
+![](/images/2019/07/image-81.png" caption="We want the contents of the id_rsa file!)
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-83.png" >}}
+![](/images/2019/07/image-83.png)
 
 Now that we have a key, who does it work with? We can use the same method as above to get the contents of the passwd file, this should give us some insite.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-84.png" >}}
+![](/images/2019/07/image-84.png)
 
 We have a few users, berlin, dali and professor. We try to SSH for each user and see what works. Turns out, its professor.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-85.png" >}}
+![](/images/2019/07/image-85.png)
 
 We run run LinEnum and PsPy to get an idea of whats going on in the box. We see a cron job executing as root calling memcached.ini.
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-87.png" >}}
+![](/images/2019/07/image-87.png)
 
 We modify that .ini to forward out a netcat connection and wait...
 
-{{< figure src="__GHOST_URL__/content/images/2019/07/image-86.png" >}}
+![](/images/2019/07/image-86.png)
 
 We snag our root flag and we are done!
 

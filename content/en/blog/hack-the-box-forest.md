@@ -74,7 +74,7 @@ We initially see ```LDAP```, ```Kerberos``` and ```SMB``` ports available. Let's
 
 A quick ```SMBMap``` gives us access denied. Next we'll try to gain access via ```RPCclient```: ```rpclient -U "" -N 10.10.10.161```. This gives us access, we can enumerate users this way using ```enumdomusers``` within our connection:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/rpcclient.gif" >}}
+![](/images/2019/12/rpcclient.gif)
 
 We can take those and paste them into a file called ```users.txt```. Now we want to remove all the junk and essentially keep the usernames. A quick one liner: 
 
@@ -91,18 +91,18 @@ Command:
 
 A breakdown of the above command. The ```htb/``` is our domain. ```-usersfile``` is the file we created earlier. ```-format john``` means we want to output our format for easy cracking in ```John```. Lastly, ```-dc-ip``` is our target Domain Controller, in this case, our target.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/pre_auth.gif" >}}
+![](/images/2019/12/pre_auth.gif)
 
 Now that we have a username and hash, we can crack it in ```John```. We issue ```John --wordlist=/usr/share/wordlists/rockyou.txt vuln_users.txt``` to get the cracking going. Shortly we have a result: ```s3rvice```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-13.png" >}}
+![](/images/2019/12/image-13.png)
 
 Now that we have a set of credentials, we can look to use those. Our earlier enumeration showed us that we could leverage ```Win-RM``` on port ```5985```. So we'll do just that. We'll use [Evil-WinRM](https://github.com/Hackplayers/evil-winrm) and start enumerating further.
 
 Command:
 ```evil-winrm -i 10.10.10.161 -u 'svc-alfresco' -p 's3rvice'```
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/winrm_user.gif" >}}
+![](/images/2019/12/winrm_user.gif)
 
 Now that we have a shell and we have access to the ```user.txt``` flag. Onto root! We can start enumerating internally. We do the normal groups and user checks with ```systeminfo```, ```net user svc-alfresco``` and ```net group``` to start. Here is a quick link to some enumeration methods for Windows machines: [Payload All the Things](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Privilege%20Escalation.md#user-enumeration).
 
@@ -113,7 +113,7 @@ Once installed, we need to leverage SharpHound.ps1 to gain data. We find that sc
 Command:
 ```upload /root/Tools/SharpHound.ps1 C:\Users\svc-alfresco\Documents```
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-15.png" >}}
+![](/images/2019/12/image-15.png)
 
 Import the module into our Powershell prompt:
 
@@ -123,7 +123,7 @@ Then run ```invoke-bloodhound -CollectionMethod All -Domain htb.local -LDAPUser 
 
 This will compile all sorts of AD data into a zip file for us to download. Once downloaded, upload the data into ```Bloodhound```. We can then filter by 'Highest Value Target' and start narrowing down a path to take based on our previous research.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-14.png" >}}
+![](/images/2019/12/image-14.png)
 
 Based on our above breakdown we can see that we have the ability to write to the ```Exchange Windows Permissions``` group. So we'll want to add ourselves to that group.
 
@@ -139,7 +139,7 @@ Command:
 
 Then we can browse to our ip and authenticate with ```svc-afresco``` credentials.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/ntlm_relayed.gif" >}}
+![](/images/2019/12/ntlm_relayed.gif)
 
 After a few resets on the box and switching from EU to US a few times, it finally worked. We now can dump some secrets.
 
@@ -148,14 +148,14 @@ Command:
 
 This kicks out a whole bunch of hashes. So our goal is to pass the hash as administrator for a shell.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-18.png" >}}
+![](/images/2019/12/image-18.png)
 
 To do this we'll use ```wmiexec.py```.
 
 Command:
 ```python wmiexec.py -hashes aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6 Administrator@10.10.10.161```
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/root_again.gif" >}}
+![](/images/2019/12/root_again.gif)
 
 There we have it, our root shell with flag!
 

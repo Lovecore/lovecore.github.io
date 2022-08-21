@@ -123,11 +123,11 @@ While attempting to enumerate potential directories, we kept getting rate limite
 
 We'll start with port `5000` since it seems to have a much more rich attack surface given user accounts can be created. With `Burpsuite` running, we'll attempt to create an account:
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-43.png" >}}
+![](/images/2021/07/image-43.png)
 
 While viewing the requests, we see that the page is being served up via `haproxy`
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-44.png" >}}
+![](/images/2021/07/image-44.png)
 
 Once logged in, we take a look around. We have a comment field, a search field and a hostname - `sink.htb`. We'll add this to our hosts file and check for `vhosts`.
 

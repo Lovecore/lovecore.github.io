@@ -82,13 +82,13 @@ Host script results:
 ```
 This scan took a while to finish, so while it was going, I popped the IP into the browser to see what was going on. We get back an error, showing us the domain we will want to add to our hosts list.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-48.png" >}}
+![](/images/2020/06/image-48.png)
 
 When we add the host we are taken to a Papercut admin page. As we look through the page and the print logs, we can obtain some info, like usernames. We will take these names and compile them into a file called `users.lst`.
 
 Next we try to use a basic `ldapsearch` to enumerate users but we are told we need to create a bind first. It's telling us that we need to be authenticated.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-49.png" >}}
+![](/images/2020/06/image-49.png)
 
 After enumerating the site we really couldn't find much more usful info in terms of credentials. However, a more and more common tactic in HTB CTF's is to use `cewl` to generate a potential wordlist. So let's give that a shot.
 
@@ -102,25 +102,25 @@ Command:
 
 To our surprise, we have more than one successful login:
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-50.png" >}}
+![](/images/2020/06/image-50.png)
 
 Now we we try to connect using `smbclient` we are told we need to change our password.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-51.png" >}}
+![](/images/2020/06/image-51.png)
 
 We can change the [password using](https://serverfault.com/questions/215983/change-windows-ad-password-from-linux) `smbpasswd`.
 
 Command:
 `smbpasswd -U bhult -r 10.10.10.193`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-52.png" >}}
+![](/images/2020/06/image-52.png)
 
 You'll need to do the steps above quickly, as the password resets on the box. Once we do, we can quickly see our shares with a standard `smbclient` command:
 
 Command:
 `smbclient -L //10.10.10.193 -U bhult`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-53.png" >}}
+![](/images/2020/06/image-53.png)
 
 We are unable to login but we can leverage `rpcclient` to connect after we've changed the password.
 
@@ -129,15 +129,15 @@ Command:
 
 We can start to enumerate a bit more inside this connection. We issue `enumprinters` and see what might be listed. We see a printer and a password.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-54.png" >}}
+![](/images/2020/06/image-54.png)
 
 We'll take that and add it to our list. It's also possible the `scan2docs` is a service account for scanning directly to smb shares. We can verify by issuing `enumdomusers`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-55.png" >}}
+![](/images/2020/06/image-55.png)
 
 We now have a much larger listing of users. We'll add these users to our list as well. We'll also want to obtain the groups on the domain with `enumdomgroups` as well. We see one group of interest in particular - `IT_Accounts`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-56.png" >}}
+![](/images/2020/06/image-56.png)
 
 To further obtain info on this group we can `query` the `rid` of the group.
 
@@ -149,13 +149,13 @@ We see there are two members of the group. We can then issues `querygroupmem` co
 Command:
 `$> querygroupmem 0x644`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-57.png" >}}
+![](/images/2020/06/image-57.png)
 
 We can then take these rid's and compare them to the output from `enumdomusers` to see who they are. Turns out they're `svc-print` and `sthompson`. We can issue `queryuser` on the rid to see if there is any data stored in the users account, but there is none. 
 
 Now that we have a bit more info on the target's we are after, we will re-run our `hydra` scan for any new potential matches.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-58.png" >}}
+![](/images/2020/06/image-58.png)
 
 Just like we though. The password does indeed work with the scan service account as well as the print account! We'll now try to use `evil-winRM` to log into the machine as that account.
 
@@ -164,41 +164,41 @@ Command:
 
 Once logged in we head over to the Desktop and snag our `user.txt` flag!
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-59.png" >}}
+![](/images/2020/06/image-59.png)
 
 Now we need to start enumerating internally. We find some intersting files during our manual enumeration, like drivers in our Documents directory, a test application bed and some others. We know from reading the readme.txt file that a solution is built and placed in the test folder.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-60.png" >}}
+![](/images/2020/06/image-60.png)
 
 As we continue to look at our privileges from `winPEAS` we see the token privileges area has some unique attributes.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-61.png" >}}
+![](/images/2020/06/image-61.png)
 
 Some quick research leads me [here](https://www.tarlogic.com/en/blog/abusing-seloaddriverprivilege-for-privilege-escalation/). An article on abusing `SeLoadDriverPrivilege`, they are even kind enough to give us a PoC to use. We do need to compile the file.
 
 To compile the file you'll need to create a new C++ Console App.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-62.png" >}}
+![](/images/2020/06/image-62.png)
 
 Then create a new source file.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-63.png" >}}
+![](/images/2020/06/image-63.png)
 
 Then paste in the PoC code. You'll also want to comment out line 6 if you are having issues building the code. The only thing that `stdafx.h` is tell the compiler will find the compiled header files from stdafx.h and does not compiled it from scratch. Once you've done then, build the solution.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-64.png" >}}
+![](/images/2020/06/image-64.png)
 
 We can now copy over our compiled executable to our target box. When we run it we are greated with our expected usage:
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-65.png" >}}
+![](/images/2020/06/image-65.png)
 
 Now that we have this working exploit we'll move it over to the `test` directory and run it again.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-67.png" >}}
+![](/images/2020/06/image-67.png)
 
 Now we need to slightly modify our `ExploitCapcom` executable that was [linked](https://github.com/tandasat/ExploitCapcom) in the research above. What we need to do is make it call an executable we create.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-68.png" >}}
+![](/images/2020/06/image-68.png)
 
 Now that we have that location linked, we'll build the solution. Now it's time to create our malicious payload. You can do this in two ways, via `msfvemon` or `msfpc`.
 
@@ -224,7 +224,7 @@ Command:
 
 Now we execute our chain!
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/fuse_root.gif" >}}
+![](/images/2020/06/fuse_root.gif)
 
 There we have it, access to the `root.txt` flag!
 

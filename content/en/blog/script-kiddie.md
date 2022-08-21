@@ -27,21 +27,21 @@ PORT      STATE    SERVICE VERSION22/tcp    open     ssh     OpenSSH 8.2p1 Ubunt
 
 There isn't much to go with. We see a webserver on port 5000 and that's about it. Let's take a look.
 
-{{< figure src="__GHOST_URL__/content/images/2021/04/image.png" >}}
+![](/images/2021/04/image.png)
 
 We see a basic hacking tool interface. We can scan an IP address or create payloads. We have the ability to upload a payload template as well. We test out the page and sure enough it does generate some payloads. Some googling around leads us [here](https://github.com/justinsteven/advisories/blob/master/2020_metasploit_msfvenom_apk_template_cmdi.md). A MSF Venom template CVE and PoC.
 
 We can find this template in `Metasploit`. If we search for `template` in `MSF` we see the module:
 
-{{< figure src="__GHOST_URL__/content/images/2021/04/image-1.png" >}}
+![](/images/2021/04/image-1.png)
 
 We list out our `options`. We have pretty much the basics, an `lport` and `lhost`.
 
-{{< figure src="__GHOST_URL__/content/images/2021/04/image-2.png" >}}
+![](/images/2021/04/image-2.png)
 
 We'll add our IP and port and generate the payload.
 
-{{< figure src="__GHOST_URL__/content/images/2021/04/image-4.png" >}}
+![](/images/2021/04/image-4.png)
 
 We can even do the following to spin up an automatic payload handler within `MSF` if we want. I often do this, but in this case, we'll use `netcat`.
 
@@ -55,11 +55,11 @@ Command:
 
 We can then set our localhost on the website to 127.0.0.1 and the platform to android.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image.png" >}}
+![](/images/2021/05/image.png)
 
 Once we hit generate, we should catch a connection back.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-1.png" >}}
+![](/images/2021/05/image-1.png)
 
 Now we want to upgrade this shell. First, we check for `Python` and `Python3`.
 
@@ -67,7 +67,7 @@ Commands:
 `which python`
 `which python3`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-2.png" >}}
+![](/images/2021/05/image-2.png)
 
 We see `Python3` installed so we'll [upgrade our shell](https://blog.ropnop.com/upgrading-simple-shells-to-fully-interactive-ttys/) with that.
 
@@ -110,19 +110,19 @@ Command:
 
 We quickly see the shell returned as `pwn`.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-3.png" >}}
+![](/images/2021/05/image-3.png)
 
 However, `pwn` cannot access `root.txt`. So we need to look around some more. Basic enumeration shows us that we can run `msfconsole` as root.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-4.png" >}}
+![](/images/2021/05/image-4.png)
 
 Awesome, let's do that. When the console loads, we get a bunch of ioctl errors but when we check our ID, we are running as `root`.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-5.png" >}}
+![](/images/2021/05/image-5.png)
 
 Now we can simply cat the `root.txt` flag!
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-6.png" >}}
+![](/images/2021/05/image-6.png)
 
 A nice easy box with some required research and trial / error.
 

@@ -19,7 +19,7 @@ At the time of writing this post, a good amount of the labs are free. As time go
 
 Update: I've logged back into the site to rerun through the lab and I can't! I have some cached session info still but since I can no longer connect to the lab, my screenshots will be limited.  It looks like this might be a shorter series that we thought!
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image.png" >}}
+![](/images/2019/06/image.png)
 
 As people are starting to get into the field of pentesting, security auditing or whatever it may be, often everyone wants to be 'uber 1337' and jump right into being a 'hacker'. Well in order to do that, you need to not only know your tools but also know how they actually function. So to help facilitate that, the lab titled Meterpreter Basics will help with just that. So, lets start it off with Meterpreter Basics!
 
@@ -88,7 +88,7 @@ We see a few things. A Git repository, mysql port running and an HTTP service ru
 
 Once we've loaded in, I've searched for mysql exploits / enumeration modules as well as XODA modules.
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-1.png" >}}
+![](/images/2019/06/image-1.png)
 
 Looks like we have an XODA module built in, lets see what it yields. The first thing we do is use the exploit.
 
@@ -98,15 +98,15 @@ use exploit/unix/webapp/xoda_file_upload
 
 Once it's loaded, we check its options. We do this by simply typing 'options'.
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-2.png" >}}
+![](/images/2019/06/image-2.png)
 
 The expected normals in most modules. Next thing we need to do is set our RHOSTS to the target. Again, to do this we simply type 'RHOSTS <IP OF TARGET>'.
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-3.png" caption="The flow so far." >}}
+![](/images/2019/06/image-3.png" caption="The flow so far.)
 
 We run it but we get back an error, 'File wasn't uploaded, aborting!' hmmm, why? Well, if we look at our options above, we see that the target URI is pointing to /xoda/. Meanwhile, our scan shows that XODA is hosted in just root or '/'. So lets change that.
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-4.png" >}}
+![](/images/2019/06/image-4.png)
 
 The exploit runs successfully and we get back a reverse connection to a Meterpreter shell!
 
@@ -116,11 +116,11 @@ Now that we're in, lets get to doing the tasks given to us. Remember, these comm
 
 Task 1 - Get the present working directory on the machine. To do this we simply issue the 'pwd' command to print the working directory. Task 1, done.
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-5.png" >}}
+![](/images/2019/06/image-5.png)
 
 Task 2 - List the files present in present working directory of the remote machine.Easy, we issue the 'ls command'.
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-6.png" >}}
+![](/images/2019/06/image-6.png)
 
 Task 3 - Check the present working directory on local (attacker) machine.We issue the 'lpwd'. You guessed it, the preceding 'L' is for local.
 
@@ -128,19 +128,19 @@ Task 4 - List the files present in present working directory of the local machin
 
 Task 5 - Get the flag value present in /app/flag1 file.We want to read the file here, so we can path to that directory and issue the 'cat' command or we can simplify it by simply given the path of the file we want to read. So our command is 'cat /app/flag1'
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-9.png" >}}
+![](/images/2019/06/image-9.png)
 
 Task 6 - Change the flag value present in /app/flag1, so that no one else can get the right flag.We can do this a few ways, we can echo some nonsense into the flag file or open it with an editor such as nano or vi and save it that way.
 
 Task 7 - Change the present working directory to a suspiciously named directory in /app and read the flag from a hidden file present in that directory.To do this we simply list our items in /app and look for something suspicious.
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-10.png" >}}
+![](/images/2019/06/image-10.png)
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-12.png" >}}
+![](/images/2019/06/image-12.png)
 
 Looks like the directory 'Secret Files' is pretty suspicious to me! We change to that directory and 'cat' the .flag2 file. Now it should be noted that you can target this directory with quotes like so to change to it: "Secret Files" however, in some operating systems you need to escape the space in the directory name.
 
-{{< figure src="__GHOST_URL__/content/images/2019/06/image-13.png" >}}
+![](/images/2019/06/image-13.png)
 
 Task 8 - Get the flag5.zip to local machine, open it using password 56784. The information given in the extracted file will give clue about the location of the another flag.To download a file, we can issue a 'download' command followed by the file name. This will download the file to the directory you launched Metasploit from. We can then unzip the file using the unzip command. We will issue the following:
 

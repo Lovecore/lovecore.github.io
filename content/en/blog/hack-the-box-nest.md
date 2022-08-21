@@ -75,15 +75,15 @@ We see that there is SMB and what looks to be SRSS reporting interface. We will 
 Command:
 `smbclient -L \\\\10.10.10.178 -U Guest`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-53.png" >}}
+![](/images/2020/01/image-53.png)
 
 We see there are a few shares that we can connect to. Especially if the Guest account is allowed. Once we start pathing around on the shares. We see a Welcome Email template on the data share.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-54.png" >}}
+![](/images/2020/01/image-54.png)
 
 We download that file and see there is a basic password of `welcome2019` associated to an account called `TempUser`. We know that often System Admin's like to reuse passwords for accounts. Now we have the ability to connect to the Users share as well. When we do we get a list of users too.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-55.png" >}}
+![](/images/2020/01/image-55.png)
 
 Now with usernames and a basic password, we will spray these accounts to see if any others share the same password. We can use the `Metasploit` module `smb_login`
 
@@ -92,7 +92,7 @@ Command:
 
 Here we will set the `user_file` to the wordlist we created for users. and `smbpass` to `welcome2019`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/nest_smb_enum.gif" >}}
+![](/images/2020/01/nest_smb_enum.gif)
 
 We have a list of more users with access. We'll continue looking through the SMB shares for further data. We have the ability to download everything from a share with `mget *` and `recurse on` within the `smbclient` connection. So we do that.
 
@@ -103,35 +103,35 @@ Command:
 
 Once we do that we get more files downloaded to our working directory. We now have `IT`, `Production`, `Reports` and `Shared`. Each with more content inside. Going through the directories we have some intersting info in the `notepadplusplus` directory.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-56.png" >}}
+![](/images/2020/01/image-56.png)
 
 We see there's another user that wasn't listed before, carl. He has a directory in the hidden share Secure$. Also in that download is a config with a password located inside `RU Scanner`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-57.png" >}}
+![](/images/2020/01/image-57.png)
 
 We can assume Carl Smith is our new way forward. We will try to access his hidden directory as TempUser. Now TempUser doesn't have the ability to list but it can traverse if you know the path already, which we do. So we connect back to the `Secure$` share and path there.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-58.png" >}}
+![](/images/2020/01/image-58.png)
 
 We repeat the same mass download as we did before. This time we have something of interest. A `Visual Studio` Project file, .sln. So we copy this over to our CommandoVM to take a look.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-59.png" >}}
+![](/images/2020/01/image-59.png)
 
 There is only one function inside. Now this program requires `RU_Config.xml`. Which we got from the share download. Inside that file is a password. We can simply change the last part of line 5 to read 'Decrypt this password' and put in our password from the `RU_Config.xml`. It should look something like this:
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-60.png" >}}
+![](/images/2020/01/image-60.png)
 
 Now we can just set a breakpoint on the end of the function call and when it hits it, we can view the data inside the variables.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/vb_decompile.gif" >}}
+![](/images/2020/01/vb_decompile.gif)
 
 We see that the program hits the break almost immediately. We can view the password of `xRxRxPANCAK3SxRxRx`. With these credentials we can login vis smb as c.smith! We log in and snag the `user.txt` flag from his desktop.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/nest_user.gif" >}}
+![](/images/2020/01/nest_user.gif)
 
 Now that we user flag we can start working toward root. Again, we download all of the files from c.smith's folder. Inside we see a file called 'Debug Mode Password.txt'.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-62.png" >}}
+![](/images/2020/01/image-62.png)
 
 What is odd is that the file has a size of 0. Hmm, we've seen this before. Previous CTF's will have data hidden in an alternate stream. After much trial and error it seems we need to download the file via Windows to preserve the data. We will connect to the share via our CommandoVM again and get the file.
 
@@ -152,32 +152,32 @@ Command:
 
 Once in we issue `debug WBQ201953D8w`. Now we see that we are in the same directory as we might have gotten when we tried earlier. Now we'll `setdir ..` to see what's in the directory before us.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-63.png" >}}
+![](/images/2020/01/image-63.png)
 
 We see three folders and some files. In this case we `setdir` again to `LDAP`. When we list again, we see a file called `ldap.conf`. So we query it.
 
 Command:
 `showquery 2`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-64.png" >}}
+![](/images/2020/01/image-64.png)
 
 This gives us the content of the ldap.conf file. So we have the content of the file with what seems like an encrypted password. If we look at the files we downloaded previously, we have a file called `HqkLdap.exe` in the same locations. We'll take this file and send it back to our Windows VM for analysis. We open the file with [dotPeek](https://www.jetbrains.com/decompiler/). Sure enough we are able to look at the code. We can start to look through the code to isolate parts that are going to be useful to us.
 
 Once of the first things we see in the Main() is it's requirements.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-65.png" >}}
+![](/images/2020/01/image-65.png)
 
 We require a file called `HqkDbImport.exe` but it only seems to check the file, not use it in any other way. So we just make a file with that name in the same directory. It also seems to look for a file to import, assumably the one we previously found with ldap configurations inside. So we'll move that to this directory as well.
 
 Now as we continue to look through the code the RD function is also of interest. This function seems to be doing the decryption. Storying the values in a new variable called `numArray`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-66.png" >}}
+![](/images/2020/01/image-66.png)
 
 So all we want to do is output that value before it's returned. To do this we'll use a tool called [`dnSpy`](https://github.com/0xd4d/dnSpy). It works in the same way the dotPeek does but lets us modify code and recompile it.
 
 So we load up `dnSpy` then load in our executable and locate our RD function. We do see some difference, we see `numArray` from above called `array2`. We need to modify this code, so we right click and Edit Method.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-67.png" >}}
+![](/images/2020/01/image-67.png)
 
 We can now enter some new code. In this case we just add the following on line 30 before our returned variables.
 
@@ -187,14 +187,14 @@ Console.WriteLine(Encoding.ASCII.GetString(array2, 0, count));
 
 All we're doing is logging the exact variables calculated here, to the console. We click compile. Then save all from the File menu.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-68.png" >}}
+![](/images/2020/01/image-68.png)
 
 Now we can run this via our command line. 
 
 Command:
 `.\HqkLdap-patched.exe .\ldap.conf`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-69.png" >}}
+![](/images/2020/01/image-69.png)
 
 There we have it, our Administrator password! We can leverage this via `Metasploit` to get a Meterpreter session. We will use the `exploit/windows/smb/psexec` module.
 
@@ -208,7 +208,7 @@ Command:
 `msf5> set smbpass XtH4nkS4Pl4y1nGX`
 `msf5> set smbuser administrator`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/nest_root_flag2.gif" >}}
+![](/images/2020/01/nest_root_flag2.gif)
 
 There we have it, our root flag! This was quite a fun box, when done the intended way. Before it was patched you could simply use the finaly Metasploit module above to go right to system.. Oops!
 

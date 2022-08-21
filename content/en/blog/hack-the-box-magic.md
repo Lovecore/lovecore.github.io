@@ -44,7 +44,7 @@ Command:
 
 We know immediately from checking the source there is some driectory structures under images as well as a `login.php` page. Here are our `gobuster` results.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-42.png" >}}
+![](/images/2020/05/image-42.png)
 
 Nothing really useful. So we'll take a peek at the login page. The first thing we try are some basic credentials like admin/admin, magic/magic ect, but none work. We have a few options, we can try to bruteforce our way in with `hydra` or `burpsuite` or we can see if the fields are vulnerable to `sql injections`. So we fire off `sqlmap` against the url. While that runs we test manually as well.
 
@@ -55,17 +55,17 @@ Payload
 
 This redirects us to the `upload.php` page.Turn outs that `sqlmap` also found the field injectable.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-43.png" >}}
+![](/images/2020/05/image-43.png)
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/magic_sql.gif" >}}
+![](/images/2020/05/magic_sql.gif)
 
 Now that we are given an option to upload, we can try and upload something a bit more useful, like maybe a webshell of some type. When we try we are given an error about our file type.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-44.png" >}}
+![](/images/2020/05/image-44.png)
 
 When we rename our shell to `shell.php.jpg`, we get another error.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-45.png" >}}
+![](/images/2020/05/image-45.png)
 
 [This seems familiar](https://www.exploit-db.com/docs/english/45074-file-upload-restrictions-bypass.pdf). It could be checking `mime` type here. There are a few ways to bypass this. This is a [nice quick reference page](https://vulp3cula.gitbook.io/hackers-grimoire/exploitation/web-application/file-upload-bypass). In this case we'll use the third method of using exiftool to add a comment. 
 
@@ -82,19 +82,19 @@ Command:
 
 Now we upload the file.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/magic_upload.gif" >}}
+![](/images/2020/05/magic_upload.gif)
 
 Once the file is uploaded we navigate to `/images/uploads/` and see if `con.php.jpg` is there.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-46.png" >}}
+![](/images/2020/05/image-46.png)
 
 It is indeed there. Now we can leverage the shell we imbeded into the image!
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-47.png" >}}
+![](/images/2020/05/image-47.png)
 
 This basic shell helps with enumeration but is lacking in functionality. I want to read that db.php5 file but in order to do so we'll need to repeat the process with a better shell, in this case we'll use [Winter Wolf's](https://github.com/WhiteWinterWolf/wwwolf-php-webshell#wwwolfs-php-web-shell) shell. After we repeat the process we are able to read the file and get a password!
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-48.png" >}}
+![](/images/2020/05/image-48.png)
 
 Unfortunately this password is not the same as the users `SSH` password. It is however an `SQL database` password. We'll need to create a reverse shell to dump this via `mysqldump`. I was able to get a shell [via python](http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet):
 
@@ -103,7 +103,7 @@ Command:
 
 Once we issue the command via our shell, our listener starts up!
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/magic_reverseshell.gif" >}}
+![](/images/2020/05/magic_reverseshell.gif)
 
 We then [stabilize our shell](https://blog.ropnop.com/upgrading-simple-shells-to-fully-interactive-ttys/) so we can dump the database. 
 
@@ -112,19 +112,19 @@ Command:
 
 As we parse through the dump, we see some more credentials:
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-49.png" >}}
+![](/images/2020/05/image-49.png)
 
 We are still unable to use that password for `SSH` due to how `SSH` has been configured. We can however try to `su` to another user and hope one of the two passwords work.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-50.png" >}}
+![](/images/2020/05/image-50.png)
 
 We got in! We snag the user.txt flag. Now that we're inside the box, we can start enumerating interally. We'll copy of `linpeas` and take a look at there is on the system. As we sift through the information given, we see some interesting items. In particular our ability to use sysinfo:
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-51.png" >}}
+![](/images/2020/05/image-51.png)
 
 This looks like a pretty potent path to root, I'm just not sure how. Some googling around didn't really give me anything great. So I copy over `pspy32` and start monitoring processes. When I run `sysinfo` with `pspy` running I see the commands it's actually calling to the system. You could also see this if you `strings` the binary.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-53.png" >}}
+![](/images/2020/05/image-53.png)
 
 Now that we know it's calling `fdisk` and in what order we'll create our own `fdisk` that has a reverse shell inside. So we create a new directory in `/tmp` called `tmp3`. Now inside this directory we create a file called `fdisk`. Now change the file permissions to `755`. Inside this file, we'll put the same `python` reverse shell we had from before just on a different port. You can either make the file on your local attackin machine or create it on the target machine. Here are the commands so far:
 
@@ -135,7 +135,7 @@ Commands:
 
 Now that we have those in place, we need to append a new location to our [PATH variables](https://linuxize.com/post/how-to-set-and-list-environment-variables-in-linux/). We know from before it is this:
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-54.png" >}}
+![](/images/2020/05/image-54.png)
 
 We also know that the PATH is parsed in order. So we want to add `/tmp/tmp3` to the front of that variables list, like this:
 
@@ -149,7 +149,7 @@ Now we'll spin up our `netcat` listener on our chosen port.
 
 With all the parts in place, we call `sysinfo`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/magic_root.gif" >}}
+![](/images/2020/05/magic_root.gif)
 
 There we have it, a root shell! We snag the root.txt flag. Box completed!
 

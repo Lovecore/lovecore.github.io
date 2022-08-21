@@ -131,7 +131,7 @@ Nmap done: 1 IP address (1 host up) scanned in 157.90 seconds
 
 We see three ports, `21`,`22` and `80`. When we visit the page being hosted we get a landing page with some visulizations. We have a logged in user of `nathan` as well. When we browse around the site we get pcap download option. We landed on data set 10
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-8.png" >}}
+![](/images/2021/08/image-8.png)
 
 However there is nothing in the `pcap` file. So to further enumerate the options we use `ffuf`.
 
@@ -140,15 +140,15 @@ Command:
 
 This gives us a much better result
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-9.png" >}}
+![](/images/2021/08/image-9.png)
 
 Sifting through each of these `pcap` files and we get some data in the `0.pcap` file:
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-10.png" >}}
+![](/images/2021/08/image-10.png)
 
 We now have a username and password for the box. So we try it on the `FTP` service and it works!
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-11.png" >}}
+![](/images/2021/08/image-11.png)
 
 This password also works for `SSH`. We can get into the box and start enumerating. We will host our enumeration script on our server and download it on the target machine.
 
@@ -162,14 +162,14 @@ Command:
 
 Now we'll run `linpeas` and see what we can find.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-12.png" >}}
+![](/images/2021/08/image-12.png)
 
 A quick google leads us to XYZ and [GTFO bins](https://gtfobins.github.io/gtfobins/python/). We simply run the provided commands to obtain root access.
 
 Command:
 `/usr/bin/python3.8 -c 'import os; os.setuid(0); os.system("/bin/sh")'
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-13.png" >}}
+![](/images/2021/08/image-13.png)
 
 That's it! Box complete!
 

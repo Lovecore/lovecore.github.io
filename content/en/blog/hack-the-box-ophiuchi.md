@@ -34,7 +34,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 Well, we don't have many options at first glance, let's take a look at what's on 8080. When we load the page, we are greeted with a YAML parser.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-47.png" >}}
+![](/images/2021/06/image-47.png)
 
 When we try to use the function, it tells us that the function has been shutdown due to security reasons. Broken YAML parsing is a pretty [well documented](https://www.google.com/search?q=online+yaml+parser+exploit&oq=online+yaml+parser+exploit&aqs=chrome..69i57.4172j0j1&sourceid=chrome&ie=UTF-8) exploit. Even though the site is telling us it's disabled the functionality, we can still test this by setting up a listener with `netcat` or `SimpleHTTPServer` and trying to catch an incoming request.
 
@@ -54,7 +54,7 @@ Command:
 
 We enter our code into the parser and check our lisener.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-48.png" >}}
+![](/images/2021/06/image-48.png)
 
 Sure enough, we have a call back. Now we can work to weaponize it. [This repo](https://github.com/artsploit/yaml-payload) in particular helps us do that quite nicely. First we'll clone the repo.
 
@@ -95,7 +95,7 @@ Now that we've done all the steps as per the Git repo, we can put our malicious 
 
 We see the `.jar` file being called, but we're not catching a shell. There could be a few reasons why we're not getting one. One of the easiest things to test is if our raw bash command isn't being executed. So to test this we'll just put our command into a small shell script, and have the server download and execute the script.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/opi_shell.gif" >}}
+![](/images/2021/06/opi_shell.gif)
 
 That methodology worked! So the code we ended up using inside our `.java` was:
 
@@ -115,19 +115,19 @@ public class AwesomeScriptEngineFactory implements ScriptEngineFactory {
 
 Now that we have a foothold, we can start enumerating in order to escalate. We don't have the ability to run scripts, so `linpeas.sh` was out. After a grueling amount of time parsing this incredibly unstable machine by hand, we find some creds in the default `tomcat-user` file.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-49.png" >}}
+![](/images/2021/06/image-49.png)
 
 Great, now we have a user `admin` and the password `whythereisalimit`. Now we can try to use these credentials to `SSH` into the machine.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-50.png" >}}
+![](/images/2021/06/image-50.png)
 
 We are able to re-use those credentials and log in! We snag our `user.txt` file and start enumerating for a path to root. We check our `sudo -l` options and we have an item listed.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-51.png" >}}
+![](/images/2021/06/image-51.png)
 
 We have this `index.go` file listed.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-52.png" >}}
+![](/images/2021/06/image-52.png)
 
 We see something right off the bat, the path for `deploy.sh` is not tight, meaning we can have it call any script called deploy.sh. The catch here is that we can only execute this portion of the code if the value of `f` is equal to `1`. The application is reading the `main.wasm` file and checking the values. We need to modify this file in order to make `f` equal `1`. In order to do that, we need to take the `main.wasm` file and convert it to a `.wat` file. This is essentially the instructions for the interactions of the library. First, let's download the `main.wasm` file to our system.
 
@@ -151,14 +151,14 @@ Now with the toolset decompressed, we can run `main.wasm` file through to conver
 Command:
 `./wasm2wat main.wasm -o main.wat`
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-53.png" >}}
+![](/images/2021/06/image-53.png)
 
 We see the output of the function. On the second line is the `$info` instance, we see that it has an `int 32` value of `0`, we need to change this to `1`. I use `nano` most often.
 
 Command:
 `nano main.wat`
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-54.png" >}}
+![](/images/2021/06/image-54.png)
 
 With that value changed, we need to convert the file back to a `.wasm`.
 
@@ -180,11 +180,11 @@ Then we call the files with `sudo`.
 Command:
 `sudo -u root /usr/bin/go run /opt/wasm-functions/index.go`
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-55.png" >}}
+![](/images/2021/06/image-55.png)
 
 Perfect, now we can cat out the contents of the `root.txt` flag!
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-56.png" >}}
+![](/images/2021/06/image-56.png)
 
 Now, you could do something more persistant here. Copying over your `SSH` key, creating another shell or anything else really.
 

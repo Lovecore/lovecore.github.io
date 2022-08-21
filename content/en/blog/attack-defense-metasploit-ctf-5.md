@@ -16,7 +16,7 @@ In this entry we will tackle the third Metasploit CTF on Pentester Academy. In t
 
 ## Network Topology
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-77.png" >}}
+![](/images/2019/12/image-77.png)
 
 ## Enumeration
 We know that in this set of labs, we are given two targets. `Target-1` and `Target-2`. We will scan these directly. 
@@ -62,7 +62,7 @@ Let's curl the target. By default it will use port 80, which is where we have th
 Command:
 `curl target-1`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image.png" >}}
+![](/images/2020/01/image.png)
 
 We are told to stop the `apache` server to start the telnet server. That's fun. We can create a file called `stop.txt` with the `touch` command.
 
@@ -93,7 +93,7 @@ We then want to `show` our `options`.
 Command:
 `msf5> show options` or `msf5> options`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-1.png" >}}
+![](/images/2020/01/image-1.png)
 
 We have to set our `rhost`, `filename` and `path` for this module.
 
@@ -107,14 +107,14 @@ We can then `run` our module.
 Command:
 `msf5> run` or `msf5> exploit`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/CTF_5_http_put.gif" >}}
+![](/images/2020/01/CTF_5_http_put.gif)
 
 We see that the file was sucessfully uploaded. Now we can rescan the target for any open `telnet` ports, typically port 23.
 
 Command:
 `nmap -T5 -p- target-1`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-2.png" >}}
+![](/images/2020/01/image-2.png)
 
 We now have a `telnet` port available. Now we `telnet` to the target.
 
@@ -125,7 +125,7 @@ Command:
 
 We are then greeted with a login prompt.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-3.png" >}}
+![](/images/2020/01/image-3.png)
 
 We try and login with standard default credentials for admin, root and other services but none work. We are then booted out after 5 failed attempts. We enumerate the service with an addition `nmap` scan.
 
@@ -142,11 +142,11 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 We launch `Metasploit` and use the `auxiliary/scanner/telnet/telnet_version` module to see what it might show.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-4.png" >}}
+![](/images/2020/01/image-4.png)
 
 We see Ubuntu 16.04.5 LTS running and that's about it. Looks like we might need to brute force our way in. We can `use` the module `auxiliary/scanner/telnet/telnet_login`. Inside this module we have a few `options`:
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-6.png" >}}
+![](/images/2020/01/image-6.png)
 
 We want to `set` the following: `rhost`, `username` and `pass_file`. You can also set a `user_file` as well. This option looks for a list of users should you not want to target just the root account. In our case though, we are just going to set our `username` to root and the hope it's what we want.
 
@@ -164,7 +164,7 @@ Eventually we get a match!
 
 
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-5.png" >}}
+![](/images/2020/01/image-5.png)
 
 We can now log in as root to `target-1`. Since `Metasploit` does a decent job with workflow, it has already created this login session for us! We can view our sessions to see which is active.
 
@@ -178,7 +178,7 @@ Command:
 
 But it seems to fail. We try the password manually, and it also fails. Hmmm. Is it possible that this password changes randomly? So we retry the scan and sure enough it seems to use a new password. S
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-7.png" >}}
+![](/images/2020/01/image-7.png)
 
 So now, the question is what's next? It seems that it changes either every minute or every successful attempt. It also seems to go to the next password in the list. We know that we can enumerate the root username password combination but what good is that to us?
 
@@ -194,11 +194,11 @@ Our command is as follows:
 `-P` for a password list. Alternatly `-p` for a specific password.
 We then list our target as `target-1` and our protocol as `telnet`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-9.png" >}}
+![](/images/2020/01/image-9.png)
 
 We get a match! Time to use the `telnet_login` module again.
 
 
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-10.png" >}}
+![](/images/2020/01/image-10.png)
 

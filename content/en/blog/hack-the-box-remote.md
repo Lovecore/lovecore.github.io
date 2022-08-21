@@ -88,18 +88,18 @@ We see some standard ports, the most apealing being 21. So we'll start there. We
 
 Once the pages loads, we see a basic website. While browsing the source, we see an interesting TODO note:
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-50.png" >}}
+![](/images/2020/04/image-50.png)
 
 We add these to the end of our URL to see if a site might be live on it or not. Sure enough `umbraco` is a site that is live. It brings us to a login page.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-51.png" >}}
+![](/images/2020/04/image-51.png)
 
 A quick google tells us the `Umbraco` [is a CMS](https://umbraco.com/). We do a `searchsploit` for `Umbraco` and we get some hits.
 
 Command:
 `searchsploit umbraco`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-52.png" >}}
+![](/images/2020/04/image-52.png)
 
 Since there are only three results, we'll try the two that make sense. The first is a `Metasploit` module. When we launch the module, we see it targets version 4.7xx. It's pretty unlikley that this will work but we run it anyway. Nothing. Next up is the SeoChecker Plugin vuln. We can check to see if this is going to work for us as well. To do that we'll simply view the referenced text file.
 
@@ -111,7 +111,7 @@ We see there is a date of 1/7/2018, so that's good, recent. The downside is that
 Command:
 `gobuster dir -u http://10.10.10.180 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 40 -x php`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-53.png" >}}
+![](/images/2020/04/image-53.png)
 
 We get a long list of pages due to the numbered entries. We do see one that stands out right away, `install`. We navigate to the page and it simply redirects us to the `Umbraco` login. 
 
@@ -120,24 +120,24 @@ Well, now is the time to start looking at other ports. Ports 111 and 2049 are ap
 Command:
 `showmount -e 10.10.10.180`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-54.png" >}}
+![](/images/2020/04/image-54.png)
 
 We do indeed see a share listed. Now we want to mount that remote share. To do this we will use `mount`, more on this command [here](hhttps://www.tutorialspoint.com/unix_commands/mount.htm).
 
 Command:
 `mount -t nfs 10.10.10.180:/site_backups ./mnt`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-55.png" >}}
+![](/images/2020/04/image-55.png)
 
 Once we've done that, we should have access to the remote share in our local `./mnt` directory.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-56.png" >}}
+![](/images/2020/04/image-56.png)
 
 Now we can start sifting through the machine for interesting content. Since the mount was called `site_backsup`, I'm going to start with `Umbraco` named directories and see what we can find. Searching around the internet lead me to this [interesting QA](https://our.umbraco.com/forum/getting-started/installing-umbraco/35554-Where-does-Umbraco-store-usernames-and-passwords). They note a path of App_Data/Umbraco.sdf. This would imply that the `.sdf` has credentials inside it. 
 
 Looking up the `.sdf` file shows it's a "relational database saved in the SQL Server Compact (SQL CE) format". There are a few ways to read the file: Visual Stuio, LINQpad and some others. But before I try that, I always just try `cat` and / or `strings` the file for visible data. In this case, it pays off.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-57.png" >}}
+![](/images/2020/04/image-57.png)
 
 We get some good information. We have a username (smith)smith (also shown as ssmith in the file), admin as well as a hash for the admin.
 
@@ -150,13 +150,13 @@ Looks like we'll put this hash into a file called `admin.hash` and feed it into 
 Command:
 `john admin.hash -w=/usr/share/wordlists/rockyou.txt`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/remote_adminhash.gif" >}}
+![](/images/2020/04/remote_adminhash.gif)
 
 We get back a password of `baconandcheese`. Now we can log into the webinterface as admin and potentially use some one of our exploits from earlier. We head over and log in sucessfully!
 
 Now we need to verify our software version. The little question mark gives us the details right way, version 7.12.4
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-58.png" >}}
+![](/images/2020/04/image-58.png)
 
 Our earlier `searchsploit` showed this exact verion, perfect! Let's copy the exploit to our working directory in case we need to edit it.
 
@@ -179,7 +179,7 @@ Next we need to create a payload string for our above requirements. When creatin
 Command:
 `PS> gal -Definition Invoke-WebRequest`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-60.png" >}}
+![](/images/2020/04/image-60.png)
 
 On my current VM hosting system, we have a few alias', we'll try some in this string. Ultimately the string I can up with is as follows:
 
@@ -192,7 +192,7 @@ Here's the breakdown:
 
 Our final modified code looks like this:
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-61.png" >}}
+![](/images/2020/04/image-61.png)
 
 Next we set up our local `netcat` listener.
 
@@ -201,7 +201,7 @@ Command:
 
 Now we launch the exploit!
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/remoteshell.gif" >}}
+![](/images/2020/04/remoteshell.gif)
 
 We get a shell back as the service! We start to look around and see there is only one real account, Administrator. We see the `user.txt` file in the Public directory. Nice, one flag down! 
 
@@ -225,7 +225,7 @@ And start some checks.
 Command:
 `invoke-allchecks`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/remotesvc.gif" >}}
+![](/images/2020/04/remotesvc.gif)
 
 We see that `UsoSvc` is capable of being exploited, just like in previous boxes! Check out [PayloadAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Privilege%20Escalation.md) to see how we leverage this.
 
@@ -248,7 +248,7 @@ Commands:
 `sc.exe stop usosvc`
 `sc.exe start usosvc`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/remoteroot.gif" >}}
+![](/images/2020/04/remoteroot.gif)
 
 We now have a shell as System! We head over to the Administrator Desktop and grab our flag!
 

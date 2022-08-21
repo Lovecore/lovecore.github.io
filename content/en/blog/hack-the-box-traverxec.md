@@ -40,7 +40,7 @@ A quick ```searchsploit``` on ```nostromo``` shows that there is a RCE payload w
 
 While that runs we'll load up ```metasploit``` and see if the RCE payload can be of use. We will find the exploit and set it's requirements. We need to set ```RHOST``` and ```LHOST```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/trav-msfpl.gif" caption="Laggy shell :(" >}}
+![](/images/2019/11/trav-msfpl.gif" caption="Laggy shell :()
 
 Once we run the exploit we gain a shell as ```www-data```. We quickly create a proper shell with python and start enumerating. We download a copy of ```linenum``` or ```linpeas``` from our ```SimpleHTTPServer``` and let it go. One of the first things that stands out is that we have a ```.htpassword```. We can take this hash and load it into ```hashcat``` and with some luck, crack it.
 
@@ -48,11 +48,11 @@ Once we run the exploit we gain a shell as ```www-data```. We quickly create a p
 
 This will attempt to crack the hash and give us an output. Once its done we see the cracked password of ```Nowonly4me```. Now given the type of access this is restricting, we'll need to apply this authentication type to an ```HTTP``` request. Time to look at the [```nhttpd``` documentation](http://www.nazgul.ch/dev/nostromo_man.html). We see that under the ```HOMDIRS``` section, places can essentially be aliased with this setting. Our configs tell us that we are mapping ```/home```. So given this example, we can go to ```http://10.10.10.165/~david/``` and should see some content.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-60.png" >}}
+![](/images/2019/11/image-60.png)
 
 The above is what we are greeted with when we do. Awesome, so now we can hopfully append an authentication to the request and have some access. However even with appending authentication to the requests I wasn't able to gain the access in the way I thought. So when I went back to re-read the config and documentation, it seems like ```public_www``` might also be mapped to David's home directory. Now when we path in David's home directory we can't list any files, however, that doesn't mean they aren't there. So if we try to path to ```public_www``` we see it is indeed a valid path.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/hidden-1.gif" >}}
+![](/images/2019/11/hidden-1.gif)
 
 We see that there is a file called ```backup-ssh-identity-files.tar```. We want to download this file, so we'll transfer it back to our machine. We'll use a ```nc``` file transfer method:
 
@@ -70,11 +70,11 @@ We'll then run it through ```John```:
 
 Almost immediately we see a potential match, ```hunter```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-61.png" >}}
+![](/images/2019/11/image-61.png)
 
 So we try this password with our key and we get in!
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-62.png" >}}
+![](/images/2019/11/image-62.png)
 
 One we're in we see that there are some scripts in ```bin``` file in David's home directory. When we parse through the file we see that we are calling ```journalctl``` as sudo. We might be able to append to this call and break out of our shell to get root. Now this is a pretty CTF type thing and took me a while, even though I was staring at [```GTFObins```](https://gtfobins.github.io/gtfobins/less/) for quite some time. We issue the following:
 
@@ -82,7 +82,7 @@ One we're in we see that there are some scripts in ```bin``` file in David's hom
 
 We can append this to the last line being called in the script and gain our access as root.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/trav-root.gif" >}}
+![](/images/2019/11/trav-root.gif)
 
 There we have it, our root flag! This last bit was CTF like but still fun none the less!
 

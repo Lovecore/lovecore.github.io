@@ -90,33 +90,33 @@ From this we see a few things. The first thing that should stick out is the use 
 
 ```gobuster dir -u http://supersechosting.htb -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 50```
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-1.png" caption="gobuster results" >}}
+![](/images/2019/11/image-1.png" caption="gobuster results)
 
 The ```gobuster``` results come back fairly standard. We will probably need to enumerate vhosts on this system further down the line. After this I did a quick ```dnsenum``` against the server to see what might be there: ```dnsenum --dnsserver 10.10.10.155 supersechosting.htb``` For now we'll browse to the web service running and see what's there.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-3.png" >}}
+![](/images/2019/11/image-3.png)
 
 Well, we have a mail server name as well. We've done some basic enumeration around port 53 as well as 80. We should look to enumerate port 43, which is ```whois```. We can interact with the port via ```nc```. From our previous enumeration we know that it has a linked ```MariaDB``` associated to it. It's possible that we can use SQL commands direct to the port and have them queued for processing.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-4.png" >}}
+![](/images/2019/11/image-4.png)
 
 We confirm this by entering some fault characters and see what response we get. Now we have to try and craft some ```SQL``` queries to find what data we can. After A LOT of failed queries, we get some data in the form of another table, ```whois```. We dig deaper into this table and are finally able to find customer name and data. Within that there are more host names.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-6.png" >}}
+![](/images/2019/11/image-6.png)
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-5.png" >}}
+![](/images/2019/11/image-5.png)
 
 We'll add these to our host file as well. Now that we have some more hostnames we'll repeat our above enumeration processes on these. When we finish we see we have another new address:
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-7.png" >}}
+![](/images/2019/11/image-7.png)
 
 ```sec03.rentahacker.htb```. Ok, lets take a look.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-8.png" >}}
+![](/images/2019/11/image-8.png)
 
 We now have a webpage that says its been owned. We also saw an interesting .php file during our enumeration:
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-9.png" >}}
+![](/images/2019/11/image-9.png)
 
 The hackers seemingly left behind the shell they used, handy! The file itself doesn't seem to have visible content. However that doesn't mean it was meant to give a remote shell. Often we can leverage files for [command injection](https://www.owasp.org/index.php/Testing_for_Command_Injection_(OTG-INPVAL-013)). So we'll fuzz the URL for a command processor and the command.
 
@@ -130,19 +130,19 @@ So in this case we'll use the command ```whoami``` and fuzz for the ```COMMAND_P
 
 We fuzz with the Burp-Parameters file. We are hiding the response size (```-fs```) of 0 as well. We only want responses that return actual data.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-10.png" >}}
+![](/images/2019/11/image-10.png)
 
 We found one! The command ```hidden``` has returned data. Lets ```curl``` this URL and see what it returns.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-11.png" >}}
+![](/images/2019/11/image-11.png)
 
 We do get a hostname back. Using this method we can enumerate the box further.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-13.png" >}}
+![](/images/2019/11/image-13.png)
 
 We check the `exim` version to see if we're vulnerable.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-12.png" >}}
+![](/images/2019/11/image-12.png)
 
 We are [indeed vulnerable](https://packetstormsecurity.com/files/153218/Exim-4.9.1-Remote-Command-Execution.html). Since the ```user.txt``` file is not listed in our current user directory we'll try to obtain root first and go backwards. We'll craft our payload according to the advisory, with one minor change. We will be copying the root flag to ```/dev/shm/root```. So our code will look like this:
 
@@ -158,11 +158,11 @@ curl "http://sec03.rentahacker.htb/shell.php?hidden=echo+dG91Y2ggL2Rldi9zaG0vZmx
 
 We run the code and get a reply back.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-14.png" >}}
+![](/images/2019/11/image-14.png)
 
 Now we should be able to curl our location for root and get the flag. We can use the above method to verify that the file was indeed created in our target location:
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-15.png" >}}
+![](/images/2019/11/image-15.png)
 
 We have our root flag! Now we can alternatly create the same payload with a reverse NC connection back to us to obtain a shell.
 

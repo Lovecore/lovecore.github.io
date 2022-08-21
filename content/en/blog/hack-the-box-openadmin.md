@@ -39,14 +39,14 @@ Command:
 
 We get back two results: `music` and `artwork`. First we'll head over to `music` and take a look. We starte numerating the page manually. Looking at the source, JS libraries and the contact form. While we are doing this we see a link to `../ona`. When we browse to it we get a `OpenNetAdmin` page.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-24.png" >}}
+![](/images/2020/01/image-24.png)
 
 As the title of the box implies, we should start looking at this for vulnerabilities. First we'll `seachsploit` for any. If those results seems slim, we'll start looking around the net for further results.
 
 Command:
 `searchsploit opennetadmin`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-25.png" >}}
+![](/images/2020/01/image-25.png)
 
 We know that we are running version 18.1.1, so these all fit our criteria. Let's load up `Metasploit` and see what works for us. When we search inside `Metasploit` we don't see the module listed. Hmmm, well, let's download it from [exploit DB](https://www.exploit-db.com/exploits/47691) and import it into our `Metasploit Framework'.
 
@@ -80,7 +80,7 @@ while true;do
 done
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/openadmin_shell_cve.gif" >}}
+![](/images/2020/01/openadmin_shell_cve.gif)
 
 Now that we have the ability to execute remote commands. Let's turn this into a shell. I tried a few things to forward a shell out but the standards didn't work. So I hosted the basic pentest monkey shell and downloaded to the target system. 
 
@@ -92,15 +92,15 @@ Then on the remote server:
 
 We then navigated to the `sh3ll.php` URL and obtained a reverse shell.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/openadmin_www_shell.gif" >}}
+![](/images/2020/01/openadmin_www_shell.gif)
 
 Now that we have a more solid shell. We can enumerate internally a bit more. We host `linpeas` on our machine and download that as well. We go through the results and see some backup files:
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-26.png" >}}
+![](/images/2020/01/image-26.png)
 
 We send these files back to our attacking machine. Turns out, they're nothing. We keep looking at the items that show in our output. We see the `database_settings.inc.php` file. We look inside and see a password.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-27.png" >}}
+![](/images/2020/01/image-27.png)
 
 We try to use `su` to change our user. First up, `Jimmy`. It works! We try to `SSH` as Jimmy as well, that works too. Great, no need for a webshell anymore. Now we start our enumeration process as Jimmy. We see there is something running on port 52846. We can curl it and get a login form. We know from our previous enumeration that there is a site called `internal`. Inside this are some files. `main.php`, `internal.php` and `logout.php`.
 
@@ -126,7 +126,7 @@ Command:
 
 We get back Joanna's SSH private key!
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/openadmin_curl_ssh.gif" >}}
+![](/images/2020/01/openadmin_curl_ssh.gif)
 
 With the key we now will send it through `ssh2john` and toss the rockyou list at it.
 
@@ -138,7 +138,7 @@ Then we'll send this file to `john` to crack.
 Command:
 `john cleaned_hash --wordlist=/usr/share/wordlists/rockyou.txt`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-28.png" >}}
+![](/images/2020/01/image-28.png)
 
 We get a password of `bloodninjas` back. Now let's try and log in as Joanna.
 
@@ -147,17 +147,17 @@ Command:
 
 We enter the password when we are pompted and we are in!
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-29.png" >}}
+![](/images/2020/01/image-29.png)
 
 Now that we're in as the 'final' user. We grab our `user.txt` file and start our root based enumeration. The first thing we do is `sudo -l`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-30.png" >}}
+![](/images/2020/01/image-30.png)
 
 We see that leverage `nano` as root. Our first stop when we see this is always [GTFObins](https://gtfobins.github.io/). It seems quite a few people had issues with this. The breakdown of above is as follows:
 
 Joanna can run `/bin/nano` as `sudo` ON the following: `/opt/priv`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/openadmin_root_gtfo.gif" caption="Laggy root shell" >}}
+![](/images/2020/01/openadmin_root_gtfo.gif" caption="Laggy root shell)
 
 Another box down! This box was particularly unstable. Hopefully something was learned during this machine! If this walkthrough helped you, send some respect my way :) [HTB Profile](https://www.hackthebox.eu/home/users/profile/95635)
 

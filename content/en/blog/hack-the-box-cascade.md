@@ -90,7 +90,7 @@ Command:
 
 This queries the target with simple authentication (`-x`). Searching the scope (`-s`) of namingcontexts. You can take a quick look here for more info: https://ldapwiki.com/wiki/NamingContext
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image.png" >}}
+![](/images/2020/04/image.png)
 
 We do see the base of cascade.local. We'll re-issue the `ldapsearch` with the base specified and obtain a pretty large list of data.
 
@@ -106,14 +106,14 @@ Command:
 
 When we do this we do see the box is probably getting spray, but we also find an interesting object - `cascadeLegacyPwd`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-1.png" >}}
+![](/images/2020/04/image-1.png)
 
 Looks like we have a base64 password here. Let's quickly decrypt it.
 
 Command:
 `echo clk0bjVldmE= | base64 -d`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-2.png" >}}
+![](/images/2020/04/image-2.png)
 
 We get back our password! Now the question is, what accounts does it work on? We can search the file for the hashed password to hopefully associate an account.
 
@@ -122,7 +122,7 @@ Command:
 
 This will give us 10 lines before and after the keyword found. We see that the password belongs to r.thompson.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-3.png" >}}
+![](/images/2020/04/image-3.png)
 
 Now that we have a password, we will try it out with `evil-winRM`.
 
@@ -134,11 +134,11 @@ We get access denied. We can try it against SMB share as well. Frist we'll try t
 Command:
 `smbclient -L //10.10.10.182 -U r.thompson`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-4.png" >}}
+![](/images/2020/04/image-4.png)
 
 The share that's most appealing is `Audit$` and `Data`. We'll try to connect to both and see what's inside. The Audit share has listing access denied but the Data share does not.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-5.png" >}}
+![](/images/2020/04/image-5.png)
 
 We are only able to list the contents of the IT directory. As we sift through the directories we are able to download some files:
 ```
@@ -151,15 +151,15 @@ When we look at these files we see a TempAdmin account which is also referenced 
 
 We download referenced application and feed it our hex.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-6.png" >}}
+![](/images/2020/04/image-6.png)
 
 We now have another password - `sT333ve2`. What are the chances that this password is for the TempAdmin account? No such luck. We did find this file in s.smith's directory, so there is a good chance this could be that users password. We try it with `Evil-WinRM` first and it works!
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/user-cascade-1.gif" >}}
+![](/images/2020/04/user-cascade-1.gif)
 
 We head over and snag the flag. Now that we have a user account with WinRM capabilities. We'll start enumerating internally. We start by checking what groups we belong to. We see that this account has access to the previously inaccessible audit share.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-7.png" >}}
+![](/images/2020/04/image-7.png)
 
 So we'll attempt to connect as this user to the share.
 
@@ -170,15 +170,15 @@ Once we're in we see quire a few files. The first is this `RunAudit.bat` file as
 
 We see that `RunAudit.bat` file is simply calling the previous executables and referencing a database location / file.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-8.png" >}}
+![](/images/2020/04/image-8.png)
 
 So we want to see what's inside this file. In the past I've used https://inloop.github.io/sqlite-viewer/ to view these files. We'll upload it here again and see what it contains. We see there are 4 tables.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-9.png" >}}
+![](/images/2020/04/image-9.png)
 
 As we go through the content, we see the password for the service account `ArkSvc`!
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-10.png" >}}
+![](/images/2020/04/image-10.png)
 
 Great, we now have an encrypted password. We also know that we obtained a `CascCrypto.dll` file from the server as well. Looks like we might have to crack open the DLL to see how the encryption works. For modern applications, I tend to use [dotPeek by JetBrains](https://www.jetbrains.com/decompiler/) in conjunction with [dnSpy](https://github.com/0xd4d/dnSpy/releases). 
 
@@ -322,20 +322,20 @@ namespace CascAudiot
 }
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-11.png" >}}
+![](/images/2020/04/image-11.png)
 
 This in particular is good for us. We have the Secret Key for the encryption but what we also need is the IV. We load the items into IDA and link the DLL. We get a IV of `1tdyjCbY1lx49842`. We can now decrypt the AES [here](https://www.devglan.com/online-tools/aes-encryption-decryption).
 
 The decrypted password is `w3lc0meFr31nd`!
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-12.png" >}}
+![](/images/2020/04/image-12.png)
 
 Now we have the service account password, we can reconnect as that account.
 
 Command:
 `Evil-WinRM -i 10.10.10.182 -U ArkSvc -p w3lc0meFr31nd`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-13.png" >}}
+![](/images/2020/04/image-13.png)
 
 Once we're in, we start to enumerate more as this service account. We know the service account has the ability delete accounts based on what we saw in the logs. We should start by trying to identify previously deleted accounts. The email said that the TempAdmin account had the same password as the standard admin account. So if the TempAdmin account is indeed still in the recyle bin we might be able to obtain data from it.
 
@@ -344,26 +344,26 @@ For this, we use PowerShell, something everyone should be familiar with at some 
 Command:
 `Evil-WinRM> Get-ADObject -filter 'isdeleted -eq $true' -includedeletedobjects`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-14.png" >}}
+![](/images/2020/04/image-14.png)
 
 This gives us a list of deleted users but nothing else, we need to appened `-property *` to the end of our command.
 
 Command
 `Evil-WinRM> Get-ADObject -filter 'isdeleted -eq $true' -includedeletedobjects -property *`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-15.png" >}}
+![](/images/2020/04/image-15.png)
 
 As you can see, this gives us a huge list of properties on each of the accounts. Just like before we had a AD Attribute of `cascadeLegacyPwd`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-16.png" >}}
+![](/images/2020/04/image-16.png)
 
 We can now decode this password and use it to log in as Administrator!
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-17.png" >}}
+![](/images/2020/04/image-17.png)
 
 We now have a password - `baCT3r1aN00dles`. Let's try to log in as Administrator.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-18.png" >}}
+![](/images/2020/04/image-18.png)
 
 We are in! We snag the root.txt file! Box complete!
 

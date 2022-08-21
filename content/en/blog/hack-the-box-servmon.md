@@ -122,18 +122,18 @@ Service detection performed. Please report any incorrect results at https://nmap
 
 We see that there is something hosted on port 80 as well as anonymous login enabled for our FTP service. So we'll log into the FTP and see what's inside the Users folder we're show in our scan. Once logged in we start pathing through the directory. We get two user names Nathan and Nadine. Inside each of their directories are two files, so we download them to see what might be inside.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image.png" >}}
+![](/images/2020/05/image.png)
 
 We look at the files and see some notes:
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-1.png" >}}
+![](/images/2020/05/image-1.png)
 
 We know that the service being hosted on port 80 is NVMS. We can do a quick `searchsploit` for NVMS and see there are a few exploits that pop up.
 
 Command:
 `searchsploit nvms`
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-2.png" >}}
+![](/images/2020/05/image-2.png)
 
 We can mirror this last exploit to our working directory with the `-m` flag.
 
@@ -142,7 +142,7 @@ Command:
 
 The number 48311 corresponds to the name of the exploit.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-3.png" >}}
+![](/images/2020/05/image-3.png)
 
 Once we have the exploit copied, we can [look at the code](https://www.exploit-db.com/exploits/48311). We see it's simply appending our standard traveral and asking for our file to get. Now when I tried to run this in Python, I ran into quite a few errors. I did a minor re-write and was still getting errors. I plan on circling back around to this after this post :). 
 
@@ -160,7 +160,7 @@ Cookie: dataPort=undefined
 Upgrade-Insecure-Requests: 1
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/servmon_burp.gif" >}}
+![](/images/2020/05/servmon_burp.gif)
 
 Now that we know this traveral is working, we need to get something of use. We read earlier that there is a Passwords.txt file on Nathan's desktop. This is the file we will get. Here's the request used:
 
@@ -176,7 +176,7 @@ Cookie: dataPort=undefined
 Upgrade-Insecure-Requests: 1
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/servmon_burp2.gif" >}}
+![](/images/2020/05/servmon_burp2.gif)
 
 Now that we have a list of passwords we will save them to a file. Now we try them against NVMS to login as Nadine, Nathan and Admin but none work. The SSH port is open as well so we can try to bruteforce our way into that while we're at it. There are a few ways to do this either the `Metasploit` module for logging in or `Hydra`. In this case I'll use `Metasploit`.
 
@@ -193,11 +193,11 @@ Command:
 
 This comes back with a hit! We could have just put both usernames in a file and supplied that list insead rather than running the module twice.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-4.png" >}}
+![](/images/2020/05/image-4.png)
 
 We then SSH in as this user and get our user.txt flag.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-5.png" >}}
+![](/images/2020/05/image-5.png)
 
 Once we have that we will start enumerating. We'll spin up a `SimpleHTTPServer` and download `WinPEAS.bat` to the system. I tried a few ways of getting the file over, `certutil`, `powershell` but it ended up being as simple as useing the `-o` flag on the built in `curl` command.
 
@@ -206,21 +206,21 @@ Command:
 
 We then run the file. A majority of functions get denied but there is still some usefull information here. We see there is a service running on port 8443 that doesn't match our `nmap` scan.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-7.png" >}}
+![](/images/2020/05/image-7.png)
 
 While the rest of the scan runs, we'll head over to port 8443 and see what might be on it. An attempt at getting there via HTTP does not work, HTTPS is required.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-8.png" >}}
+![](/images/2020/05/image-8.png)
 
 Nothing seems to be loading on this page however. We do another `searchsploit` for NSClient and come back with a [local windows exploit for escalation](https://www.exploit-db.com/exploits/46802). We see that we can obtain a password from the `nsclient.ini` file or via a command
 
 We run the command to obtain the password: `nscp web password --display`
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-9.png" >}}
+![](/images/2020/05/image-9.png)
 
 We're also going to look at the ini file for any other useful information. There is one additional piece of information we need inside this file.  The allowed hosts is set to local hosts only.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-11.png" >}}
+![](/images/2020/05/image-11.png)
 
 This means we'll need to setup some port forwarding to access the page.
 
@@ -233,7 +233,7 @@ We are telling SSH to map our local (`-L`) port of `9000` to our local machine a
 
 Once we load up the page, we can see the differences:
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/sermon_rfwd.gif" >}}
+![](/images/2020/05/sermon_rfwd.gif)
 
 We can now use the password we found earlier (via the command or .ini file) to log in. It looks like we can now follow this PoC and escalate. First we need to create an `evil.bat` file as per the PoC. In this case I'll call my file `rf.bat`. Inside this bat is the follow:
 
@@ -256,7 +256,7 @@ Command:
 
 Now we need to add a script to the NSClient (Step 5 in the PoC). This will call our evil bat file.
 
-{{< figure src="__GHOST_URL__/content/images/2020/05/image-14.png" >}}
+![](/images/2020/05/image-14.png)
 
 Now to add to schedule a task to call the script (Step 6).
 

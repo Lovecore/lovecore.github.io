@@ -61,7 +61,7 @@ Host script results:
 
 We can start by checking to see if we can enumerate `LDAP` anonymously. To do that we issue: `ldapsearch -x -h megabank.local`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-44.png" >}}
+![](/images/2019/12/image-44.png)
 
 We get a response back. So we now know that if we combine our leaked FQDN with our search string, we can start searching the structure.
 
@@ -75,19 +75,19 @@ Command:
 
 We can save that output and start parsing through it. We have an interesting note on one of the accounts.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-45.png" >}}
+![](/images/2019/12/image-45.png)
 
 I wonder if this password is still valid. It's not, however, a common tactic is to reuse a password for a group of new users. So in this case we try to use the same password for all of the accounts that we found. We get one, ```Melanie```. You can also send a currated listed through `Hydra` to spray all the accounts.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/resolute_spray.gif" >}}
+![](/images/2019/12/resolute_spray.gif)
 
 We login as Melanie and get our user flag from her Desktop. We start to look around the box and see a PSTranscripts folder. Inside this is another folder that has the logging output of a script that has been run. Inside the script, we have credentials for ```Ryan```.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-46.png" >}}
+![](/images/2019/12/image-46.png)
 
 We can now login as Ryan. We do some more enumeration and see that Ryan is part of the DNSAdmins group.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-47.png" >}}
+![](/images/2019/12/image-47.png)
 
 If you've been a System Administrator or on a Red Team you know this is a valid path to escalation. [Here](https://adsecurity.org/?p=4064) and [here](https://ired.team/offensive-security-experiments/active-directory-kerberos-abuse/from-dnsadmins-to-system-to-domain-compromise) are two quick articles on the topic. So our goal here is to create a malicious dll file with `msfpc` or `msfvenom`. Host it on an `smb share`. Then tell our DNS system to load the dll. This should then execute our payload and connect back to us.
 
@@ -121,7 +121,7 @@ then
 
 We should then see our SMB Share light up, followed by our Netcat session.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/resolute_root.gif" >}}
+![](/images/2019/12/resolute_root.gif)
 
 We are in as root! Off to the root flag! Box complete.
 

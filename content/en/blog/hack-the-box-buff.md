@@ -33,7 +33,7 @@ PORT     STATE SERVICE    VERSION
 
 We see only two ports. So we head over to port `8080` and see what is being hosted. We land on a gym page. Exploring the page a bit shows that it's built on a software called `Gym Management Software 1.0`. A quick google shows us there are a few possible exploits for this software.
 
-{{< figure src="__GHOST_URL__/content/images/2020/08/image.png" >}}
+![](/images/2020/08/image.png)
 
 We will quickly mirror this exploit to our working directory with `searchsploit`.
 
@@ -45,11 +45,11 @@ Reading through the exploit and how it works, we simply need to supply our targe
 Command:
 `python2 48506.py http://10.10.10.198:8080/`
 
-{{< figure src="__GHOST_URL__/content/images/2020/08/buffshell.gif" >}}
+![](/images/2020/08/buffshell.gif)
 
 We get back a webshell. We can now use this to quickly snag our `users.txt` flag.
 
-{{< figure src="__GHOST_URL__/content/images/2020/08/image-1.png" >}}
+![](/images/2020/08/image-1.png)
 
 Now that we have this flag, we can look at creating a more stable connection and look for ways to escalate. We can use `nc` or `plink` to create a connnection back to our attacking system. First we need to download those tools to this system.
 
@@ -66,7 +66,7 @@ Make sure we have our listener as well.
 
 Once we do that we get our shell back.
 
-{{< figure src="__GHOST_URL__/content/images/2020/08/image-2.png" >}}
+![](/images/2020/08/image-2.png)
 
 Now we just download `winPEAS` the same as we have for other tools:
 
@@ -75,7 +75,7 @@ Command:
 
 When we try to run the file however, we are blocked.
 
-{{< figure src="__GHOST_URL__/content/images/2020/08/image-3.png" >}}
+![](/images/2020/08/image-3.png)
 
 So we just download the `.bat` version instead. As we sift through this data we don't see much too exciting. As we manually browse the the contents of the machine, we noticed `CloudMe_1112.exe` in downloads. When we check against the `winPeas` scan from above we see that port 8888 is open locally, the port `CloudMe` uses. A quick search for any exploits of the software shows there is one on [exploit-db](https://www.exploit-db.com/exploits/48389).
 
@@ -103,13 +103,13 @@ Command:
 
 This will then prompt us to login with the account. Once we do we should see a basic prompt.
 
-{{< figure src="__GHOST_URL__/content/images/2020/08/image-5.png" >}}
+![](/images/2020/08/image-5.png)
 
 Now we should have the remote port of `8888` being forwarded to our local port of `1234`. If you try to curl the port, it's not going to get back any info but that's normally what I would do to be sure it worked.
 
 Now that we have the ports forwarded, we can modify the exploit we found earlier - `44470.py`. First we need to replace the shellcode inside the exploit with our generated backdoor code. That's the code on line 31 - 52. Once we've pasted in our new shell code, we need to modify line 57 to reflect our port. In this case, we set or local port to `1234`. So we'll need to make that the value rather than `8888`
 
-{{< figure src="__GHOST_URL__/content/images/2020/08/image-6.png" >}}
+![](/images/2020/08/image-6.png)
 
 Now with that saved. We can setup another listener to catch our reverse shell for the exploitcode that we made in the first step.
 
@@ -123,7 +123,7 @@ Command:
 
 If all goes well, your listen will catch the connection.
 
-{{< figure src="__GHOST_URL__/content/images/2020/08/image-4.png" >}}
+![](/images/2020/08/image-4.png)
 
 We now have an admin shell. We get our `root.txt` flag and box complete!
 

@@ -112,7 +112,7 @@ Parsing through the code we see that we have an API endpoint. ```/api```, ```/ap
 
 Now that we have some tools installed, let's get ```Burpsuit``` up and running and see what is being called. During our login we see this request
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-34.png" >}}
+![](/images/2019/11/image-34.png)
 
 Now if we look at the ```Bearer token``` which is the same as the ```OAuth2 token```, we see it's in ```base64```. Let's quickly decode that, either Burp's built in decoder or via CLI.
 
@@ -129,9 +129,9 @@ We get back some ```JSON``` data:
 
 At this point we will want to fuzz the API and see if there is anything it doesn't really like. We should also try crafting our own ```JSON``` payload to see what works. The first thing I do when I start fuzzing something are the low hanging fruits. Things like changing the request types, referer, cookies and bearer values. In this case when we change the bearer value, we get a deserialization error.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-35.png" >}}
+![](/images/2019/11/image-35.png)
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-36.png" >}}
+![](/images/2019/11/image-36.png)
 
 What's interesting about this response is the error we get back. If we do some googling on the issue we see there are quite a few topics on the issue. In this case we will use [ysoserial.net](https://github.com/pwntester/ysoserial.net). The noticiable thing is that this is run on a windows machine and compiling to linux seems to be fairly hit or miss with a lot of dependancy legwork. So what we are going to do is simply copy the POC that we see in the documentation and base64 encode it and see what we get.
 
@@ -164,7 +164,7 @@ Now we'll modify the values above to try and ping back to us. We can then monito
 
 Now we can't obviously send this in it's entirety via the bearer token, we first have to ```base64``` encode it. Once we do that, we can put it into repeater.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-37.png" >}}
+![](/images/2019/11/image-37.png)
 
 Next we'll start up ```tcpdump``` and listen for incoming icmp packets: 
 
@@ -172,13 +172,13 @@ Next we'll start up ```tcpdump``` and listen for incoming icmp packets:
 
 We send the payload and get a response!
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-38.png" >}}
+![](/images/2019/11/image-38.png)
 
 So it looks like we have a valid RCE. Now we simply need to craft the correct payload. In this case we'll create a payload with ```msfpc```. Simply issuing ```msfpc windows tun0``` will generate us a staged reverse shell. Next we need to host our file somewhere. Since we are dealing with Windows we can spin up a quick SMB share to do this easily:
 
 ```impacket-smbserver share .```
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-39.png" >}}
+![](/images/2019/11/image-39.png)
 
 Now that SMB is up and running and our payload located on the share. We need to start up the handler.
 
@@ -194,7 +194,7 @@ Then we encode it:
 
 ```./ps_encoder.py -s rc.ps1```
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-40.png" >}}
+![](/images/2019/11/image-40.png)
 
 Now we can modify our payload from before to call Powershell and execute this command. We should note that you need to use the ```-enc``` flag to execute this due to escape characters. Our new payload should look like this:
 
@@ -212,17 +212,17 @@ Now we can modify our payload from before to call Powershell and execute this co
 
 Once we send the request we see our SMB server light up and our listener activate! We have a shell!
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-42.png" >}}
+![](/images/2019/11/image-42.png)
 
 Once we are on the system, we'll path over to ```C:\Users\userpool\Desktop``` and get our ```user.txt```
 
 Now we need to focus on getting root. In our shell we'll run ```systeminfo``` to see what we are dealing with exactly.
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-43.png" >}}
+![](/images/2019/11/image-43.png)
 
 We also see that we have ```SeImpersonatePrivilege``` and ```SeAssignPrimaryTokenPrivilege``` set to enabled. We can leverage the idea of [RottenPotato](https://github.com/breenmachine/RottenPotatoNG). There are a few options for this method out there, in this case I'll be using [LovelyPotato](https://github.com/TsukiCTF/Lovely-Potato).
 
-{{< figure src="__GHOST_URL__/content/images/2019/11/image-44.png" >}}
+![](/images/2019/11/image-44.png)
 
 We simply follow the commands given to us on the repo and we get a root shell back after ~7 minutes! There are more ways to exploit this based on this particular vulnerability. Check out [ohpe.it](https://ohpe.it/juicy-potato/) for more about it.
 

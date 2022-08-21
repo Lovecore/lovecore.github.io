@@ -47,21 +47,21 @@ Command:
 
 The enumeration shows us that we've working with a Wordpress site. Digging around gives us two users, `protagonist` and `neil`. Neil gives us one comment in particular that is interesting:
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image.png" >}}
+![](/images/2021/06/image.png)
 
 So, we should start looking for `.php` and `.bak` / `.back` files. As well as any items named `sator`. Since this list is small, we can check these by hand by checking our vhost and IP for these file names. The reason we do both IP and Vhost is because there are possibly more Vhosts than we know that could resolve to the IP.
 
 Sure enough, the `10.10.10.223/sator.php` finds a hit:
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-1.png" >}}
+![](/images/2021/06/image-1.png)
 
 Along side that, so does the `.bak`:
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-2.png" >}}
+![](/images/2021/06/image-2.png)
 
 Now that we've downloaded the file, we can take a look at it.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-3.png" >}}
+![](/images/2021/06/image-3.png)
 
 Looks like we're taking a repo, `arepo`, which is serialized and unserializing it. Looks like we're using a magic method here, `__destruct()`. `PHP Deserialization` is a common thing to see in HTB as well as other CTF's. It's also still realivant to real life applications (unfortunately). Here's some more info on the topic:
 
@@ -100,19 +100,19 @@ Command:
 `nc -lvnp 7070`
 `php tenet.php`
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/tenetshell.gif" >}}
+![](/images/2021/06/tenetshell.gif)
 
 We get a shell back! Now we can start to look around and enumerate internally. Right where we land when we get a shell, we see a directory called `Wordpress`. Inside there's the `wp-config.php` file, with credentials for `neil`.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-4.png" >}}
+![](/images/2021/06/image-4.png)
 
 Now we can try to login via `ssh` as `neil`. It works, we're in as `neil` and grab the `users.txt` flag! The first thing we always do once we get a user foothold on a box is `sudo -l`. This gives us an idea:
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-5.png" >}}
+![](/images/2021/06/image-5.png)
 
 We check the script, the `addKey()` function is our target in this case.
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-6.png" >}}
+![](/images/2021/06/image-6.png)
 
 We can write a `while` loop to keep adding our `ssh` key to any ssh files in tmp. First generate a new ssh key:
 
@@ -132,7 +132,7 @@ Command:
 
 Boom, we get in!
 
-{{< figure src="__GHOST_URL__/content/images/2021/06/image-7.png" >}}
+![](/images/2021/06/image-7.png)
 
 Another fun box down! If you found this write-up useful, send some respect my way:[https://app.hackthebox.eu/profile/95635](https://app.hackthebox.eu/profile/95635)
 

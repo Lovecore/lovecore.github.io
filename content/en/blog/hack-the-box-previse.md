@@ -44,39 +44,39 @@ We see that a basic username / password landing page. Before we start digging in
 Command:
 `gobuster dir -u http://10.10.11.104 -w /usr/share/seclists/Discovery/Web-Content/raft-large-directories-lowercase.txt -x .php,.old,.bak -t 60 -b 403,404`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-37.png" >}}
+![](/images/2021/08/image-37.png)
 
 We see a bunch of files. We check them all and find the `nav.php` has some interesting links.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-38.png" >}}
+![](/images/2021/08/image-38.png)
 
 When trying to access all of these resources, we need an account. Luckily for us, we have a create account page! However, the page isn't accessable via the browser. When we view the `HTTP` request, we see that is actually something we can access.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-39.png" >}}
+![](/images/2021/08/image-39.png)
 
 Given that we can see the source for this request, we know the parameters we need to `POST` in order to create an account.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-40.png" >}}
+![](/images/2021/08/image-40.png)
 
 So we will craft the request we need to supply a `username`, `password` and `confirmation` password. We also need to be sure to add our `Content-Type` of `application/x-www-form-urlencoded`. All together, we have the following request.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-41.png" >}}
+![](/images/2021/08/image-41.png)
 
 We send the request and we get back a success message!
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-42.png" >}}
+![](/images/2021/08/image-42.png)
 
 We can now log into the site. When we start looking around we find the file `SITEBACKUP.ZIP` in the files section. We download the file and unzip it to find exactly what we think, a backup of the site. We see in `config.php` a username and password.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-43.png" >}}
+![](/images/2021/08/image-43.png)
 
 We still need a username to go with the password. Now, if we look around the site a bit more we have a Request Log Data section. If we download the file, we can see the users associated to logging in, this could give us a user to `SSH` with.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-44.png" >}}
+![](/images/2021/08/image-44.png)
 
 Unable to login with those credentials. Now as we continue to sift through the files, we find a gem. A `Python exec()` call in the `logs.php` file.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-45.png" >}}
+![](/images/2021/08/image-45.png)
 
 This is not a properly sanatized output, meaning we can leverage it to break things. More on [Command Injection here](https://portswigger.net/web-security/os-command-injection).
 
@@ -96,14 +96,14 @@ Command:
 
 Now ww send our request (a few times), and eventually get a response back on our `netcat` listener
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-46.png" >}}
+![](/images/2021/08/image-46.png)
 
 Before we start enumerating any further, we should check to see if we have `mysql` access. We have credentials from before that we should try to leverage and see what we have access to.
 
 Command:
 `mysql -u root -p'mySQL_p@ssw0rd!:)'`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-47.png" >}}
+![](/images/2021/08/image-47.png)
 
 Sure enough, we have access! Now we can start sifting through the database.
 
@@ -114,7 +114,7 @@ show tables;
 select * from accounts;
 ```
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-48.png" >}}
+![](/images/2021/08/image-48.png)
 
 Now we see our username and hashes. We'll copy them out to crack, we really just want `m4lwhere` in particular.
 
@@ -126,19 +126,19 @@ Now we can run it against `rockyou.txt` to see what we might be able to find. In
 Command:
 `john -w=/usr/share/wordlists/rockyou.txt m4lwhere.hash --format=md5crypt-long`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-49.png" >}}
+![](/images/2021/08/image-49.png)
 
 A few minutes later we get a match `ilovecody1122235!`. Now let's see if we can `SSH` with this password.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-50.png" >}}
+![](/images/2021/08/image-50.png)
 
 Sure enough, we are in! Let's snag our `user.txt` flag and find a way to root! The next thing we check is `sudo -l`.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-51.png" >}}
+![](/images/2021/08/image-51.png)
 
 It looks like we have the ability to run a backup script.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-52.png" >}}
+![](/images/2021/08/image-52.png)
 
 The problem with this script is that its just saying `gzip`. It's not giving a specific path to `gzip`. This is `Path Hijacking` and it's the reason why you should ensure your paths are explicit and narrow as can be. What we'll do is create our own `gzip` file. This will just be a simple file to `cat` our the `root.txt` flag.
 
@@ -166,7 +166,7 @@ Now we simply run our privledged script.
 Command:
 `sudo /opt/scripts/access_backup.sh`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/previseroot.gif" >}}
+![](/images/2021/08/previseroot.gif)
 
 We get a text file with the `root.txt` flag inside! Feel free to send respect my way if you found this write-up helpful.
 

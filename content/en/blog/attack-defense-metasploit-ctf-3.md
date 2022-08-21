@@ -20,7 +20,7 @@ In this entry we will tackle the third Metasploit CTF on Pentester Academy. In t
 
 ## Network Topology
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-77.png" >}}
+![](/images/2019/12/image-77.png)
 
 ## Enumeration
 If you've been following along, you know that we being our enumeration process with `nmap`. We'll now start to combine the set of command options we've learned. Let's obtain our IP and scan our subnet:
@@ -53,7 +53,7 @@ Command:
 `searchsploit jserv`
 `searchsploit 'tomcat metasploit'`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-78.png" >}}
+![](/images/2019/12/image-78.png)
 
 We see that we have a few `Tomcat` modules but no `Metasploit` modules returned for `Jserv`. Let's load `Metasploit`.
 
@@ -65,7 +65,7 @@ Once loaded, lets find the module we want to use.
 Command:
 `msf5> search tomcat`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-80.png" >}}
+![](/images/2019/12/image-80.png)
 
 Quite a few modules come back. We see there are some authenticated modules and some RCE's. However, the first thing we want to try is to enumerate our possible login options. So for that we will use the `tomcat_mgr_login` module.
 
@@ -85,7 +85,7 @@ Command:
 Then `run` our payload.
 `msf5> run`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/CTF_3_tomcat_mod.gif" >}}
+![](/images/2019/12/CTF_3_tomcat_mod.gif)
 
 We see a successful credential pair: `tomcat`:`tomcat`. The default credentials. Well now that we know we have a valid set of credentials, we can seek to leverage them for an `Authenticated RCE`. 
 
@@ -99,7 +99,7 @@ We check out `options` inside the module.
 Command:
 `msf5> show options`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-81.png" >}}
+![](/images/2019/12/image-81.png)
 
 We have quite a few options to set here: `HttpPassword`, `HttpUsername`, `rhosts` and `rport`.
 
@@ -116,21 +116,21 @@ We then `run` our exploit.
 Command:
 `msf5> run` or `msf5> exploit`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/CTF_3_tomcat_aRCE.gif" >}}
+![](/images/2019/12/CTF_3_tomcat_aRCE.gif)
 
 It worked! We not have a valied `Meterpreter` session! This is different than a normal shell. You can read all about what `Meterpreter` is [here](https://www.offensive-security.com/metasploit-unleashed/about-meterpreter/). For the purpose of this post, you just need to know it's a more advanced shell. 
 
 We can use standard Linux commands inside this shell to navigate around and do some enumeration. We head to `/home` to see what users are listed.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-82.png" >}}
+![](/images/2019/12/image-82.png)
 
 We have one user `devadmin`. Inside his home directory is a file called `note`.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-83.png" >}}
+![](/images/2019/12/image-83.png)
 
 We look at it's contents and see some credentials.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-84.png" >}}
+![](/images/2019/12/image-84.png)
 
 Great! We can safely assume that we are going to use these credentials to log into `target-2`. We will `background` our current shell just in case we need it later.
 
@@ -149,7 +149,7 @@ Command:
 
 We enter the password and accept our fingerprinting.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/CTF_3_tomcat_target-2_ssh.gif" >}}
+![](/images/2019/12/CTF_3_tomcat_target-2_ssh.gif)
 
 We have admin credentials on the system but now what? We aren't root but we can try to switch the root user.
 
@@ -158,11 +158,11 @@ Command:
 
 Once we do that we are given an elevated prompt!
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-85.png" >}}
+![](/images/2019/12/image-85.png)
 
 We then head to `/root/` to find the `flag` file.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/image-86.png" >}}
+![](/images/2019/12/image-86.png)
 
 Another CTF down! Hopefully this has been a learning experience for anyone that has read it through. Next up Metasploit CTF 4!
 

@@ -30,7 +30,7 @@ This CTF was based on two machines. One machine held the `SSH` key to the second
 ### Network Topology
 Here is the network layout given to us.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1.png" >}}
+![](/images/2019/12/PA_MCTF_1.png)
 
 ### Enumeration
 We start with getting our ip address.
@@ -49,7 +49,7 @@ A small breakdown of the above. We are using the `-T5` to tell `nmap` to go as f
 
 Here are our results:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_nmap.png.png" >}}
+![](/images/2019/12/PA_MCTF_1_nmap.png.png)
 
 We see two machines, `target-1` and `target-2`. The only services that are shown are `SSH` and `rmiregistry`. If you didn't know, a standard `nmap` scan will only scan the top 1000 ports on a target unless specified otherwise. If we wanted to scan all ports or a particular port we use the `-p` flag in our scan.
 
@@ -60,7 +60,7 @@ Command:
 
 Now you can see how our results are a bit more detailed:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_nmap_2.png.png" >}}
+![](/images/2019/12/PA_MCTF_1_nmap_2.png.png)
 
 So we now know that `target-1` has Java RMI Registry running on port 1099. We want to try and find some exploits for this service. To do this, we use a tool called `searchsploit`. `Searchsploit` will search [Exploit-DB](https://www.exploit-db.comac) for any published exploits on our search term.
 
@@ -69,7 +69,7 @@ Command:
 
 The `-w` gives  us the weblink output in our results. Our search term is a bit longer than normal. Usually you might just type in RMI or Java RMI. In this case we also want results that have a precompiled Metasploit exploit.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_searchsploit.png" >}}
+![](/images/2019/12/PA_MCTF_1_searchsploit.png)
 
 ### Action
 We have three results. So we'll start up `Metasploit` and take a look at them.
@@ -82,7 +82,7 @@ This will start up our database and lauch our console. Now we need to locate our
 Command:
 `msf5> search rmiregistry`
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/AD_meta.gif" >}}
+![](/images/2019/12/AD_meta.gif)
 
 We get one results. Which also happens to match up with our second result in our `searchsploit` search. Great, we now know which exploit we want, now we need to select it. There are two ways to do this, both use the term `use`. This tells Metasploit to `use` the following module.
 
@@ -94,7 +94,7 @@ Alternately we can type the entire exploit path `use exploit/multi/misc/java_rmi
 
 Once we have the module selected, our prompt changes and tells us we are inside the selected module. Now we can look at the module options by typing `show options`.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_exploit_1.png.png" >}}
+![](/images/2019/12/PA_MCTF_1_exploit_1.png.png)
 
 This gives us the options that the module has. Some are required, some are not. The description of each parameter is given as well. In this case we need to set the `rhosts` and `rport`. These parameters are required in just about every module in Metasploit. You'll also see `lhost` and `lport` a lot too. If the `r` is in front of the word, it wants the `r`emote target. If the `l` is in from of the word, it wants the `l`ocal target.
 
@@ -106,17 +106,17 @@ Commands:
 
 Often you wont be able to use a hostname for a target but in this case we can. Once you have them set you can `show options` again to verify they've been set properly.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_exploit_2.png" >}}
+![](/images/2019/12/PA_MCTF_1_exploit_2.png)
 
 Everything looks correct. To run the exploit we can issue `run` or `exploit` command!
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/ad_rmi_run.gif" >}}
+![](/images/2019/12/ad_rmi_run.gif)
 
 We see the module run, but  it seems to tell us it fails. Odd. We see it make a connection back to use using the payload it creates. It doesn't seem to tell us our session has closed either. 
 
 To check to see if we have any sessions we can use the `sessions` command. Exploits that create shells back will have their sessions listed here.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_session.png" >}}
+![](/images/2019/12/PA_MCTF_1_session.png)
 
 Our session is still active! We can interact with a session by using the `-i` command and then our session id. In this case we have an id of `1`. So we will pick that session to interact with.
 
@@ -125,25 +125,25 @@ Command:
 
 We now see our prompt change again. This time showing it we are interacting with the `Meterpreter` module on the remote target.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_meterp.png" >}}
+![](/images/2019/12/PA_MCTF_1_meterp.png)
 
 This is where the magic happens. This shell has high level rights on the target due to the type of exploit we ran. I did a previous post on [Meterpreter Basics](__GHOST_URL__/attack-defend/) here. From here we can use commands to enumerate our target. When we `ls` we get our directory structure. We've landed on the `root` directory. The first place we want to go is to `/home/` to see how many users are listed.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_meterp-1.png" >}}
+![](/images/2019/12/PA_MCTF_1_meterp-1.png)
 
 Now we'll explore Alice's home directory. We only have the standard hidden directories:
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_meterp-2.png" >}}
+![](/images/2019/12/PA_MCTF_1_meterp-2.png)
 
 The important file here is the `.ssh` directory. This is where key pairs are stored in Linux. So if we are able to get Alice's key we might be able to use it on `target-2` to log in.
 
 Sure enough, inside the `.ssh` directory we have an `id_rsa` file.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_meterp-3.png" >}}
+![](/images/2019/12/PA_MCTF_1_meterp-3.png)
 
 `Meterpreter` comes with commands built-in to `upload` and `download` items. We'll use the `download` command to download the `id_rsa` to our machine.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_meterp-4.png" >}}
+![](/images/2019/12/PA_MCTF_1_meterp-4.png)
 
 Now that we have this key we can close our sessions out using the `exit` command. Once for closing our `Meterpreter` shell and another to exit from the `Metasploit console`.
 
@@ -159,11 +159,11 @@ Command:
 
 Once we do that, we try to connect again and get connected! We got logged in as `root`. When we do an `ls` we see the `flag` we are after right away.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_ssh.png" >}}
+![](/images/2019/12/PA_MCTF_1_ssh.png)
 
 We  `cat` the `FLAG` file to see what we've been after.
 
-{{< figure src="__GHOST_URL__/content/images/2019/12/PA_MCTF_1_flag.png" >}}
+![](/images/2019/12/PA_MCTF_1_flag.png)
 
 CTF complete! We've obtained the flag. Hopefully this format provided some insight to a very basic CTF and the methodology and tools used to get to our target. 
 

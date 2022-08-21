@@ -39,7 +39,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 Pretty small selection. Looks like our path forward is some type of web exploit. We head over to the site to see what is being hosted. We're greeted with a sign in page.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image.png" >}}
+![](/images/2020/03/image.png)
 
 We'll start some manual inspection of the page while we load up `Burpsuite` and `Gobuster`.
 
@@ -72,11 +72,11 @@ by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
 
 While that runs we will create an account on the site and attempt to login. Sure enough, that does function.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-1.png" >}}
+![](/images/2020/03/image-1.png)
 
 We are logged in as our account and start to enumerate futher. We see the page ends with `.php`. So we can pass some sessionID's to `Gobuster` and enumerate a bit more. We snag the `PHPSESSID` from Burp and feed it to `Gobuster`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-2.png" >}}
+![](/images/2020/03/image-2.png)
 
 Command:
 `gobuster dir -u http://10.10.10.176 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 40`
@@ -106,39 +106,39 @@ Here are the results:
 
 While that runs we start manual enumeration. We see a php call to download a file.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-3.png" >}}
+![](/images/2020/03/image-3.png)
 
 We might be able to leverage this as a potential SQL injection or maybe Directory Traversal. We also have a Book Submission form as well.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-4.png" >}}
+![](/images/2020/03/image-4.png)
 
 We might be able to leverage this form by uploading something malicious. On the contact page we see a form that sends a message to admin@book.htb. Now we have a username as well as a domain to append to our hosts file. Our profile page also gives us the ability to update our name as well. Also on the book feedback page, we are able to seemingly send feedback to the admin.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-5.png" >}}
+![](/images/2020/03/image-5.png)
 
 There seem to be quite a few good avenues forward, but which is the best? The standard access page or the admin page? We know that we want to access the Admin page. So what we will try is an [SQL Truncation Attack](https://resources.infosecinstitute.com/sql-truncation-attack/). First we will try and register our account as the admin account we found. So we register as `admin@book.htb` with our spaces on the end, up to the character limit of 20. Then we add some characters after that.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-6.png" >}}
+![](/images/2020/03/image-6.png)
 
 In order to do with without `Burpsuite`, we need to modify the code on the email field to simply allow all text. So we inspect element and change our type from email to text.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-7.png" caption="Before" >}}
+![](/images/2020/03/image-7.png" caption="Before)
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-8.png" caption="After" >}}
+![](/images/2020/03/image-8.png" caption="After)
 
 Now we can click submit. Then we head over to the admin portal and try to login as with the admin email password we just made.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-9.png" >}}
+![](/images/2020/03/image-9.png)
 
 We're in! Now we look around the site and see some new areas. One for feedback, another for the collections and the messages that are sent from the user side. Now that we are in we are going to be looking to leverage some of the previous forms we found. With some luck they might have an XSS or reflection attack or something that we can leverage to gain a bit more access.
 
 The first thing I attempted was to find and LFI. Maybe if I can just read some system contents I can have a better understanding of what we're dealing with. Nothing basic stood out, however, googling around lead me to this: https://www.noob.ninja/2017/11/local-file-read-via-xss-in-dynamically.html. Well, this is actually right up our alley! So we take this POC that attampts to read passwd file and put it into our title field. Fill out the author and submit it via our basic user account.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-10.png" >}}
+![](/images/2020/03/image-10.png)
 
 Then back in our admin panel, we download the collection PDF. Sure enough, inside is the contents of passwd file!
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-11.png" >}}
+![](/images/2020/03/image-11.png)
 
 Sifting through the file we see we have a user `reader`. So now we're going to attempt to get the id_rsa file inside reader's home directory. We modify our injection slightly:
 
@@ -155,25 +155,25 @@ x.send();
 
 Then we upload that file as well, then check the PDF output.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-12.png" >}}
+![](/images/2020/03/image-12.png)
 
 Awesome, now we have a key. However, copy / pasting the key from the PDF doesn't seem to work within Kali. When I opened the file in Chrome outside of my VM I was able to copy / paste that just fine. We save the file and attempt to SSH in with our new key.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-13.png" >}}
+![](/images/2020/03/image-13.png)
 
 Now that we're in, let's snag the user.txt key and start to enumerate. We use 'wget' to download `LinEnum` or `LinPEAS` as well as `pspy`from our attacking machine and run it. We see some interesting items in the static enumeration. Such as book.timer calling other book functions. One thing that seems to catch my eye is when we are looking at the data via `pspy` we see this:
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-15.png" >}}
+![](/images/2020/03/image-15.png)
 
 This shows up quite a bit. So we google around for log rotate exploit and we come back with a few items but this in particular is appealing: [logrotten](https://github.com/whotwagner/logrotten). There is a good article here on how this exploit works: [feedyourhead](https://tech.feedyourhead.at/content/details-of-a-logrotate-race-condition). 
 
 So we need to have control of our path to use this exploit as well as some type of payload. When we look at the `backups` folder in our home directory we see we have full control of it and it's files. We also take a peek at the `logrotate.conf` file listed under `/etc/` to verify our permissions being set. Look's like we're in business!
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-16.png" >}}
+![](/images/2020/03/image-16.png)
 
 Looks like indeed root is the ID being set we double check it against the `wtmp` file just to be sure.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-17.png" >}}
+![](/images/2020/03/image-17.png)
 
 Looks like we are in good shape. We have the ability to create our own payload. There are a few ways to go about that. The first is we can copy the root users SSH key to a temp file and then use that to SSH into the box. Alternatly we can create a payload with a NC reverse shell. The PoC gives us the code for a reverse shell so we'll use that same method.
 
@@ -189,7 +189,7 @@ Command:
 
 Now we copy the payload and logrotten to the target machine using `SimpleHTTPServer`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/image-18.png" >}}
+![](/images/2020/03/image-18.png)
 
 We'll then open a `netcat` listener.
 
@@ -208,7 +208,7 @@ Command:
 
 This will kick off the exploit and we will get a shell back!
 
-{{< figure src="__GHOST_URL__/content/images/2020/03/book_root.gif" >}}
+![](/images/2020/03/book_root.gif)
 
 We now have a root shell! We snag the flag and the box is done!
 

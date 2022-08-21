@@ -146,23 +146,23 @@ It looks like port 1337 is echoing back our nmap command with the text ```what d
 
 We see the default apache2 install page. So we'll kick off a ```dirb``` scan and enumerate the site more. ```dirb http://10.10.10.147``` will run the common word list against the site. While that run's we will check the page source on the apache install to see what might be there.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-83.png" >}}
+![](/images/2019/09/image-83.png)
 
 We now know that we can download ```myapp``` from this location. Lets ```wget``` get it and see what happens.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-86.png" >}}
+![](/images/2019/09/image-86.png)
 
 Now that we have the file. Lets test against it. When we launch the app and enter any anything, it is echo'd back to us.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-87.png" >}}
+![](/images/2019/09/image-87.png)
 
 There is a good chance this app will have a ```buffer overflow```. So lets tell ```python``` to end it 150 characters and see what our result is.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-88.png" >}}
+![](/images/2019/09/image-88.png)
 
 Looks like we have a fault! So now we need to identify the offset where the overflow actually occurs. Before we do that we will check the security on the file by using ```checksec``` within ```peda```. If you are unfamiliar with PEDA check [it out here](https://github.com/longld/peda).
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-89.png" >}}
+![](/images/2019/09/image-89.png)
 
 This tells us the PIE is disabled. PIE are Position Independent Executables which means that Address Space Layout Randomization (ASLR) is off. So we can reliably find our offset and call it accordingly.
 
@@ -181,7 +181,7 @@ The ```-rport``` is the remote port that the application is using.
 
 Once we run it we get some fun Hackerman content on the screen and are eventually greeted with a prompt.
 
-{{< figure src="__GHOST_URL__/content/images/2019/09/image-90.png" >}}
+![](/images/2019/09/image-90.png)
 
 We now have an interactive remote session on the box! We head over to ```/home/user/``` and snag the user.txt file. Onto root!
 
@@ -189,7 +189,7 @@ We'll want create a new ssh key pair so that we can remote into the box reliably
 
 Now that we have a reliable ```SSH``` shell, we can enumerate a bit. We see a file in the users home directory called ```MyPasswords.kdbx```
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image.png" >}}
+![](/images/2019/10/image.png)
 
 There are a bunch of JPG files and a ```KeePass``` database. First we'll download the the ```KeePass``` database. We will use ```scp``` for this. On our local host, we issue:
 
@@ -203,29 +203,29 @@ The ```/home/user/Documents/htb/safe/``` is the local path to download the files
 
 Now if we try to open the ```MyPasswords.kdbx``` file directly we are prompted for the master key.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-1.png" >}}
+![](/images/2019/10/image-1.png)
 
 We know that we need a master key file. After poking around, it seems that we can use the many JPG files we found in the users home directory. We will use ```keepass2john``` to convert the JPG file to a hash and try and crack it with ```john```. So for each image we issue ```keepass2john -k user/IMGFILE user/MyPasswords.kdbx > IMG_XXXX_Hash```. This will take the image file specified, convert it to a hash and save it. We will do this will all 6 of the image files.
 
 Once we've converted all of our images files over to hashes, we will brute force the hashes with ```john```. We issue ```john IMGFILEHERE --wordlist=/usr/share/wordlists/rockyou.txt``` for each hash file we've created. Eventually we get a list of passwords to try against the ```KeePass``` database.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-2.png" >}}
+![](/images/2019/10/image-2.png)
 
 Now that we have our passwords, we can user ```kpcli``` to interact with the database. You could also just use the GUI interface as well. We launch ```kpcli```. We then use ```open``` to open the ```MyPassword.kdbx``` and also specify the master keyfile.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-3.png" >}}
+![](/images/2019/10/image-3.png)
 
 Now that we have entered the database, we see that there is a directory called MyPasswords. We navigate into it and see there is an entry called ```Root password```. We can view it by issuing ```show -f 0```. This will show the contents of entry ```0```. The ```-f``` will unmask the ```Pass``` field.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-4.png" caption="show 0 vs show -f 0" >}}
+![](/images/2019/10/image-4.png" caption="show 0 vs show -f 0)
 
 We now have a root password! Lets ```SSH``` back into the box as root. We are unable to SSH into the box as root. So we will ```SSH``` back in as user and ```su root``` to see if we can escalate.
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-5.png" >}}
+![](/images/2019/10/image-5.png)
 
 We can! We will ```cat /root/root.txt``` and get our flag!
 
-{{< figure src="__GHOST_URL__/content/images/2019/10/image-7.png" >}}
+![](/images/2019/10/image-7.png)
 
 Box complete. The use of the image files as master keys was pretty CTF like. This box is a good resource for learning Buffer Overflows.
 

@@ -40,7 +40,7 @@ Command:
 
 In this case we use the `-fs` to hide responses with a size of 277 because of the amount of false positives. There is nothing additional. So we move on to using `Burpsuite`. When we load up `Burpsuite` and view our request / response, we see a hint:
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image.png" >}}
+![](/images/2021/08/image.png)
 
 The `X-Powered-By` Header value. The first google results gives us [this](https://packetstormsecurity.com/files/162864/PHP-8.1.0-dev-Backdoor-Remote-Command-Execution.html). They were so kind to even give us a PoC script. We download the PoC and execute it:
 
@@ -49,15 +49,15 @@ Command:
 
 When we run it, we get an interactive shell back.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-1.png" >}}
+![](/images/2021/08/image-1.png)
 
 We use `which nc` to identify if `netcat` is on the system.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-2.png" >}}
+![](/images/2021/08/image-2.png)
 
 We attempt to use `netcat` to create a shell back, but it doesn't work.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-3.png" >}}
+![](/images/2021/08/image-3.png)
 
 So instead of `netcat` we'll try to catch a shell with a `bash` command.
 
@@ -66,19 +66,19 @@ Command:
 
 That didn't work either. So, there is a space on this PoC for proxy interface. We'll simply uncomment it and let the requests go through `Burpsuite` so we can see what's being sent.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-4.png" >}}
+![](/images/2021/08/image-4.png)
 
 Now with our requests coming through Burp, we can see what's being sent. In actuallity its just a simple header value - `User-Agentt` is the value we can modify to obtain the backdoor.
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-5.png" >}}
+![](/images/2021/08/image-5.png)
 
 We modify the request as it comes through to send us a shell to a `netcat` listener on port 6969
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-6.png" >}}
+![](/images/2021/08/image-6.png)
 
 Next we check to see what we can run as `root` with `sudo -l`
 
-{{< figure src="__GHOST_URL__/content/images/2021/08/image-7.png" >}}
+![](/images/2021/08/image-7.png)
 
 We see that we can run an app called `knife`. Some googling finds us the [documentation](https://docs.chef.io/workstation/knife_exec/). There's a section for `exec`. This function lets us execute codes through itself. After some trial and error, we were able to craft a command to get the root flag.
 

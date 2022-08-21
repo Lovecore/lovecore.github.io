@@ -63,18 +63,18 @@ SF:ion:\x20close\r\n\r\nHello\x20World\n");
 
 We see multiple services running, perfect. Let's start by taking a peek at port 80. When we hit it, we see a issue tracking page that looks incomplete:
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-17.png" >}}
+![](/images/2021/05/image-17.png)
 
 The source does show us a hostname of `spectra.htb`, so we'll add that to our hosts list as well. Navigating to the `testing` page, givers us a database connection error. Navigating to the `main` page, lands us on a `Wordpress site`. The first thing I do when I see a `WordPress` site is point `wpscan` at it. Sometimes there's nothing, sometimes there's a everything!
 
 Command:
 `wpscan --url 'http://spectra.htb/main' --api-token <TOKEN HERE>`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-18.png" >}}
+![](/images/2021/05/image-18.png)
 
 There does seem to be some vulnerabilities here. Let's keep these in mind as we continue to enumerate the target. We browse through all the pages / comments onn the `WordPress` portion, let's turn our attention to the `testing` page. We try some different ports but no dice. However, simply taking it back one level to `spectra.htb/testing` gives us an index listing.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-19.png" >}}
+![](/images/2021/05/image-19.png)
 
 The first thing we see here is the `wp-config.php.save`, `wp-config` and  `wp-settings.php`. Let's get all of these so we can take a look at them.
 
@@ -85,7 +85,7 @@ This will download the entire site with directory structure intacked. Now we can
 
 The `wp-config.php.save` shows us some `mysql` credentials!
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-20.png" >}}
+![](/images/2021/05/image-20.png)
 
 Now that we have a set of credentials, what are the chances they work in the WordPress login area? The combo of `devtest`:`devteam01` didn't work. If you've spent any time working with WordPress you know that the default account is called `Administrator` unless you change it during your installation processes. Let's try that. Sure enough, it works! We are in! 
 
@@ -102,7 +102,7 @@ Command:
 `msf6> set targeturi /main`
 `msf6> run`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/spectra_shell.gif" >}}
+![](/images/2021/05/spectra_shell.gif)
 
 Now that we have a shell, we take a look around. The `user.txt` flag is in `katie`'s home directory. We don't have the permissions we need to view it. We'll need to escalate our account. I wasn't able to run `linpeas` or other tools, so some manual enumeration is required here. 
 
@@ -140,7 +140,7 @@ end script
 
 What we see above is a location of a password file as show on this line: `for dir in /mnt/stateful_partition/etc/autologin /etc/autologin; do`. We can navigate there and locate a file with a password. We find a `passwd` file in `/etc/autologin`. Inside is a password!
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-23.png" >}}
+![](/images/2021/05/image-23.png)
 
 So now, all we have to do is figure out who this password is tied to. We can simply try to `ssh` into the box to verify. Our list of users is small; `katie`, `chronos`, `nginx`, `user` and `root`.
 
@@ -149,11 +149,11 @@ Command:
 
 Turns out, the user is `Katie`.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-24.png" >}}
+![](/images/2021/05/image-24.png)
 
 Now that we have the `user.txt` flag, we can start enumerating for a way to get the root flag. The first thing we always check is `sudo -l`. This can often give us a path forward in a HTB style CTF.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-25.png" >}}
+![](/images/2021/05/image-25.png)
 
 Some research on how the `initctl` function works, lets us [understand](https://explainshell.com/explain?cmd=sudo%20initctl%20list) how to leverage this forward. Our goal here is to list the running daemons and find one we can modify. We can then modify the job to do something as `root`.
 
@@ -170,13 +170,13 @@ Even that listing is large. We can further strip it down to some odd entries we 
 Command:
 `sudo /sbin/initctl list | grep stop | grep test`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-26.png" >}}
+![](/images/2021/05/image-26.png)
 
 This is a much more managable listing. Now to edit a job seen here, we need to head over to `/etc/init/`. This is where the job .conf files reside. 
 
 We see we do have permission to edit these
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-27.png" >}}
+![](/images/2021/05/image-27.png)
 
 We will then open `test.conf` file and modify it. There are two approaches here, first we'll take a look at the easy one.
 
@@ -185,14 +185,14 @@ We can modify the `test.conf` file to `cat` the `root.txt` flag.
 Command:
 `nano test10.conf`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-31.png" >}}
+![](/images/2021/05/image-31.png)
 
 Now all we need to do is run the daemon for test10 and we should have a file with our flag in it!
 
 Command:
 `sudo /sbin/initctl start test10`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-32.png" >}}
+![](/images/2021/05/image-32.png)
 
 There we have it, the flag!
 
@@ -203,14 +203,14 @@ Command:
 
 This allows us to always execute as the owner of the file, regardless of what has been passed to the command. You can read more on that [here](https://www.redhat.com/sysadmin/suid-sgid-sticky-bit).
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-28.png" >}}
+![](/images/2021/05/image-28.png)
 
 Now with the config modified, we start it.
 
 Command:
 `sudo /sbin/initctl start test10`
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-29.png" >}}
+![](/images/2021/05/image-29.png)
 
 Awesome, that worked. Now we can run a `bash` shell and cat the `root.txt` flag.
 
@@ -219,7 +219,7 @@ Command:
 
 This will drop a new `bash` shell as `root`.
 
-{{< figure src="__GHOST_URL__/content/images/2021/05/image-33.png" >}}
+![](/images/2021/05/image-33.png)
 
 We can now just `cat` the flag file! Another box down!
 

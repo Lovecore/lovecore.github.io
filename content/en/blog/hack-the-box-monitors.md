@@ -32,11 +32,11 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 When we visit port 80, we see that the hostname is leaked in the 'error' message.
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-1.png" >}}
+![](/images/2021/09/image-1.png)
 
 We can add `monitors.htb` to our host file. When we visit the hostname we get a `wordpress` site.
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-2.png" >}}
+![](/images/2021/09/image-2.png)
 
 We can scan a `wordpress` site for vulns using `wpscan`. 
 
@@ -47,7 +47,7 @@ The results come back with quite a few vulnerabilities. As we scroll through the
 
 We can simply test this by copy / pasting the `lfi` path onto the url.
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-3.png" >}}
+![](/images/2021/09/image-3.png)
 
 We can open up `Burpsuite` and start to enumerate the directories. A quick Google shows us that `wp-config.php` is readable file. Trial and error gets us the following LFI path.
 
@@ -55,13 +55,13 @@ We can open up `Burpsuite` and start to enumerate the directories. A quick Googl
 
 This gets us the config and a username / password combo. We try to use these for `SSH` but no dice. We use `Burpsuite`'s `Intruder` function to help us enumerate possible exploit paths. Eventually we find `sites-available` location with the default `000-default.conf` file that shows we should add `cacti-admin.monitors.htb` as a valid host location. We add this to our hostfile and see whatt's being hosted.
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-4.png" >}}
+![](/images/2021/09/image-4.png)
 
 After trying a few combinations, we use `admin` and `BestAdministrator@2020!` to get logged into `Cacti`. A quick Google search shows we have one possible exploit - https://www.exploit-db.com/exploits/49810.
 
 We start up a `netcat` listener on `4444` and fire the script off with all the defaults. After quite a few attempts we get a shell back!
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-5.png" >}}
+![](/images/2021/09/image-5.png)
 
 Now that we're on the system, we can start to enumerate. We can copy over `linpeas` and see what comes up when we run it. The machine did not have `curl` or `wget` so we need to transfer it via `netcat`.
 
@@ -73,35 +73,35 @@ Send command:
 
 Once the file is over, we give it a run. We see some potential additional services running on the box. We know it's in a container, now we need to figure out how to break out.
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-6.png" >}}
+![](/images/2021/09/image-6.png)
 
 There is so much data that it's hard for `linpeas` to make much sense of it. One item that is interesting is that we can see the files in `marcus`'s home directory.
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-7.png" >}}
+![](/images/2021/09/image-7.png)
 
 This generally means we can view and list other things there as well. When we head to his directory, we see a `.backup` folder. The folder is missing `r` permissions but for some reason has execute? After a while of sifting through the `linpeas` log, I started to look at files associated to backups.
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-8.png" >}}
+![](/images/2021/09/image-8.png)
 
 This service is worth checking out and we have the ability to read it. Inside that file, we see a reference to what's inside the `.backup` folder!
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-9.png" >}}
+![](/images/2021/09/image-9.png)
 
 Now let's try to read the `backup.sh` file!
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-10.png" >}}
+![](/images/2021/09/image-10.png)
 
 Inside this file, we have another username / password combo. We know that the user `cacti_backup` isn't a thing, so we try to `SSH` in as `marcus` with the above password, and we are in!
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-11.png" >}}
+![](/images/2021/09/image-11.png)
 
 Now that we are in as `marcus`, we can look at the `note.txt` file in his directory.
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-12.png" >}}
+![](/images/2021/09/image-12.png)
 
 `phpinfo` gives us general information about the running version - [see here](https://www.php.net/manual/en/function.phpinfo.php). So there is something about the running version of PHP that we are not meant to see. We rerun `linpeas` as `marcus` and see something familiar, port 8443.
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-13.png" >}}
+![](/images/2021/09/image-13.png)
 
 There is no local `curl` or `wget` on the system. So we can transfer over the `curl` binary - downloaded from [here](https://github.com/moparisthebest/static-curl/releases/tag/v7.79.0). Next we transfer it via `netcat`.
 
@@ -171,7 +171,7 @@ Now with the port being forwarded, let's see if the `Metasploit` module will wor
 
 With all these setup, we shoot it off and...
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-14.png" >}}
+![](/images/2021/09/image-14.png)
 
 We get a shell as root! We're not clear yet, we take a look and don't see our rootflag anywhere. Looks like we need to break from the container! We'll upload `linpeas` again and run it as root this time.
 
@@ -183,7 +183,7 @@ Command:
 
 Now when we run `linpeas` as root, there can often be a lot of noise to sift through. Eventually, we check this listing:
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-15.png" >}}
+![](/images/2021/09/image-15.png)
 
 Hacktricks has a [good listing](https://book.hacktricks.xyz/linux-unix/privilege-escalation/docker-breakout#container-capabilities) of checking for Docker breakout scenarios. We indeed have `cap_sys_module`. There have been a few write-ups on this kind of break out. 
 
@@ -229,14 +229,14 @@ Commands:
 `upload reverse-shell.c`
 `upload Makefile`
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-16.png" >}}
+![](/images/2021/09/image-16.png)
 
 Now with both files on the target, we drop back into a shell session. We will use the `make` command to make things..
 
 Command:
 `make`
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-17.png" >}}
+![](/images/2021/09/image-17.png)
 
 Now we can start our `netcat` listener.
 
@@ -250,7 +250,7 @@ Command:
 
 Boom, we get an error....
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-18.png" >}}
+![](/images/2021/09/image-18.png)
 
 This simply means the module has already been loaded into the kernel. We need to remove the loaded module with `rmmod`
 
@@ -267,11 +267,11 @@ Nothing, now we can try loading it again!
 Command:
 `rmmod reverse-shell.ko`
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-19.png" >}}
+![](/images/2021/09/image-19.png)
 
 Our listener lights up and we have a connection to the host machine!
 
-{{< figure src="__GHOST_URL__/content/images/2021/09/image-20.png" >}}
+![](/images/2021/09/image-20.png)
 
 Another box down! See you again next time!
 
