@@ -31,7 +31,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 It looks like the only way in is on port 80. Let's see what's being hosted. Since this box looks to be web access, we'll load up `Burpsuite` and work through that.
 
-We see the request come throught to `horizontall.htb`, so we'll add that to our host file.
+We see the request come throught to ``horizontall.htb``, so we'll add that to our host file.
 
 ![](/images/2021/10/image.png)
 
