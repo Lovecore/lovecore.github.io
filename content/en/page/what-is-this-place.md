@@ -5,6 +5,7 @@ description = ""
 draft = false
 slug = "what-is-this-place"
 title = "What is this place?"
+url = "/what-is-this-place"
 
 +++
 

@@ -9,6 +9,7 @@ slug = "hack-the-box-magic"
 summary = "Today we are doing the Hack the Box machine Magic."
 tags = ["hack the box", "CTF", "medium", "Linux", "sqli", "SQL Injection", "gobuster", "image bypass", "exiftool", "reverse shell", "su", "sysinfo"]
 title = "Hack the Box - Magic"
+url = "/hack-the-box-magic"
 
 +++
 

@@ -9,6 +9,7 @@ slug = "attack-defense-metasploit-ctf-3"
 summary = "In this entry we will tackle the third Metasploit CTF on Pentester Academy. In this entry we will use two Metasploit modules. A module to test for valid user credentials and an authenticated RCE."
 tags = ["attack defend", "CTF", "basic", "metasploit", "meterpreter", "ssh", "sudo", "tomcat", "authenticated rce"]
 title = "Attack | Defense - Metasploit CTF 3"
+url = "/attack-defense-metasploit-ctf-3" 
 
 +++
 

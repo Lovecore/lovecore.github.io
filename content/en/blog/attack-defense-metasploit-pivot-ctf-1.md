@@ -9,6 +9,7 @@ slug = "attack-defense-metasploit-pivot-ctf-1"
 summary = "Welcome to another new blog series! This course series, much like the previous, will be based on Pentester Academy's beginner CTF series. Based around the Pivot CTF Labs."
 tags = ["CTF", "basic", "pivot", "metasploit", "unrealirc", "ping sweep", "port forwarding", "tomcat", "finger"]
 title = "Attack | Defense - Metasploit Pivot CTF 1"
+url = "/attack-defense-metasploit-pivot-ctf-1" 
 
 +++
 

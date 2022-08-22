@@ -8,6 +8,8 @@ thumbnail = "/images/2021/08/cap.png"
 slug = "hack-the-box-cap"
 tags = ["hack the box", "Linux", "ftp", "ssh", "wireshark", "pcap", "cap_setuid"]
 title = "Hack the Box - Cap"
+url = "/hack-the-box-cap"
+ 
 
 +++
 

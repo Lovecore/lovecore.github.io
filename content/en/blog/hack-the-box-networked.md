@@ -9,6 +9,7 @@ slug = "hack-the-box-networked"
 summary = "Today we are going to go though the easy box, Networked. Lets get into it!"
 tags = ["basic", "cron", "CTF", "enumeration", "Linux", "netcat", "reverse shell", "web services", "PHP", "bash"]
 title = "Hack the Box - Networked"
+url = "/hack-the-box-networked"
 
 +++
 

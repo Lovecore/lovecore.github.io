@@ -9,6 +9,7 @@ slug = "hack-the-box-traceback"
 summary = "Welcome back! Today we are going to be doing the Hack the Box machine, Traceback. This is a Linux machine with an Easy difficulty rating, let's jump in!"
 tags = ["hack the box", "easy", "webshell", "ssh-keygen", "ssh", "lua"]
 title = "Hack the Box - Traceback"
+url = "/hack-the-box-traceback"
 
 +++
 

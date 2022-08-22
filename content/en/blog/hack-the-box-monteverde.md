@@ -9,6 +9,7 @@ slug = "hack-the-box-monteverde"
 summary = "Welcome back! Today's write-up will be for the Hack the Box machine Monteverde. This is listed as a medium Windows machine."
 tags = ["hack the box", "CTF", "ldap", "evil-winrm", "AzureADSync", "easy", "enum4linux", "hydra", "smb", "smbclient", "medium", "windows"]
 title = "Hack the Box - Monteverde"
+url = "/hack-the-box-monteverde"
 
 +++
 

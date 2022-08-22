@@ -9,6 +9,7 @@ slug = "hack-the-box-secnotes"
 summary = "Hack the Box - SecNotes machine. Lets get root!"
 tags = ["CTF", "NetSec"]
 title = "Hack the Box - SecNotes"
+url = "/hack-the-box-secnotes"
 
 +++
 

@@ -9,6 +9,8 @@ slug = "hack-the-box-control"
 summary = "Welcome back! Today we are doing the Hack the Box machine, Control. It's a Linux machine listed as Hard. Let's see what's in store!"
 tags = ["hack the box", "Hard", "wfuzz", "burpsuite", "sqlmap", "sqli", "reverse shell", "netcat", "plink", "reverse tunnel", "evil-winrm", "wuauserv", "windows"]
 title = "Hack the Box - Control"
+url = "/hack-the-box-control"
+ 
 
 +++
 

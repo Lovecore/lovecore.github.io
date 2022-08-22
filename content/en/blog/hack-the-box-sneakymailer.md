@@ -9,6 +9,7 @@ slug = "hack-the-box-sneakymailer"
 summary = "Welcome back everyone! Today we are doing the Hack the Box machine - SneakyMailer. This is listed as a medium difficulty Linux machine. Let's see what's in store."
 tags = ["hack the box", "CTF", "medium", "Linux", "python", "pypi", "reverse shell", "GTFObins", "sudo"]
 title = "Hack the Box - SneakyMailer"
+url = "/hack-the-box-sneakymailer"
 
 +++
 

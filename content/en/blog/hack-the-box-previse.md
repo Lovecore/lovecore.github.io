@@ -8,6 +8,7 @@ thumbnail = "/images/2021/08/previse.png"
 slug = "hack-the-box-previse"
 tags = ["hack the box", "Linux", "easy", "burpsuite", "command injection", "gobuster", "mysql", "john", "path hijacking"]
 title = "Hack the Box - Previse"
+url = "/hack-the-box-previse"
 
 +++
 

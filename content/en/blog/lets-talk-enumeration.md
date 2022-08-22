@@ -9,6 +9,7 @@ slug = "lets-talk-enumeration"
 summary = " This series of articles will  focus on making Enumeration easier for those that might not know how to go about doing it. "
 tags = ["enumeration", "CTF", "Tools", "Blog", "smb", "nmap", "dirb", "smbmap", "smbclient", "wfuzz", "enumeration-resource"]
 title = "Lets talk Enumeration - Part 1"
+url = "/lets-talk-enumeration"
 
 +++
 

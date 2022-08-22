@@ -7,6 +7,7 @@ draft = true
 slug = "hack-the-box-sink"
 tags = ["hack the box", "Linux", "HA Proxy", "CVE-2019-18277", "Request Smuggling", "Insane"]
 title = "Hack the Box - Sink"
+url = "/hack-the-box-sink"
 
 +++
 

@@ -9,6 +9,7 @@ slug = "hack-the-box-zetta"
 summary = "Welcome back! Today we are going to do the box Zetta. Lets dig i"
 tags = ["hack the box", "ftp", "ipv6", "RFC2428", "rsync", "ssh", "reverse shell", "psql", "postgress", "brute force", "RCE"]
 title = "Hack the Box - Zetta"
+url = "/hack-the-box-zetta"
 
 +++
 

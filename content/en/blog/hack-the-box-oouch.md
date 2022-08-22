@@ -9,6 +9,7 @@ slug = "hack-the-box-oouch"
 summary = "Welcome back everyone! Today we are tackling the Hack the Box machine - Oouch. It's listed as a Hard Linux machine."
 tags = ["hack the box", "Hard", "Linux", "CTF", "api", "csrf", "oauth", "wfuzz", "gobuster", "dbus", "uwsgi", "scp"]
 title = "Hack the Box - Oouch"
+url = "/hack-the-box-oouch"
 
 +++
 

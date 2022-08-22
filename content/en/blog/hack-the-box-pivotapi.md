@@ -5,6 +5,7 @@ description = ""
 draft = true
 slug = "hack-the-box-pivotapi"
 title = "Hack the Box - Pivotapi"
+url = "/hack-the-box-pivotapi"
 
 +++
 

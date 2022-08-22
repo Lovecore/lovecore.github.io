@@ -9,6 +9,7 @@ slug = "hack-the-box-haystack"
 summary = "Welcome back! Today we are doing the machine Haystack on Hack the Box. Lets jump in!"
 tags = ["CTF", "NetSec", "Linux", "ELK", "reverse shell", "api", "netcat"]
 title = "Hack The Box - Haystack"
+url = "/hack-the-box-haystack"
 
 +++
 

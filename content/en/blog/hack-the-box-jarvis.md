@@ -9,6 +9,7 @@ slug = "hack-the-box-jarvis"
 summary = "Today we're going to do the machine Jarvis on Hack the Box. This box was a total pain in the ass due to the way my reverse shell was terminating lines. After I figured out that was the problem it was easier. Lets jump in!"
 tags = ["CTF", "enumeration", "Linux", "metasploit", "netcat", "python", "reverse shell", "web services", "SQL Injection"]
 title = "Hack the Box - Jarvis"
+url = "/hack-the-box-jarvis"
 
 +++
 

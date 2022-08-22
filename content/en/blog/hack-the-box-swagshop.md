@@ -9,6 +9,7 @@ slug = "hack-the-box-swagshop"
 summary = "Welcome back! Today we're going to tackle the box SwagShop on Hack the Box. Lets get to it!"
 tags = ["basic", "CTF", "enumeration", "netcat", "python", "reverse shell", "web services"]
 title = "Hack The Box - SwagShop"
+url = "/hack-the-box-swagshop"
 
 +++
 

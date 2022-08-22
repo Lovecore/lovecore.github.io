@@ -9,6 +9,7 @@ slug = "hack-the-box-postman"
 summary = "Today we are doing the Hack the Box machine, Postman. It's a Linux machine listed as easy. Let's jump in!"
 tags = ["hack the box", "webmin", "redis", "ssh2john", "reverse shell", "john"]
 title = "Hack the Box - Postman"
+url = "/hack-the-box-postman"
 
 +++
 

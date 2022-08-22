@@ -9,6 +9,7 @@ slug = "hack-the-box-spectra"
 summary = "Welcome back everyone! Today we are going to walk through the Hack the Box machine, Spectra. This is listed as an Easy 'other' machine. Let's dive in!"
 tags = ["hack the box", "ChromiumOS", "easy", "wordpress", "reverse shell", "suid"]
 title = "Hack the Box - Spectra"
+url = "/hack-the-box-spectra"
 
 +++
 

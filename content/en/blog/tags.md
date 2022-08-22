@@ -5,6 +5,7 @@ description = ""
 draft = false
 slug = "tags"
 title = "Tags"
+url = "/tags"
 
 +++
 

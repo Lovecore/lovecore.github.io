@@ -9,6 +9,7 @@ slug = "hack-the-box-nest"
 summary = "Welcome back everyone. Today we are doing the Hack the Box machine Nest. This is listed as an Easy Windows machine. Let's jump in!"
 tags = ["hack the box", "easy", "Linux", "smbclient", "metasploit", "visual studio", "telnet", "dotpeek", "reverse engineering", "psexec"]
 title = "Hack the Box - Nest"
+url = "/hack-the-box-nest"
 
 +++
 

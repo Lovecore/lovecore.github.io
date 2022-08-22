@@ -7,6 +7,7 @@ draft = true
 slug = "api-security-the-basics"
 tags = ["api", "api-resource"]
 title = "API Security - The basics - OWASP"
+url = "/api-security-the-basics" 
 
 +++
 

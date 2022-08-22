@@ -9,6 +9,7 @@ slug = "hack-the-box-tabby"
 summary = "Welcome back CTF nerds. Today we are doing the machine Tabby from Hack the Box. This is a Linux machine with an easy difficulty. Let's jump in!"
 tags = ["hack the box", "Linux", "easy", "LFI", "burpsuite", "tomcat", "reverse shell", "netcat", "war file", "fcrackzip", "lxd"]
 title = "Hack the Box - Tabby"
+url = "/hack-the-box-tabby"
 
 +++
 

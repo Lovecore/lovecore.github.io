@@ -8,6 +8,8 @@ thumbnail = "/images/2020/10/infocard.png"
 slug = "hack-the-box-blunder"
 tags = ["CTF", "hack the box", "Linux", "easy", "bludit", "blunder", "gobuster", "directory traversal", "metasploit", "sudo", "reverse shell", "su"]
 title = "Hack the Box - Blunder"
+url = "/hack-the-box-blunder"
+ 
 
 +++
 

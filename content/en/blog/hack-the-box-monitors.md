@@ -8,6 +8,7 @@ thumbnail = "/images/2021/09/monitors.png"
 slug = "hack-the-box-monitors"
 tags = ["hack the box", "Linux", "Hard", "ofBiz", "port forwarding", "meterpreter", "LFI", "cacti", "reverse shell", "container", "container escape", "cap_sys_module"]
 title = "Hack the Box - Monitors"
+url = "/hack-the-box-monitors"
 
 +++
 

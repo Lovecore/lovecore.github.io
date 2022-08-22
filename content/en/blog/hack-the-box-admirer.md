@@ -9,6 +9,7 @@ slug = "hack-the-box-admirer"
 summary = "Today we are going to be doing the Hack the Box machine Admirer. This machine is listed as Easy Linux machine. Let's jump in!\n"
 tags = ["hack the box", "easy", "Linux", "gobuster", "adminer", "hydra", "bruteforce", "python", "path hijacking"]
 title = "Hack the Box - Admirer"
+url = "/hack-the-box-admirer" 
 
 +++
 

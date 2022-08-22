@@ -9,6 +9,7 @@ slug = "hack-the-box-the-notebook"
 summary = "Welcome! Today's write-up is for the Hack the Box machine - The Notebook. This machine is listed as a medium difficulty Linux machine. It's pretty straight forward, so let's jump in"
 tags = ["hack the box", "medium", "enum4linux", "JWT", "burpsuite", "docker", "runc", "reverse shell", "CVE-2019-5736"]
 title = "Hack the Box - The Notebook"
+url = "/hack-the-box-the-notebook"
 
 +++
 

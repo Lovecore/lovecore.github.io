@@ -9,6 +9,7 @@ slug = "hack-the-box-registry"
 summary = "Welcome back! Today we are going to be doing the Hack the Box machine - Registry. This machine is listed as a Hard linux box. Let's jump in!"
 tags = ["hack the box", "Linux", "Hard", "docker", "bolt cms", "reverse shell", "john", "port forwarding", "restic"]
 title = "Hack the Box - Registry"
+url = "/hack-the-box-registry"
 
 +++
 

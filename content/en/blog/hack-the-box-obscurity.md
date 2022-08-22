@@ -9,6 +9,7 @@ slug = "hack-the-box-obscurity"
 summary = "Welcome back everyone! Today we'll be doing the machine Obscurity on Hack the Box. It's listed as a medium Linux machine, let's jump in!"
 tags = ["hack the box", "burpsuite", "command injection", "reverse shell", "python", "custom exploitation", "medium", "wfuzz", "john"]
 title = "Hack the Box - Obscurity"
+url = "/hack-the-box-obscurity"
 
 +++
 

@@ -5,10 +5,11 @@ date = 2019-01-14T16:08:50Z
 description = ""
 draft = false
 thumbnail = "/images/2019/01/access_card.png"
-slug = "hack-the-box"
+slug = "hack-the-box-access"
 summary = "Technically the first HtB I've done, however, it wasn't listed as private until now. Lets do this! Hack the Box - Access!"
 tags = ["CTF", "NetSec"]
 title = "Hack the Box - Access"
+url = "/hack-the-box-access"
 
 +++
 

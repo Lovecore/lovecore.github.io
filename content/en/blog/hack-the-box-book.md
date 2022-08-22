@@ -9,6 +9,8 @@ slug = "hack-the-box-book"
 summary = "Welcome back! Today we will be doing a walkthrough of the Hack the Box machine, Book. This is a Linux machine with a medium difficulty. Let's jump in!"
 tags = ["hack the box", "XSS", "sql truncation", "log rotate", "pdf", "burpsuite", "LFI", "reverse shell"]
 title = "Hack the Box - Book"
+url = "/hack-the-box-book"
+ 
 
 +++
 

@@ -5,6 +5,7 @@ description = ""
 draft = true
 slug = "hack-the-box-hades-lab"
 title = "Hack the Box - Hades Lab"
+url = "/hack-the-box-hades-lab"
 
 +++
 

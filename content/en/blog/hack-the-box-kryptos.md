@@ -9,6 +9,7 @@ slug = "hack-the-box-kryptos"
 summary = "Probably the hardest box to ever show up on HTB? Lets find out and walkthough Kryptos!"
 tags = ["CTF", "python", "cryptography", "custom exploitation", "PHP", "mysql", "mariadb", "php filters", "eval", "RCE", "dirb", "hack the box", "Linux", "hashcat", "wireshark"]
 title = "Hack The Box - Kryptos"
+url = "/hack-the-box-kryptos"
 
 +++
 

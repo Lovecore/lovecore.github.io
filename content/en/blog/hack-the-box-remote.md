@@ -9,6 +9,7 @@ slug = "hack-the-box-remote"
 summary = "Welcome back everyone! Today we will be doing the Hack the Box machine, Remote. This is a Windows machine listed as an Easy difficulty. Let's jump in"
 tags = ["hack the box", "easy", "windows", "authenticated rce", "umbraco", "john", "showmount", "rpcbind", "sdf", "netcat", "PowerUp", "usosvc"]
 title = "Hack the Box - Remote"
+url = "/hack-the-box-remote"
 
 +++
 

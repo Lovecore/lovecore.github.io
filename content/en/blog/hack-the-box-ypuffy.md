@@ -9,6 +9,7 @@ slug = "hack-the-box-ypuffy"
 summary = "We are back with another HtB walk through. I just finished this box maybe 12 hours before it went into retired, so that was awesome! This box is a pretty cool box with a fairly common entry and a common escalation path"
 tags = ["CTF", "NetSec"]
 title = "Hack the Box - Ypuffy"
+url = "/hack-the-box-ypuffy"
 
 +++
 

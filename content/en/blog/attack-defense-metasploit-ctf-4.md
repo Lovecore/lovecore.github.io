@@ -5,6 +5,7 @@ description = ""
 draft = true
 slug = "attack-defense-metasploit-ctf-4"
 title = "Attack | Defense - Metasploit CTF 6"
+url = "/attack-defense-metasploit-ctf-4" 
 
 +++
 

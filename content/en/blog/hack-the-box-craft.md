@@ -9,6 +9,8 @@ slug = "hack-the-box-craft"
 summary = "Welcome back friends! Today we'll be doing the brand new box, Craft. This will be the first time I do a box as it's released and hope to continue this trend! So lets jump in!"
 tags = ["api", "CTF", "enumeration", "netcat", "python", "web services", "custom exploit", "Gogs"]
 title = "Hack the Box - Craft"
+url = "/hack-the-box-craft"
+ 
 
 +++
 

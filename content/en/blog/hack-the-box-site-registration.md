@@ -9,6 +9,7 @@ slug = "hack-the-box-site-registration"
 summary = "So it's been a while since I've posted something here. That's mostly due to the machine's that I've completed are not yet able to have walk through's released. So in the mean time, why not do a quick write up on how to actually get obtain a membership to Hack The Box"
 tags = ["CTF", "NetSec", "invite", "Javascript", "api", "hack the box"]
 title = "Hack The Box - Site Registration"
+url = "/hack-the-box-site-registration"
 
 +++
 

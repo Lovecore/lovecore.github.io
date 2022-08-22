@@ -9,6 +9,8 @@ slug = "hack-the-box-curling"
 summary = "Hack the Box Machine - Curling"
 tags = ["CTF", "NetSec"]
 title = "Hack the Box - Curling"
+url = "/hack-the-box-curling"
+ 
 
 +++
 

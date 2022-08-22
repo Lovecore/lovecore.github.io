@@ -9,6 +9,8 @@ slug = "hack-the-box-bitlab"
 summary = "Welcome back! Today we are doing the machine Bitlab on Hack the Box. "
 tags = ["hack the box", "decrypt", "PHP", "gitlab", "GIT", "reverse shell", "psql", "ssh", "ollydbg", "reverse engineering"]
 title = "Hack the Box - Bitlab"
+url = "/hack-the-box-bitlab"
+ 
 
 +++
 

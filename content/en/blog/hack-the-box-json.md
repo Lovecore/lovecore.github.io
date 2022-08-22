@@ -9,6 +9,7 @@ slug = "hack-the-box-json"
 summary = "Welcome back! Today we are going to walk through the Hack the box machine JSON. This is listed a medium box, so let's jump in!"
 tags = ["hack the box", "api", "JSON", "Javascript", "curl", "burpsuite", "tcpdump", "msfpc", "meterpeter", "Lovely Potato"]
 title = "Hack the Box - JSON"
+url = "/hack-the-box-json"
 
 +++
 

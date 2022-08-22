@@ -8,6 +8,7 @@ thumbnail = "/images/2020/11/info.png"
 slug = "hack-the-box-openkeys"
 tags = ["hack the box", "openBSD", "medium", "cve-2019-19520", "cve-2019-19522"]
 title = "Hack the Box - OpenKeyS"
+url = "/hack-the-box-openkeys"
 
 +++
 

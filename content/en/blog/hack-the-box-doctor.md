@@ -8,6 +8,7 @@ thumbnail = "/images/2020/11/doctor.png"
 slug = "hack-the-box-doctor"
 tags = ["hack the box", "easy", "Linux", "splunk", "reverse shell", "Server Side Template Injection"]
 title = "Hack the Box - Doctor"
+url = "/hack-the-box-doctor"
 
 +++
 

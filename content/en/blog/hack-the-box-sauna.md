@@ -9,6 +9,7 @@ slug = "hack-the-box-sauna"
 summary = "Today's post is for the Hack the Box machine - Sauna. It's a Windows machine with a difficulty listed as easy. Let's jump in!"
 tags = ["hack the box", "windows", "easy", "evil-winrm", "impacket"]
 title = "Hack the Box - Sauna"
+url = "/hack-the-box-sauna"
 
 +++
 

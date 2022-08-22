@@ -9,6 +9,8 @@ slug = "hack-the-box-cascade"
 summary = "Welcome back! Today we are doing the Hack the Box machine - Cascade! This machine is listed as an easy Windows system. Let's jump in!"
 tags = ["hack the box", "medium", "cascade", "evil-WinRAR", "windows", "ldap", "reverse engineering", "aes", "dotpeek", "ida", "vnc decrypt"]
 title = "Hack the Box - Cascade"
+url = "/hack-the-box-cascade"
+ 
 
 +++
 

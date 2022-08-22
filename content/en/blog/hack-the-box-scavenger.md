@@ -9,6 +9,7 @@ slug = "hack-the-box-scavenger"
 summary = "Welcome back! This will be my write-up for the machine Scavenger. Lets dig in!"
 tags = ["enumeration", "hack the box", "curl", "gobuster", "wfuzz", "command injection", "SQL Injection", "mariadb", "whois", "exim", "CVE-2019-10149"]
 title = "Hack the Box - Scavenger"
+url = "/hack-the-box-scavenger"
 
 +++
 

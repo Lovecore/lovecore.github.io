@@ -8,6 +8,7 @@ thumbnail = "/images/2019/12/resolute.png"
 slug = "hack-the-box-resolute"
 tags = ["hack the box", "windows", "WinRM", "dll injection", "dns admin", "hydra", "evil-winrm", "smb"]
 title = "Hack the Box - Resolute"
+url = "/hack-the-box-resolute"
 
 +++
 

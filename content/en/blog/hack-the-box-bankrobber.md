@@ -9,6 +9,8 @@ slug = "hack-the-box-bankrobber"
 summary = "Welcome! Here is my walk through for the Hack the Box machine Bankrobber. The machine is listed as Insane, so let's see how insane it really is!"
 tags = ["SQL Injection", "burpsuite", "hack the box", "base64", "XSS", "meterpeter", "port forwarding", "custom exploit", "command injection", "payload obfuscation"]
 title = "Hack the Box - Bankrobber"
+url = "/hack-the-box-bankrobber"
+ 
 
 +++
 

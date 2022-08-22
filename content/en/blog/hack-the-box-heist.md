@@ -9,6 +9,7 @@ slug = "hack-the-box-heist"
 summary = "Welcome back everyone! Today we are going to be going through the Hack the Box machine, Heist. Lets jump in!"
 tags = ["CTF", "enumeration", "windows", "Powershell", "WinRM", "Ruby", "CVE", "hashcat", "impacket", "metasploit", "procdump", "hack the box", "cisco hashes"]
 title = "Hack the Box - Heist"
+url = "/hack-the-box-heist"
 
 +++
 

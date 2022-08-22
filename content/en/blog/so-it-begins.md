@@ -5,6 +5,7 @@ description = ""
 draft = false
 slug = "so-it-begins"
 title = "So it begins..."
+url = "/so-it-begins"
 
 +++
 

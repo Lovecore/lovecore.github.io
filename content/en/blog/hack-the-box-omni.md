@@ -9,6 +9,7 @@ slug = "hack-the-box-omni"
 summary = "Welcome back everyone. Today we are doing the Hack the Box machine - Omni. This machine is different than most other machines. This is an IoT device! I'm excited to jump into this puzzle, let's go!"
 tags = ["hack the box", "easy", "windows 10", "iot", "reverse shell", "Powershell", "sireprat"]
 title = "Hack the Box - Omni"
+url = "/hack-the-box-omni"
 
 +++
 

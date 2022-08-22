@@ -5,10 +5,11 @@ date = 2021-06-05T15:00:00Z
 description = ""
 draft = false
 thumbnail = "/images/2021/05/scriptkiddie.png"
-slug = "script-kiddie"
+slug = "hack-the-box-script-kiddie"
 summary = "Welcome back everyone! Today we are going to do the Hack the Box machine Script Kiddie. This is a Linux machine rated as easy. Let's jump in!"
 tags = ["hack the box", "Linux", "netcat", "ssh-keygen", "metasploit"]
 title = "Hack the Box - Script Kiddie"
+url = "/hack-the-box-script-kiddie"
 
 +++
 

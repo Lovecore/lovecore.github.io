@@ -9,6 +9,8 @@ slug = "hack-the-box-bastion"
 summary = "We are back with another Hack the Box walk through, this time we are doing the box Bastion. Lets dive in!"
 tags = ["CTF", "windows", "enumeration", "smb"]
 title = "Hack The Box - Bastion"
+url = "/hack-the-box-bastion"
+ 
 
 +++
 

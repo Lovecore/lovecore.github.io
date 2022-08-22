@@ -8,6 +8,8 @@ thumbnail = "/images/2021/08/bounty.png"
 slug = "hack-the-box-bountyhunter"
 tags = ["hack the box", "Linux", "easy", "XXE", "burpsuite", "php filters", "python", "GTFObins"]
 title = "Hack the Box - Bountyhunter"
+url = "/hack-the-box-bountyhunter"
+ 
 
 +++
 

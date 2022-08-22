@@ -7,6 +7,7 @@ draft = true
 slug = "lets-talk-enumeration-part-2"
 tags = ["dns enumeration", "dig", "Kerberos", "kerberos enumeration", "enumeration-resource"]
 title = "Let's Talk Enumeration - Part 2"
+url = "/lets-talk-enumeration-part-2"
 
 +++
 

@@ -9,6 +9,7 @@ slug = "hack-the-box-luke"
 summary = "Back with a quick write-up on the box Luke from HtB"
 tags = ["ssh", "dirb", "enumeration", "curl", "JSON", "ajani", "terminal", "plugins"]
 title = "Hack The Box - Luke"
+url = "/hack-the-box-luke"
 
 +++
 

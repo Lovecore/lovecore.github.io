@@ -9,6 +9,7 @@ slug = "hack-the-box-tenet"
 summary = "Welcome back! Today we will be doing the Hack the Box machine - Tenet. This is listed as a medium Linux box, let's see what's in store!"
 tags = ["hack the box", "Linux", "medium", "serialization", "PHP", "PHP Deserialization", "ssh"]
 title = "Hack the Box - Tenet"
+url = "/hack-the-box-tenet"
 
 +++
 

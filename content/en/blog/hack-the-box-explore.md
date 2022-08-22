@@ -8,6 +8,7 @@ thumbnail = "/images/2021/08/explore.png"
 slug = "hack-the-box-explore"
 tags = ["hack the box", "Android", "ADB", "ES File Explorer", "port forwarding", "burpsuite"]
 title = "Hack the Box - Explore"
+url = "/hack-the-box-explore"
 
 +++
 

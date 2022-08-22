@@ -9,6 +9,7 @@ slug = "hack-the-box-smasher2"
 summary = "Welcome back to anther Hack the Box write up. In this post we're going to go through the box Smasher2."
 tags = ["enumeration", "nmap", "dig", "gobuster", "dns", "c", "custom exploit", "reverse shell", "log enumeration", "hack the box", "burpsuite", "JSON"]
 title = "Hack the Box - Smasher2"
+url = "/hack-the-box-smasher2"
 
 +++
 

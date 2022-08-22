@@ -9,6 +9,7 @@ slug = "hack-the-box-writeup"
 summary = "Welcome back! Today we're doing the box Writeup. Let's jump in!"
 tags = ["basic", "CTF", "enumeration", "NetSec", "cron", "hack the box"]
 title = "Hack the Box - Writeup"
+url = "/hack-the-box-writeup"
 
 +++
 

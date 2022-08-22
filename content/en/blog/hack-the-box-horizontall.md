@@ -10,6 +10,7 @@ slug = "hack-the-box-horizontall"
 tags = ["hack the box", "easy", "Linux", "Laravel", "strapi", "reverse shell"]
 title = "Hack the Box - Horizontall"
 url = "/hack-the-box-horizontall"
+
 +++
 
 

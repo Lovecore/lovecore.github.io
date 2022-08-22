@@ -9,6 +9,7 @@ slug = "hack-the-box-forward-slash"
 summary = "Hey everyone, we are back with another Hack the Box machine. This write-up is for the machine Forward Slash. It's listed as a Hard Linux machine, let's jump in!"
 tags = ["hack the box", "Hard", "Linux", "burpsuite", "python", "cryptography", "ffuf", "gobuster", "php filters", "LFI"]
 title = "Hack the Box - Forward Slash"
+url = "/hack-the-box-forward-slash"
 
 +++
 

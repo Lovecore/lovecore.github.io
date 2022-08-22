@@ -9,6 +9,7 @@ slug = "hack-the-box-knife"
 summary = "Welcome back! Today we are doing the Hack the Box machine - Knife. This is listed as an easy Linux machine. Let's start!\n"
 tags = ["hack the box", "Linux", "easy", "php backdoor", "php 8.1.0-dev", "knife"]
 title = "Hack the Box - Knife"
+url = "/hack-the-box-knife"
 
 +++
 

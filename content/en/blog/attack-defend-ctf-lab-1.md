@@ -9,6 +9,7 @@ slug = "attack-defend-ctf-lab-1"
 summary = "The goal here is to do the CTF and break down the commands, process and thoughts behind each to hopefully help others learn."
 tags = ["attack defend", "CTF", "metasploit", "basic", "ssh", "java rmi"]
 title = "Attack | Defense - Metasploit CTF Lab 1"
+url = "/attack-defend-ctf-lab-1" 
 
 +++
 

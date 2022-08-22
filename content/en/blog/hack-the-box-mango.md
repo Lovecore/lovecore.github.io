@@ -8,6 +8,7 @@ thumbnail = "/images/2019/12/mango.png"
 slug = "hack-the-box-mango"
 tags = ["hack the box", "gobuster", "nosql", "sqli", "SQL Injection", "burpsuite", "ssh", "linpeas", "GTFObins"]
 title = "Hack the Box - Mango"
+url = "/hack-the-box-mango"
 
 +++
 

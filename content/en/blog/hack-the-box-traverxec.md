@@ -9,6 +9,7 @@ slug = "hack-the-box-traverxec"
 summary = "Here is my walk through of the machine Traverxec on Hack the Box. The box is listed as easy so let's jump in"
 tags = ["hack the box", "CVE", "ssh", "ssh2john", "metasploit", "reverse shell", "RCE", "GTFObins", "john", "cracking"]
 title = "Hack the Box - Traverxec"
+url = "/hack-the-box-traverxec"
 
 +++
 

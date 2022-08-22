@@ -9,6 +9,7 @@ slug = "hack-the-box-tenticle"
 summary = "Welcome back! Today's write-up is for the Hack the Box machine - Tenticle. This was listed as hard Linux box. I would argue it might be on the upper scale of 'hard' and pretty lifelike. Let's jump in!"
 tags = ["Hard", "Linux", "hack the box", "Squid Proxy", "Squid", "Kerberos", ".k5login", "ssh", "ksu", "kadmin", "proxychains", "CVE-2020-7247", "OpenSMTPD"]
 title = "Hack the Box - Tenticle"
+url = "/hack-the-box-tenticle"
 
 +++
 

@@ -8,6 +8,7 @@ thumbnail = "/images/2021/07/school.png"
 slug = "hack-the-box-schooled"
 tags = ["hack the box", "freeBSD", "CVE-2020-14321", "moodle", "reverse shell"]
 title = "Hack the Box - Schooled"
+url = "/hack-the-box-schooled"
 
 +++
 

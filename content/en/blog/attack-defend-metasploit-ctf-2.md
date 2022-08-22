@@ -9,6 +9,7 @@ slug = "attack-defend-metasploit-ctf-2"
 summary = "In this entry we will tackle the second Metasploit CTF on Pentester Academy. In this entry we will use three Metasploit modules. A weaponized payload, a credential checker and a sql query module."
 tags = ["attack defend", "CTF", "basic", "metasploit", "mysql", "http exploit"]
 title = "Attack | Defense - Metasploit CTF 2"
+url = "/attack-defend-metasploit-ctf-2" 
 
 +++
 

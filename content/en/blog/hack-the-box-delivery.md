@@ -8,6 +8,7 @@ thumbnail = "/images/2021/05/delivery.png"
 slug = "hack-the-box-delivery"
 tags = ["hack the box", "Linux", "osTicket", "ssh", "mattermost", "mysql", "hashcat", "john"]
 title = "Hack the Box - Delivery"
+url = "/hack-the-box-delivery"
 
 +++
 

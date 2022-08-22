@@ -9,6 +9,7 @@ slug = "hack-the-box-friendzone"
 summary = "Now I had already started on this box a while back but had to stop due to time constraints, so now it's time to pickup where we left off and finish it up!"
 tags = ["CTF", "NetSec", "metasploit", "python", "netcat", "smb", "web services", "reverse shell"]
 title = "Hack The Box - FriendZone"
+url = "/hack-the-box-friendzone"
 
 +++
 

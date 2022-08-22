@@ -9,6 +9,7 @@ slug = "hack-the-box-love"
 summary = "Welcome back! Today we are going to be doing the Hack the Box machine - Love. This is listed as an Easy Windows machine. Let's jump in.\n"
 tags = ["hack the box", "easy", "windows", "reverse shell", "AlwaysInstallElevated", "msfvenom"]
 title = "Hack the Box - Love"
+url = "/hack-the-box-love"
 
 +++
 

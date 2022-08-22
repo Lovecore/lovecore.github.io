@@ -7,6 +7,7 @@ draft = false
 slug = "who-am-i"
 tags = ["me"]
 title = "Who Am I?"
+url = "/who-am-i"
 
 +++
 

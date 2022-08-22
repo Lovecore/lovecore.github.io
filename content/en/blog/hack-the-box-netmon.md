@@ -9,6 +9,7 @@ slug = "hack-the-box-netmon"
 summary = "I was pretty fortunate that this box is VERY easy to crack, which was great because I have been pretty time limited, especially on a holiday weekend. So, Lets dive into the box called 'Netmon'!"
 tags = ["CTF", "NetSec"]
 title = "Hack The Box - Netmon"
+url = "/hack-the-box-netmon"
 
 +++
 

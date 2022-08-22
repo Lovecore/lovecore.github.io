@@ -9,6 +9,7 @@ slug = "hack-the-box-re"
 summary = "Welcome back! Today we will be doing the machine 'Re' over on Hack the Box. Let's jump in!"
 tags = ["hack the box", "ods", "odt", "macro", "reverse shell", "meterpeter", "smbclient", "msfpc", "evil-WinRAR", "certutil", "usosvc", "zip slip"]
 title = "Hack the Box - Re"
+url = "/hack-the-box-re"
 
 +++
 

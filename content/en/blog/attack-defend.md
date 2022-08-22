@@ -9,6 +9,7 @@ slug = "attack-defend"
 summary = "As people are starting to get into the field of pentesting, security auditing or whatever it may be, often everyone wants to be 'uber 1337' and jump right into being a 'hacker'. Well in order to do that, you need to not only know your tools but also know how they actually function."
 tags = ["CTF", "NetSec", "metasploit", "basic"]
 title = "Attack Defense - Meterpreter Basics"
+url = "/attack-defend" 
 
 +++
 

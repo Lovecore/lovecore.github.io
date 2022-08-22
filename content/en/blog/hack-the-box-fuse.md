@@ -8,6 +8,7 @@ thumbnail = "/images/2020/06/info-1.png"
 slug = "hack-the-box-fuse"
 tags = ["hack the box", "windows", "medium", "rpcclient", "evil-winrm", "hydra", "cewl", "c++", "visual studio", "metasploit", "reverse shell"]
 title = "Hack the Box - Fuse"
+url = "/hack-the-box-fuse"
 
 +++
 

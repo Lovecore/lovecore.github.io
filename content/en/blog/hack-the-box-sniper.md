@@ -9,6 +9,7 @@ slug = "hack-the-box-sniper"
 summary = "Welcome everyone. Today we will be doing the machine Sniper on Hack the Box. The machine is a Windows machine and listed as medium in difficulty. Let's jump in!"
 tags = ["hack the box", "LFI", "RFI", "PHP", "reverse shell", "Powershell", "rsync", "netcat", "windows", "chm"]
 title = "Hack the Box - Sniper"
+url = "/hack-the-box-sniper"
 
 +++
 

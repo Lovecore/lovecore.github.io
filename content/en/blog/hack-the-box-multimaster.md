@@ -9,6 +9,7 @@ slug = "hack-the-box-multimaster"
 summary = "Hey everyone, today we are tackling the Hack the Box machine - Multimaster. This is a Windows box with an Insane difficulty rating! Let's dive in!"
 tags = ["hack the box", "Insane", "windows", "python", "sqli", "WAF", "unicode", "burpsuite", "hydra", "api", "sqlmap", "hashcat", "evil-winrm", "Windows Services"]
 title = "Hack the Box - Multimaster"
+url = "/hack-the-box-multimaster"
 
 +++
 

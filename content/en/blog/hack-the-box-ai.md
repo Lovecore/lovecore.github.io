@@ -4,10 +4,11 @@ categories = ["hack the box", "text to speech", "gobuster", "SQL Injection", "ms
 date = 2020-01-25T15:31:00Z
 description = ""
 draft = false
-thumbnail = "/__GHOST_URL__/content/images/2019/12/ai.png"
+thumbnail = "/images/2019/12/ai.png"
 slug = "hack-the-box-ai"
 tags = ["hack the box", "text to speech", "gobuster", "SQL Injection", "msfpc", "jdwp"]
 title = "Hack the Box - Ai"
+url = "/hack-the-box-ai" 
 
 +++
 

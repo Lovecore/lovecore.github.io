@@ -9,6 +9,7 @@ slug = "hack-the-box-ophiuchi"
 summary = "Welcome back everyone! Today's write-up is for the Hack the Box machine - Ophiuchi. This is listed as a medium Linux machine. Let's get to it! "
 tags = ["hack the box", "medium", "golang", "wasm", "YAML", "PHP Deserialization"]
 title = "Hack the Box - Ophiuchi"
+url = "/hack-the-box-ophiuchi"
 
 +++
 

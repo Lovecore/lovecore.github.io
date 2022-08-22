@@ -9,6 +9,7 @@ slug = "hack-the-box-unattended"
 summary = "Today we'll be stepping through the box Unattended. This was an interesting machine, most likely due to my poor VPN stability. Anyway, lets get to it!"
 tags = ["CTF", "mysql", "SQL Injection", "LFI", "PHP", "Linux", "metasploit", "reverse shell", "socat", "grub", "LUKS"]
 title = "Hack the Box - Unattended"
+url = "/hack-the-box-unattended"
 
 +++
 

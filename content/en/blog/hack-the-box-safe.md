@@ -9,6 +9,7 @@ slug = "hack-the-box-safe"
 summary = "Welcome back! Today we are going to be doing the box Safe on Hack the Box. The box is listed as an easy box. Lets jump in!"
 tags = ["hack the box", "python", "Buffer Overflow", "keypass", "john", "scp", "kpcli", "ropstar", "ssh", "ssh-keygen"]
 title = "Hack the Box - Safe"
+url = "/hack-the-box-safe"
 
 +++
 

@@ -9,6 +9,7 @@ slug = "hack-the-box-wall"
 summary = "Welcome to my write-up for the Hack the Box machine, Wall. This box is listed as an easy box, let's jump in!"
 tags = ["hack the box", "python", "burpsuite", "gobuster", "RCE", "reverse shell", "screen", "LPE"]
 title = "Hack the Box - Wall"
+url = "/hack-the-box-wall"
 
 +++
 

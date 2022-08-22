@@ -8,6 +8,8 @@ thumbnail = "/images/2020/06/info-3.png"
 slug = "hack-the-box-blackfield"
 tags = ["hack the box", "Hard", "windows", "blackfield", "smbclient", "AESRepRoast", "GetNPUsers.py", "impacket", "john", "mimikatz", "command vm", "evil-winrm", "SeBackupOperator", "secretsdump", "ntds.dit", "kerberoast"]
 title = "Hack the Box - Blackfield"
+url = "/hack-the-box-blackfield"
+ 
 
 +++
 

@@ -9,6 +9,7 @@ slug = "hack-the-box-lacasadepapel"
 summary = "Welcome back to another HTB write up. Today we'll be doing the box LaCasaDePapel or the House of Paper. Lets jump in!"
 tags = ["CTF", "enumeration", "reverse shell", "web services"]
 title = "Hack The Box - LaCasaDePapel"
+url = "/hack-the-box-lacasadepapel"
 
 +++
 

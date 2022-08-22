@@ -9,6 +9,7 @@ slug = "hack-the-box-forest"
 summary = "Welcome back everyone. Today we will be doing the Hack the Box machine Forest. The box is listed as an easy Windows box. Let's jump in!"
 tags = ["hack the box", "RPC", "evil-winrm", "impacket", "ntlm relay", "bloodhound", "pass the hash", "windows", "Powershell"]
 title = "Hack the Box - Forest"
+url = "/hack-the-box-forest"
 
 +++
 

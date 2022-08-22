@@ -9,6 +9,7 @@ slug = "hack-the-box-player"
 summary = "Welcome! Today we are doing the machine Player on Hack the Box. Let's jump in!"
 tags = ["hack the box", "wfuzz", "nmap scripts", "PHP", "enumeration", "magic method", "netcat", "reverse shell", "cron", "pspy64", "LinEnum", "Linux", "bash", "www-data", "gobuster"]
 title = "Hack the Box - Player"
+url = "/hack-the-box-player"
 
 +++
 

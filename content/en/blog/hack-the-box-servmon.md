@@ -9,6 +9,7 @@ slug = "hack-the-box-servmon"
 summary = "This is a write-up for the box Servmon. The write-up is 95% complete due to public box's failing to complete the last step >.<"
 tags = ["hack the box", "easy", "windows", "NVMS", "LFI", "port forwarding"]
 title = "Hack the Box - ServMon"
+url = "/hack-the-box-servmon"
 
 +++
 

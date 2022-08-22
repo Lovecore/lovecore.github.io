@@ -9,6 +9,7 @@ slug = "hack-the-box-openadmin"
 summary = "Welcome back! Today we are doing the Hack the Box machine - OpenAdmin. The machine is listed as an easy Linux machine. Let's jump in!"
 tags = ["hack the box", "CTF", "easy", "CVE", "reverse shell", "PHP", "curl", "ssh", "john", "ssh2john", "GTFObins", "nano"]
 title = "Hack the Box - OpenAdmin"
+url = "/hack-the-box-openadmin"
 
 +++
 
