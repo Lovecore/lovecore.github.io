@@ -23,7 +23,7 @@ noTimes = true
 
     [[languages.en.menu.main]]
         name = "About"
-        url = "blog/who-am-i"
+        url = "/who-am-i"
         weight = 2
 
     [[languages.en.menu.main]]
