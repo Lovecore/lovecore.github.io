@@ -9,7 +9,7 @@ slug = "hack-the-box-buff"
 summary = "Welcome back everyone! Today we are going to be doing the Hack the Box machine - Buff. This is listed as an easy Windows box. Let's jump in!"
 tags = ["hack the box", "easy", "windows", "CVE", "webshell", "port forwarding", "reverse shell", "plink"]
 title = "Hack the Box - Buff"
-slug = "/hack-the-box-buff"
+url = "/hack-the-box-buff"
  
 
 +++
