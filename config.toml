@@ -14,8 +14,8 @@ noTimes = true
     [languages.en.params]
       introTitle = "Hey! I'm Nick"
       introSubtitle = "I'm a Father, hacker and gamer. Welcome to my blog."
-      introPhoto = "/images/dalle-gen-logo.png"
-      logo = "/blist-logo.png"
+      introPhoto = "/images/rootflag.png"
+      logo = "/images/rootflag_banner.png"
     [[languages.en.menu.main]]
         name = "Blog"
         url = "blog"
