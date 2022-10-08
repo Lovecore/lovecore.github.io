@@ -298,7 +298,7 @@ Now, time to escalate. We copy over `linpeas` and let that run to see what it mi
 
 ![](/images/opensource/opensource12.png)
 
-We can abuse something called ![`pre-commit`](https://verdantfox.com/blog/view/how-to-use-git-pre-commit-hooks-the-hard-way-and-the-easy-way). Essentially these are scripts that can be run when a specific event happens in a git repository.
+We can abuse something called [pre-commit](https://verdantfox.com/blog/view/how-to-use-git-pre-commit-hooks-the-hard-way-and-the-easy-way). Essentially these are scripts that can be run when a specific event happens in a git repository.
 
 In the `dev01` users home directory, there is a `.git` directory. Inside this directory is the `hooks` directory. Here is where the `pre-commit` scripts are stored. We'll simply make a script that reach out to our attacking machine and we should have elevated access!
 
