@@ -1,7 +1,7 @@
 +++
 author = "Nick"
 categories = ["hack the box", "Easy"]
-date = 2022-10-08T11:00:00.000Z
+date = 2022-10-07T11:00:00.000Z
 description = ""
 draft = false
 image = "/images/opensource/logo.png"
