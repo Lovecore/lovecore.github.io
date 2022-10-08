@@ -4,10 +4,10 @@ categories = ["hack the box", "Easy"]
 date = 2022-10-07T11:00:00.000Z
 description = ""
 draft = false
-image = "/images/opensource/logo.png"
+thumbnail = "/images/opensource/logo.png"
 slug = "hack-the-box-opensource"
 summary = ""
-tags = ["hack the box", "Easy", "Linux", "Containers", "python", "git"]
+tags = ["hack the box", "Easy", "Linux", "Containers", "python", "git", "gitea", "pre-commit", "lfi", "code review"]
 title = "Hack the Box - OpenSource"
 url = "/hack-the-box-opensource"
 +++
