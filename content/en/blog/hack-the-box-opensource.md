@@ -9,6 +9,7 @@ slug = "hack-the-box-opensource"
 summary = ""
 tags = ["hack the box", "Easy", "Linux", "Containers", "python", "git"]
 title = "Hack the Box - OpenSource"
+url = "/hack-the-box-opensource"
 +++
 
 Welcome back everyone. It's been a while! This week we're going to be doing the machine OpenSource. This is listed as an easy Linux machine - let's jump in!
