@@ -1,14 +1,15 @@
 +++
 author = "Nick"
 categories = ["hack the box", "Easy"]
-date = 2022-10-08T11:00:00.000Z
+date = 2022-10-07T11:00:00.000Z
 description = ""
-draft = true
+draft = false
 image = "/images/opensource/logo.png"
 slug = "hack-the-box-opensource"
 summary = ""
 tags = ["hack the box", "Easy", "Linux", "Containers", "python", "git"]
 title = "Hack the Box - OpenSource"
+url = "/hack-the-box-opensource"
 +++
 
 Welcome back everyone. It's been a while! This week we're going to be doing the machine OpenSource. This is listed as an easy Linux machine - let's jump in!
