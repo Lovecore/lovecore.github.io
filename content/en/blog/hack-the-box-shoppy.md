@@ -2,7 +2,7 @@
 author = "Nick"
 categories = ["hack the box", "Easy"]
 date = 2023-1-14T11:00:00.000Z
-publishDate = 2023-1-14T11:00:00.000Z
+publishDate = 2023-01-14T11:00:00.000Z
 description = ""
 draft = false
 thumbnail = "/images/shoppy/logo.png"
