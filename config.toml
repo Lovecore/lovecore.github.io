@@ -13,7 +13,7 @@ noTimes = true
     languageName = "English"
     [languages.en.params]
       introTitle = "Hey! I'm Nick"
-      introSubtitle = "I'm a Father, hacker and gamer. Welcome to my blog."
+      introSubtitle = "Father, hacker and gamer. Welcome to my blog!"
       introPhoto = "/images/rootflag.png"
       logo = "/images/rootflag_banner.png"
     [[languages.en.menu.main]]
