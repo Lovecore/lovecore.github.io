@@ -1,9 +1,9 @@
 +++
 author = "Nick"
 categories = ["hack the box", "Medium"]
-date = 2023-04-29T11:00:00.000Z
-publishDate = 2023-04-29T11:00:00.000Z
-description = " "
+date = 2023-08-03T11:00:00.000Z
+publishDate = 2023-08-03T11:00:00.000Z
+description = "Welcome back! Today we’re going to do the same thing we do every day, Hack the Box! Today’s machine is Agile. This machine is listed as a medium Linux machine. Let’s go!"
 summary = ""
 draft = false
 slug = "hack-the-box-agile"
