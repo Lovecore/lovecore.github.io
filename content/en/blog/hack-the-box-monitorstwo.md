@@ -1,7 +1,7 @@
 +++
 author = "Nick"
 categories = ["hack the box", "Easy", "Linux"]
-date = 2023-9-02T11:00:00.000Z
+date = 2023-09-02T11:00:00.000Z
 publishDate = 2023-09-02T11:00:00.000Z
 description = " "
 summary = ""
