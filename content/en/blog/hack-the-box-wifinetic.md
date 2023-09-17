@@ -9,7 +9,7 @@ draft = false
 slug = "hack-the-box-wifinetic"
 tags = ["hack the box", "Easy", "Linux", "networking", "wifi", "reaver", "WPA", "Password Reuse", "hostapd"]
 title = "Hack the Box - wifinetic"
-url = "/hack-the-box-wifinetic
+url = "/hack-the-box-wifinetic"
 thumbnail = "/images/wifinetic/logo.png"
 +++
 
