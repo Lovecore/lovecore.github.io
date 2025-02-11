@@ -1,4 +1,17 @@
-+++ author = "Nick" categories = ["AI", "Reference", "LLM"] date = 2025-02-05T11:00:00.000Z publishDate = 2025-02-11T11:00:00.000Z description = "This is a breakdown of AI oriented workflows." summary = "This is a breakdown of AI oriented workflows.." draft = false slug = "ai-workflows" tags = ["ai", "reference guide", "Design Patterns", "Prompt Chaining", "Router", "Parallelization", "orchestration-worker", "evaluation-optimizer"] title = "AI Workflows" url = "/ai-workflows" thumbnail = "/images/ai/ai-header-1.png" +++
++++
+author = "Nick"
+categories = ["AI", "Reference", "LLM"]
+date = 2025-02-11T11:00:00.000Z
+publishDate = 2025-02-11T11:00:00.000Z
+description = "This is a breakdown of AI oriented workflows."
+summary = "This is a breakdown of AI oriented workflows.."
+draft = false
+slug = "ai-workflows"
+tags = ["ai", "reference guide", "Design Patterns", "Prompt Chaining", "Router", "Parallelization", "orchestration-worker", "evaluation-optimizer"]
+title = "AI Workflows"
+url = "/ai-workflows"
+thumbnail = "/images/ai/ai-header-1.png"
++++
 
 Welcome back to my small corner of the world. There has been a lot of hype around AI Agents and Agentic Models. In the security space, this is an even more hot topic, because these 'systems' while not exactly new, do require a new methodology of securing them. I have a blog post brewing that is oriented directly to securing AI systems and agents, so stay tuned for that! In the meanwhile, let's talk about the purpose of this post - AI systems, both Agentic and LLM augmented workflows. Now this post isn't going to be a very technical post, the goal of this post is to simplify the AI centric design patterns down, for better understanding. In another post, I'll look to outline Agentic workflows and systems and how they can fit into the larger picture.
 
