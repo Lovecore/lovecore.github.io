@@ -1,0 +1,14 @@
++++
+author = "Nick"
+categories = ["AI", "Reference", "LLM"]
+date = 2025-02-11T11:00:00.000Z
+publishDate = 2025-02-11T11:00:00.000Z
+description = "This is a breakdown of AI oriented workflows."
+summary = "This is a breakdown of AI oriented workflows.."
+draft = true
+slug = "ai-workflows"
+tags = ["ai", "reference guide", "Design Patterns", "Prompt Chaining", "Router", "Parallelization", "orchestration-worker", "evaluation-optimizer"]
+title = "AI Workflows"
+url = "/ai-workflows"
+thumbnail = "/images/ai/ai-header-1.png"
++++
