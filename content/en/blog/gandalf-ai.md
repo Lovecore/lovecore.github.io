@@ -1,4 +1,5 @@
-+++ author = "Nick"
++++
+author = "Nick"
 categories = ["AI", "CTF", "LLM"]
 date = 2023-06-05T11:00:00.000Z
 publishDate = 2023-06-11T11:00:00.000Z
@@ -9,7 +10,8 @@ slug = "gandalf-ai"
 tags = ["ai", "CTF", "Prompt Injection", "Prompt Chaining", "Prompt Obfuscation", "lakera ai"]
 title = "Gandalf AI"
 url = "/gandalf-ai"
-thumbnail = "/images/ai/gandalf.png" +++
+thumbnail = "/images/ai/gandalf.png"
++++
 
 Welcome back everyone! Today we're doing something a bit different and new in the CTF space - AI based CTFs! This particular one is presented by Lakera. This challenge is called `Gandalf`. Check it [out here](https://gandalf.lakera.ai/baseline)! Let's jump in!
 
