@@ -1,14 +1,14 @@
 +++
 author = "Nick"
 categories = ["AI", "Reference", "LLM", "agentic", "agentic design", "multi agent", "tool-use agent", "reflection agent", "planning agent", "tools", "planning", "Multitool", "reflection"]
-date = 2025-02-11T11:00:00.000Z
-publishDate = 2025-02-11T11:00:00.000Z
+date = 2025-02-20T11:00:00.000Z
+publishDate = 2025-02-20T11:00:00.000Z
 description = "This is a breakdown of AI and Agentic Design Patterns."
 summary = "This is a breakdown of AI and Agentic Design Patterns."
 draft = false
 slug = "ai-agents-patterns"
 tags = ["AI", "Reference", "LLM", "agentic", "agentic design", "multi agent", "tool-use agent", "reflection agent", "planning agent", "tools", "planning", "Multitool", "reflection"]
-title = "AI Workflows"
+title = "Agentic Design Patterns"
 url = "/ai-agents-patterns"
 thumbnail = "/images/ai/ai-agents-header.png"
 +++
