@@ -10,7 +10,7 @@ slug = "gandalf-ai"
 tags = ["ai", "CTF", "Prompt Injection", "Prompt Chaining", "Prompt Obfuscation", "lakera ai"]
 title = "Gandalf AI"
 url = "/gandalf-ai"
-thumbnail = "/images/ai/gandalf.png"
+thumbnail = "/images/ai/gandalf/gandalf.png"
 +++
 
 Welcome back everyone! Today we're doing something a bit different and new in the CTF space - AI based CTFs! This particular one is presented by Lakera. This challenge is called `Gandalf`. Check it [out here](https://gandalf.lakera.ai/baseline)! Let's jump in!
