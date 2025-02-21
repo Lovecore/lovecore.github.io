@@ -23,7 +23,7 @@ Let's go over some of the more common design patterns we're seeing currently.
 #### Tool Based
 The Tool Based pattern is one of the most common agentic design patterns currently. It has been largely adopted due to how much it can significantly increase the usefulness of a system. Being able to give an Agent the ability to query a dataset, search the web for an answer, have memory and additional functionality is a very strong system expander.
 
-![](/images/ai/agent-tools.png)
+![](/images/ai/agent-tool.png)
 
 
 #### Multi Agent
