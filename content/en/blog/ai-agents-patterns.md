@@ -10,7 +10,7 @@ slug = "ai-agents-patterns"
 tags = ["AI", "Reference", "LLM", "agentic", "agentic design", "multi agent", "tool-use agent", "reflection agent", "planning agent", "tools", "planning", "Multitool", "reflection"]
 title = "AI Workflows"
 url = "/ai-agents-patterns"
-thumbnail = "/images/ai/ai-header-1.png"
+thumbnail = "/images/ai/ai-agents-header.png"
 +++
 
 We're back! In the [first blog post](https://rootflag.io/ai-workflows/) in this series, we talked about some LLM powered workflows and how they aren't agentic solutions or design patterns, but they can be. In this entry I want to touch on the hype of Agentic Design Patterns.
