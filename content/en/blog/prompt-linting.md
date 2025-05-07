@@ -2,7 +2,7 @@
 +++
 author = "Nick"
 categories = ["AI", "Reference", "LLM", "prompt", "Prompt linting", "linter", "Prompt Engineering"]
-date = 2025-05-2066T11:00:00.000Z
+date = 2025-05-06T11:00:00.000Z
 publishDate = 2025-05-06T11:00:00.000Z
 description = "This is a discussion around why we should be using Prompt Linters."
 summary = "This is a discussion around why we should be using Prompt Linters."
