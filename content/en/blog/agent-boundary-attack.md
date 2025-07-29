@@ -3,12 +3,12 @@ author = "Nick"
 categories = ["AI", "Agentic Systems", "Agent Privilege Escalation", "agentic", "agentic security", "security", "cybersecurity", "MCP", "GitHub", "Agent Security", "Agent Boundary Attack"]
 date = 2025-07-28T23:16:20.000Z
 publishDate = 2025-07-28T23:16:20.000Z
-description = "Exploint agents for fun and profit!"
+description = "Exploiting agents for fun and profit!"
 summary = "This blog post will be about a recent bounty submission I was able to pass. Leveraging overly permissive agents."
 draft = false
 slug = "agent-boundary-attack"
 tags = ["AI", "Compound Engineering", "LLM", "agentic", "agentic security", "security", "cybersecurity", "MCP", "GitHub", "Agent Security", "Agent Boundary Attack"]
-title = "Exploint agents for fun and profit!"
+title = "Exploiting agents for fun and profit!"
 url = "/agent-boundary-attack"
 thumbnail = "/images/ai/ai-boundary.png"
 +++
