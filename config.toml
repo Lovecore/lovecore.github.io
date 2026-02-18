@@ -1,4 +1,4 @@
-baseURL = 'https://rootflag.io'
+baseURL = 'https://blog.rootflag.io'
 languageCode = 'en-us'
 title = 'Rootflag.io'
 theme = "blist"
@@ -83,3 +83,4 @@ noTimes = true
   [markup.goldmark.renderer]
     # Enable to include inline HTML
     unsafe = true
+
