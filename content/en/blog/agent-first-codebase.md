@@ -1,8 +1,8 @@
 +++
 author = "Nick"
 title: "Your Codebase Has a New Reader — And It Doesn't Think Like You"
-date = 2026-02-18T18:00:20.000Z
-publishDate = 2026-02-18T18:00:20.000Z 
+date = 2026-02-17T18:00:20.000Z
+publishDate = 2026-02-17T18:00:20.000Z 
 draft = false
 slug = "agent-first-codebase"
 url = "/agent-first-codebase"
