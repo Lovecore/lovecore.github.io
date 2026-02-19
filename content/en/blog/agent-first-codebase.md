@@ -1,6 +1,6 @@
 +++
 author = "Nick"
-title: "Your Codebase Has a New Reader — And It Doesn't Think Like You"
+title = "Your Codebase Has a New Reader — And It Doesn't Think Like You"
 date = 2026-02-17T18:00:20.000Z
 publishDate = 2026-02-17T18:00:20.000Z 
 draft = false
