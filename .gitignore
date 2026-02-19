@@ -1,3 +1,4 @@
+*.DS_Store
 public/
 themes/ananke
 content\en\blog\my-first-post.md
