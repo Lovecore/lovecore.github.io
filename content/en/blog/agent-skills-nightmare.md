@@ -9,7 +9,7 @@ url = "/agent-skills-nightmare"
 tags = ["agentic-coding", "AI engineering", "developer experience", "security", "AGENTS.md", "Claude Code", "agent skills"]
 categories = ["AI Engineering"]
 description = "It’s time to treat agent skills like the highly potent, potentially lethal execution vectors they are. Verify the artifact, lock down the capabilities, and keep the human out of the loop until it actually matters."
-thumbnail = "/images/ai/agent-first.jpg"
+thumbnail = "/images/ai/agent-skills-nightmare.png"
 +++
 
 
