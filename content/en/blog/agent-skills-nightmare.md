@@ -1,8 +1,8 @@
 +++
 author = "Nick"
 title = "Are Agent Skills Are the Next Supply Chain Nightmare"
-date = 2026-05-06T18:00:20.000Z
-publishDate = 2026-05-06T18:00:20.000Z 
+date = 2026-05-06T12:00:00.000Z
+publishDate = 2026-05-06T12:00:00.000Z
 draft = false
 slug = "agent-skills-nightmare"
 url = "/agent-skills-nightmare"

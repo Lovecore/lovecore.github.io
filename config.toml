@@ -5,6 +5,7 @@ theme = "blist"
 DefaultContentLanguage = "en"
 DefaultContentLanguageInSubdir = false
 noTimes = true
+buildFuture = true
 
 [languages]
   [languages.en]
